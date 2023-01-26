@@ -1,0 +1,89 @@
+﻿#include "pch-c.h"
+#ifndef _MSC_VER
+# include <alloca.h>
+#else
+# include <malloc.h>
+#endif
+
+
+#include "codegen/il2cpp-codegen-metadata.h"
+
+
+
+
+
+extern void DeckManager_Start_m50342C3EB03EE3523CC7C95FD56244B3E5227C12 (void);
+extern void DeckManager_Update_m9B26BB990F029396D6D480852A4A33B94217F313 (void);
+extern void DeckManager__ctor_m59EBC0004969FD0D8864BBF1EF7345D83F54439D (void);
+extern void UnitySourceGeneratedAssemblyMonoScriptTypes_IsEditorOnly_m59E10A16B0BDEA496377805E39C3D90B1E2C4815 (void);
+extern void UnitySourceGeneratedAssemblyMonoScriptTypes_Get_mDAD527916A4779DB4ACAFEADC3BA7372671FA647 (void);
+extern void UnitySourceGeneratedAssemblyMonoScriptTypes__ctor_mE2C680837D47039E3F06032AA8C63FEDB7E783A5 (void);
+extern void CardInteractive_Awake_mA9FCA31CD141E3E60C4FE7398FAFFA633D9D6441 (void);
+extern void CardInteractive_Start_mA79452F5789C8481FDD4EDE7E27E38800C2D0A27 (void);
+extern void CardInteractive_Update_mB8F789AA57A7869C6A05E198636B6911AEDE13B9 (void);
+extern void CardInteractive_OnPointerClick_mC4598178AB3409D131DDFA3C11949EEDC589E9CD (void);
+extern void CardInteractive_OnPointerEnter_m3429221170523D965848185E54152C5DBA0F7513 (void);
+extern void CardInteractive_OnPointerExit_m97872C82FE142A4FC55E81C585DDEAC02071CB95 (void);
+extern void CardInteractive__ctor_m5375823E038F4F2A2DC9B1BE5497A179E5A114A9 (void);
+extern void U3CU3Ec__cctor_m8ED5A6F4084F9F5F7B1DA57F9E7443018C769830 (void);
+extern void U3CU3Ec__ctor_mAD8700534DC5BC8BECB1308FDC77A6850BA6A296 (void);
+extern void U3CU3Ec_U3CStartU3Eb__2_0_m9F79D01BABEF313FE1DD45E5149C1BB89C6201A3 (void);
+static Il2CppMethodPointer s_methodPointers[16] = 
+{
+	DeckManager_Start_m50342C3EB03EE3523CC7C95FD56244B3E5227C12,
+	DeckManager_Update_m9B26BB990F029396D6D480852A4A33B94217F313,
+	DeckManager__ctor_m59EBC0004969FD0D8864BBF1EF7345D83F54439D,
+	UnitySourceGeneratedAssemblyMonoScriptTypes_IsEditorOnly_m59E10A16B0BDEA496377805E39C3D90B1E2C4815,
+	UnitySourceGeneratedAssemblyMonoScriptTypes_Get_mDAD527916A4779DB4ACAFEADC3BA7372671FA647,
+	UnitySourceGeneratedAssemblyMonoScriptTypes__ctor_mE2C680837D47039E3F06032AA8C63FEDB7E783A5,
+	CardInteractive_Awake_mA9FCA31CD141E3E60C4FE7398FAFFA633D9D6441,
+	CardInteractive_Start_mA79452F5789C8481FDD4EDE7E27E38800C2D0A27,
+	CardInteractive_Update_mB8F789AA57A7869C6A05E198636B6911AEDE13B9,
+	CardInteractive_OnPointerClick_mC4598178AB3409D131DDFA3C11949EEDC589E9CD,
+	CardInteractive_OnPointerEnter_m3429221170523D965848185E54152C5DBA0F7513,
+	CardInteractive_OnPointerExit_m97872C82FE142A4FC55E81C585DDEAC02071CB95,
+	CardInteractive__ctor_m5375823E038F4F2A2DC9B1BE5497A179E5A114A9,
+	U3CU3Ec__cctor_m8ED5A6F4084F9F5F7B1DA57F9E7443018C769830,
+	U3CU3Ec__ctor_mAD8700534DC5BC8BECB1308FDC77A6850BA6A296,
+	U3CU3Ec_U3CStartU3Eb__2_0_m9F79D01BABEF313FE1DD45E5149C1BB89C6201A3,
+};
+static const int32_t s_InvokerIndices[16] = 
+{
+	4686,
+	4686,
+	4686,
+	6883,
+	6911,
+	4686,
+	4686,
+	4686,
+	4686,
+	3780,
+	3780,
+	3780,
+	4686,
+	6941,
+	4686,
+	4686,
+};
+IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
+const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
+{
+	"Assembly-CSharp.dll",
+	16,
+	s_methodPointers,
+	0,
+	NULL,
+	s_InvokerIndices,
+	0,
+	NULL,
+	0,
+	NULL,
+	0,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+};

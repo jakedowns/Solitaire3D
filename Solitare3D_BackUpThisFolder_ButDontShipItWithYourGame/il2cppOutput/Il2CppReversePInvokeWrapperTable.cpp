@@ -1,0 +1,93 @@
+﻿#include "pch-cpp.hpp"
+
+#ifndef _MSC_VER
+# include <alloca.h>
+#else
+# include <malloc.h>
+#endif
+
+
+#include <stdint.h>
+#include <limits>
+
+
+
+struct Void_t4861ACF8F4594C3437BB48B6E56783494B843915;
+
+
+
+IL2CPP_EXTERN_C_BEGIN
+IL2CPP_EXTERN_C_END
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
+struct ValueType_t6D9B272BD21782F0A9A14F2E41F85A50E97A986F  : public RuntimeObject
+{
+};
+struct ValueType_t6D9B272BD21782F0A9A14F2E41F85A50E97A986F_marshaled_pinvoke
+{
+};
+struct ValueType_t6D9B272BD21782F0A9A14F2E41F85A50E97A986F_marshaled_com
+{
+};
+
+struct IntPtr_t 
+{
+	void* ___m_value_0;
+};
+
+struct IntPtr_t_StaticFields
+{
+	intptr_t ___Zero_1;
+};
+
+struct Void_t4861ACF8F4594C3437BB48B6E56783494B843915 
+{
+	union
+	{
+		struct
+		{
+		};
+		uint8_t Void_t4861ACF8F4594C3437BB48B6E56783494B843915__padding[1];
+	};
+};
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_AudioEncoder_RunOnRenderThread_m7365B2CBBDD63063E58453A9B05A35E89E7DA138(int32_t ___eventID0);
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_CultureInfo_OnCultureInfoChangedInAppX_m407BCFC1029A4485B7B063BC2F3601968C3BE577(Il2CppChar* ___language0);
+extern "C" void CDECL ReversePInvokeWrapper_NRDeviceSubsystem_OnBrightnessKeyCallbackInternal_m1CAA518556CA51D71FAE48D9CE095F78AE26FC84(uint64_t ___glasses_control_handle0, int32_t ___key_event1, uint64_t ___user_data2);
+extern "C" void CDECL ReversePInvokeWrapper_NRDeviceSubsystem_OnBrightnessValueCallbackInternal_mA83BCC6972A742B2617BB5FD775B55386E0311DA(uint64_t ___glasses_control_handle0, int32_t ___brightness1, uint64_t ___user_data2);
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_NRDeviceSubsystem_OnGlassesDisconnectEvent_m2245BF1AE512A4D3C39308636C1BEA8FF22B5AF6(uint64_t ___glasses_control_handle0, intptr_t ___user_data1, int32_t ___reason2);
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_NRDeviceSubsystem_OnGlassesWear_mC23242B321B85BEA2EC63DCC226E3B495A4ED615(uint64_t ___glasses_control_handle0, int32_t ___wearing_status1, uint64_t ___user_data2);
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_NRDeviceSubsystem_OnKeyEventCallbackInternal_m2420B16223FED123C160C066119DB874F6B642A8(uint64_t ___glasses_control_handle0, uint64_t ___key_event_handle1, uint64_t ___user_data2);
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_NRRenderer_RunOnRenderThread_m97C5319C5661DBC0E295BB78D469A285C6FAAC2E(int32_t ___eventID0);
+extern "C" void CDECL ReversePInvokeWrapper_NRRgbCamera_RGBCameraCapture_mB953209033E63E7203589F2F8C27EF1566BCFEA3(uint64_t ___camera_handle0, uint64_t ___camera_image_handle1, uint64_t ___userdata2);
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_NRVirtualDisplayer_OnDisplayResolutionChanged_m23C331F962E073118FAD3AEE2EF9B947C9FEB914(int32_t ___w0, int32_t ___h1);
+extern "C" void CDECL ReversePInvokeWrapper_NativeEncoder_OnAudioDataCallback_mD7F44D61EE6DF0F038AAF8E03DAD393903BF8C44(intptr_t ___data0, uint32_t ___size1);
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_OSSpecificSynchronizationContext_InvocationEntry_mF93C3CF6DBEC86E377576D840CAF517CB6E4D7E3(intptr_t ___arg0);
+extern "C" void DEFAULT_CALL ReversePInvokeWrapper_VideoEncoder_RunOnRenderThread_mF2A7BF9D5E481AB0F7F2CE15CD98167C972104BD(int32_t ___eventID0);
+
+
+IL2CPP_EXTERN_C const Il2CppMethodPointer g_ReversePInvokeWrapperPointers[];
+const Il2CppMethodPointer g_ReversePInvokeWrapperPointers[13] = 
+{
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_AudioEncoder_RunOnRenderThread_m7365B2CBBDD63063E58453A9B05A35E89E7DA138),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_CultureInfo_OnCultureInfoChangedInAppX_m407BCFC1029A4485B7B063BC2F3601968C3BE577),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NRDeviceSubsystem_OnBrightnessKeyCallbackInternal_m1CAA518556CA51D71FAE48D9CE095F78AE26FC84),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NRDeviceSubsystem_OnBrightnessValueCallbackInternal_mA83BCC6972A742B2617BB5FD775B55386E0311DA),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NRDeviceSubsystem_OnGlassesDisconnectEvent_m2245BF1AE512A4D3C39308636C1BEA8FF22B5AF6),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NRDeviceSubsystem_OnGlassesWear_mC23242B321B85BEA2EC63DCC226E3B495A4ED615),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NRDeviceSubsystem_OnKeyEventCallbackInternal_m2420B16223FED123C160C066119DB874F6B642A8),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NRRenderer_RunOnRenderThread_m97C5319C5661DBC0E295BB78D469A285C6FAAC2E),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NRRgbCamera_RGBCameraCapture_mB953209033E63E7203589F2F8C27EF1566BCFEA3),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NRVirtualDisplayer_OnDisplayResolutionChanged_m23C331F962E073118FAD3AEE2EF9B947C9FEB914),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_NativeEncoder_OnAudioDataCallback_mD7F44D61EE6DF0F038AAF8E03DAD393903BF8C44),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_OSSpecificSynchronizationContext_InvocationEntry_mF93C3CF6DBEC86E377576D840CAF517CB6E4D7E3),
+	reinterpret_cast<Il2CppMethodPointer>(ReversePInvokeWrapper_VideoEncoder_RunOnRenderThread_mF2A7BF9D5E481AB0F7F2CE15CD98167C972104BD),
+};
