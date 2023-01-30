@@ -545,6 +545,7 @@ IL2CPP_EXTERN_C const RuntimeMethod* Attribute_GetCustomAttribute_m4E50C708F5219
 IL2CPP_EXTERN_C const RuntimeMethod* Attribute_GetCustomAttribute_mBF35997518AA6969E0E9A29D7E8C5FE6FCF36AC1_RuntimeMethod_var;
 IL2CPP_EXTERN_C const RuntimeMethod* Attribute_GetCustomAttributes_m7431B520819C0E00B86D7E16FFED7675A0CCC9DB_RuntimeMethod_var;
 IL2CPP_EXTERN_C const RuntimeMethod* Attribute_GetCustomAttributes_mCB0A3E0F2148A92A0C6444D601F0F19E01B0ED09_RuntimeMethod_var;
+IL2CPP_EXTERN_C const RuntimeMethod* Attribute_GetCustomAttributes_mCF959D982EF0B4FC9C254CFC6AE0D3326FB18774_RuntimeMethod_var;
 IL2CPP_EXTERN_C const RuntimeMethod* Attribute_GetCustomAttributes_mF1EE547A2DF3170198A9108CB8E82DFE2D920E35_RuntimeMethod_var;
 IL2CPP_EXTERN_C const RuntimeMethod* Attribute_IsDefined_m5DB4031FBFCC88B85E13217F1323701794B8D42C_RuntimeMethod_var;
 IL2CPP_EXTERN_C const RuntimeMethod* Buffer_BlockCopy_m2F7BC0C5BA97C500E3F87D5008718F797E02B358_RuntimeMethod_var;
@@ -3393,6 +3394,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool Attribute_InternalIsDefined_m725076CD1B0
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Attribute_tFDA8EFEFB0711976D22474794576DAF28F7440AA* Attribute_GetCustomAttribute_mBF35997518AA6969E0E9A29D7E8C5FE6FCF36AC1 (MemberInfo_t* ___element0, Type_t* ___attributeType1, bool ___inherit2, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void AmbiguousMatchException__ctor_m626D7A373A51DC634778AEECB96ACAA06058006D (AmbiguousMatchException_t74F105B42C618E39EEE32A52E79C24044604E70E* __this, String_t* ___message0, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool Assembly_op_Equality_m1E2666F9D0537F02AB32F14B4458C98C4851CEAB (Assembly_t* ___left0, Assembly_t* ___right1, const RuntimeMethod* method) ;
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1* Attribute_GetCustomAttributes_mCF959D982EF0B4FC9C254CFC6AE0D3326FB18774 (Assembly_t* ___element0, bool ___inherit1, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Attribute_tFDA8EFEFB0711976D22474794576DAF28F7440AA* Attribute_GetCustomAttribute_m4E50C708F52191C29F0C43B0C27B5BA44E2C683E (Assembly_t* ___element0, Type_t* ___attributeType1, bool ___inherit2, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1* Attribute_GetCustomAttributes_m7431B520819C0E00B86D7E16FFED7675A0CCC9DB (Assembly_t* ___element0, Type_t* ___attributeType1, bool ___inherit2, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Type_t* Object_GetType_mE10A8FC1E57F3DF29972CCBC026C2DC3942263B3 (RuntimeObject* __this, const RuntimeMethod* method) ;
@@ -6130,6 +6132,54 @@ IL_005c:
 		ObjectU5BU5D_t8061030B0A12A55D5AD8652A20C922FE99450918* L_19;
 		L_19 = VirtualFuncInvoker2< ObjectU5BU5D_t8061030B0A12A55D5AD8652A20C922FE99450918*, Type_t*, bool >::Invoke(13, L_16, L_17, L_18);
 		return ((AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1*)Castclass((RuntimeObject*)L_19, AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1_il2cpp_TypeInfo_var));
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1* Attribute_GetCustomAttributes_mD4455DC35BFA6EFA35E1A16A08D2519E44ADB5E8 (Assembly_t* ___element0, const RuntimeMethod* method) 
+{
+	{
+		Assembly_t* L_0 = ___element0;
+		AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1* L_1;
+		L_1 = Attribute_GetCustomAttributes_mCF959D982EF0B4FC9C254CFC6AE0D3326FB18774(L_0, (bool)1, NULL);
+		return L_1;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1* Attribute_GetCustomAttributes_mCF959D982EF0B4FC9C254CFC6AE0D3326FB18774 (Assembly_t* ___element0, bool ___inherit1, const RuntimeMethod* method) 
+{
+	static bool s_Il2CppMethodInitialized;
+	if (!s_Il2CppMethodInitialized)
+	{
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1_il2cpp_TypeInfo_var);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Attribute_tFDA8EFEFB0711976D22474794576DAF28F7440AA_0_0_0_var);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Type_t_il2cpp_TypeInfo_var);
+		s_Il2CppMethodInitialized = true;
+	}
+	{
+		Assembly_t* L_0 = ___element0;
+		bool L_1;
+		L_1 = Assembly_op_Equality_m1E2666F9D0537F02AB32F14B4458C98C4851CEAB(L_0, (Assembly_t*)NULL, NULL);
+		if (!L_1)
+		{
+			goto IL_0014;
+		}
+	}
+	{
+		ArgumentNullException_t327031E412FAB2351B0022DD5DAD47E67E597129* L_2 = (ArgumentNullException_t327031E412FAB2351B0022DD5DAD47E67E597129*)il2cpp_codegen_object_new(((RuntimeClass*)il2cpp_codegen_initialize_runtime_metadata_inline((uintptr_t*)&ArgumentNullException_t327031E412FAB2351B0022DD5DAD47E67E597129_il2cpp_TypeInfo_var)));
+		ArgumentNullException__ctor_m444AE141157E333844FC1A9500224C2F9FD24F4B(L_2, ((String_t*)il2cpp_codegen_initialize_runtime_metadata_inline((uintptr_t*)&_stringLiteral27F5946EF97DA519B61A2DE957327C84C529D60F)), NULL);
+		IL2CPP_RAISE_MANAGED_EXCEPTION(L_2, ((RuntimeMethod*)il2cpp_codegen_initialize_runtime_metadata_inline((uintptr_t*)&Attribute_GetCustomAttributes_mCF959D982EF0B4FC9C254CFC6AE0D3326FB18774_RuntimeMethod_var)));
+	}
+
+IL_0014:
+	{
+		Assembly_t* L_3 = ___element0;
+		RuntimeTypeHandle_t332A452B8B6179E4469B69525D0FE82A88030F7B L_4 = { reinterpret_cast<intptr_t> (Attribute_tFDA8EFEFB0711976D22474794576DAF28F7440AA_0_0_0_var) };
+		il2cpp_codegen_runtime_class_init_inline(Type_t_il2cpp_TypeInfo_var);
+		Type_t* L_5;
+		L_5 = Type_GetTypeFromHandle_m6062B81682F79A4D6DF2640692EE6D9987858C57(L_4, NULL);
+		bool L_6 = ___inherit1;
+		NullCheck(L_3);
+		ObjectU5BU5D_t8061030B0A12A55D5AD8652A20C922FE99450918* L_7;
+		L_7 = VirtualFuncInvoker2< ObjectU5BU5D_t8061030B0A12A55D5AD8652A20C922FE99450918*, Type_t*, bool >::Invoke(13, L_3, L_5, L_6);
+		return ((AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1*)Castclass((RuntimeObject*)L_7, AttributeU5BU5D_t0F73488E6F1249C889608E8DCC0BCC28A874E8F1_il2cpp_TypeInfo_var));
 	}
 }
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Attribute_tFDA8EFEFB0711976D22474794576DAF28F7440AA* Attribute_GetCustomAttribute_m8ECC2F3DB73C2CCEC06BE6272FD23CCF746474C5 (Assembly_t* ___element0, Type_t* ___attributeType1, const RuntimeMethod* method) 

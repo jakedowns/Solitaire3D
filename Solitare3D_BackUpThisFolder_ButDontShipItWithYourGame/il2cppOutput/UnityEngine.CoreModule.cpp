@@ -1661,6 +1661,10 @@ struct Matrix4x4_tDB70CF134A14BA38190C59AA700BCE10E2AED3E6_StaticFields
 	Matrix4x4_tDB70CF134A14BA38190C59AA700BCE10E2AED3E6 ___identityMatrix_17;
 };
 
+struct MethodBase_t  : public MemberInfo_t
+{
+};
+
 struct MonoPInvokeCallbackAttribute_t3C659C8B8852BD4E98F7B63E73D36AEE20666527  : public Attribute_tFDA8EFEFB0711976D22474794576DAF28F7440AA
 {
 };
@@ -2166,6 +2170,10 @@ struct JobRanges_t5A1CDFF3E0DB1197050E1E28617B517C15AF6DC3
 struct MaterialPropertyBlock_t2308669579033A857EFE6E4831909F638B27411D  : public RuntimeObject
 {
 	intptr_t ___m_Ptr_0;
+};
+
+struct MethodInfo_t  : public MethodBase_t
+{
 };
 
 struct Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C  : public RuntimeObject
@@ -3396,6 +3404,8 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Hash128__ctor_m0B61E717B3FF7D7BBD8FF12C8
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void* BurstCompilerService_GetOrCreateSharedMemory_m1293EB3119CBEE41DBCC0E3B2235601BD927BFE6 (Hash128_t93367F504B687578F893CDBCD13FB95AC8A87A40* ___key0, uint32_t ___size_of1, uint32_t ___alignment2, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppChar String_get_Chars_mC49DF0CD2D3BE7BE97B3AD9C995BE3094F8E36D3 (String_t* __this, int32_t ___index0, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void UnsafeUtility_MemSet_m4CD74CD43260EB2962A46F57E0D93DD5C332FC2B (void* ___destination0, uint8_t ___value1, int64_t ___size2, const RuntimeMethod* method) ;
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float Keyframe_get_time_mB8886F64CBB373936C0C25C4C68397C05779F661 (Keyframe_tB9C67DCBFE10C0AE9C52CB5C66E944255C9254F0* __this, const RuntimeMethod* method) ;
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float Keyframe_get_value_m53E6B7609086AAAA46E24BAF734EF08E16A3FD6C (Keyframe_tB9C67DCBFE10C0AE9C52CB5C66E944255C9254F0* __this, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Object_Finalize_mC98C96301CCABFE00F1A7EF8E15DF507CACD42B2 (RuntimeObject* __this, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void AnimationCurve_Internal_Destroy_m240B298D0A13EEC1652955C4BDCDBE9B7B2EE296 (intptr_t ___ptr0, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR intptr_t AnimationCurve_Internal_Create_m638BB04F32C3013A7CA810879E46FD9F32E9FE05 (KeyframeU5BU5D_t63250A46914A6A07B2A6689850D47D7D19D80BA3* ___keys0, const RuntimeMethod* method) ;
@@ -4589,6 +4599,14 @@ IL_000e:
 		intptr_t L_6 = V_0;
 		return L_6;
 	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void JobsUtility_set_JobCompilerEnabled_m14CB399441AB02D65BE11D74E9CC3E313420D72B (bool ___value0, const RuntimeMethod* method) 
+{
+	typedef void (*JobsUtility_set_JobCompilerEnabled_m14CB399441AB02D65BE11D74E9CC3E313420D72B_ftn) (bool);
+	static JobsUtility_set_JobCompilerEnabled_m14CB399441AB02D65BE11D74E9CC3E313420D72B_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (JobsUtility_set_JobCompilerEnabled_m14CB399441AB02D65BE11D74E9CC3E313420D72B_ftn)il2cpp_codegen_resolve_icall ("Unity.Jobs.LowLevel.Unsafe.JobsUtility::set_JobCompilerEnabled(System.Boolean)");
+	_il2cpp_icall_func(___value0);
 }
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void JobsUtility_InvokePanicFunction_mDD3D5F9B1F0A26924CC82DB52E0561D32DC8E255 (const RuntimeMethod* method) 
 {
@@ -6533,6 +6551,15 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void UnsafeUtility_MemClear_m6C4377117084A11A
 		return;
 	}
 }
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t UnsafeUtility_GetScriptingTypeFlags_m5C7844B4A33A56FA3C3FFA55729E85C9F1FD3E71 (Type_t* ___type0, const RuntimeMethod* method) 
+{
+	typedef int32_t (*UnsafeUtility_GetScriptingTypeFlags_m5C7844B4A33A56FA3C3FFA55729E85C9F1FD3E71_ftn) (Type_t*);
+	static UnsafeUtility_GetScriptingTypeFlags_m5C7844B4A33A56FA3C3FFA55729E85C9F1FD3E71_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (UnsafeUtility_GetScriptingTypeFlags_m5C7844B4A33A56FA3C3FFA55729E85C9F1FD3E71_ftn)il2cpp_codegen_resolve_icall ("Unity.Collections.LowLevel.Unsafe.UnsafeUtility::GetScriptingTypeFlags(System.Type)");
+	int32_t icallRetVal = _il2cpp_icall_func(___type0);
+	return icallRetVal;
+}
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -6556,6 +6583,33 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BurstDiscardAttribute__ctor_m0AC3131F7C5
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* BurstCompilerService_GetDisassembly_m8D1D4FEE78219EE2DC26A5E022D36DD495FAD127 (MethodInfo_t* ___m0, String_t* ___compilerOptions1, const RuntimeMethod* method) 
+{
+	typedef String_t* (*BurstCompilerService_GetDisassembly_m8D1D4FEE78219EE2DC26A5E022D36DD495FAD127_ftn) (MethodInfo_t*, String_t*);
+	static BurstCompilerService_GetDisassembly_m8D1D4FEE78219EE2DC26A5E022D36DD495FAD127_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (BurstCompilerService_GetDisassembly_m8D1D4FEE78219EE2DC26A5E022D36DD495FAD127_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::GetDisassembly(System.Reflection.MethodInfo,System.String)");
+	String_t* icallRetVal = _il2cpp_icall_func(___m0, ___compilerOptions1);
+	return icallRetVal;
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t BurstCompilerService_CompileAsyncDelegateMethod_mDEA0EF934BF3674C1B47014A7518886D1DC2FE80 (RuntimeObject* ___delegateMethod0, String_t* ___compilerOptions1, const RuntimeMethod* method) 
+{
+	typedef int32_t (*BurstCompilerService_CompileAsyncDelegateMethod_mDEA0EF934BF3674C1B47014A7518886D1DC2FE80_ftn) (RuntimeObject*, String_t*);
+	static BurstCompilerService_CompileAsyncDelegateMethod_mDEA0EF934BF3674C1B47014A7518886D1DC2FE80_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (BurstCompilerService_CompileAsyncDelegateMethod_mDEA0EF934BF3674C1B47014A7518886D1DC2FE80_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::CompileAsyncDelegateMethod(System.Object,System.String)");
+	int32_t icallRetVal = _il2cpp_icall_func(___delegateMethod0, ___compilerOptions1);
+	return icallRetVal;
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void* BurstCompilerService_GetAsyncCompiledAsyncDelegateMethod_mE6AD1EA0DD647A367102A1330BF4D695E1A796F9 (int32_t ___userID0, const RuntimeMethod* method) 
+{
+	typedef void* (*BurstCompilerService_GetAsyncCompiledAsyncDelegateMethod_mE6AD1EA0DD647A367102A1330BF4D695E1A796F9_ftn) (int32_t);
+	static BurstCompilerService_GetAsyncCompiledAsyncDelegateMethod_mE6AD1EA0DD647A367102A1330BF4D695E1A796F9_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (BurstCompilerService_GetAsyncCompiledAsyncDelegateMethod_mE6AD1EA0DD647A367102A1330BF4D695E1A796F9_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::GetAsyncCompiledAsyncDelegateMethod(System.Int32)");
+	void* icallRetVal = _il2cpp_icall_func(___userID0);
+	return icallRetVal;
+}
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void* BurstCompilerService_GetOrCreateSharedMemory_m1293EB3119CBEE41DBCC0E3B2235601BD927BFE6 (Hash128_t93367F504B687578F893CDBCD13FB95AC8A87A40* ___key0, uint32_t ___size_of1, uint32_t ___alignment2, const RuntimeMethod* method) 
 {
 	typedef void* (*BurstCompilerService_GetOrCreateSharedMemory_m1293EB3119CBEE41DBCC0E3B2235601BD927BFE6_ftn) (Hash128_t93367F504B687578F893CDBCD13FB95AC8A87A40*, uint32_t, uint32_t);
@@ -6563,6 +6617,48 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void* BurstCompilerService_GetOrCreateSharedM
 	if (!_il2cpp_icall_func)
 	_il2cpp_icall_func = (BurstCompilerService_GetOrCreateSharedMemory_m1293EB3119CBEE41DBCC0E3B2235601BD927BFE6_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::GetOrCreateSharedMemory(UnityEngine.Hash128&,System.UInt32,System.UInt32)");
 	void* icallRetVal = _il2cpp_icall_func(___key0, ___size_of1, ___alignment2);
+	return icallRetVal;
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BurstCompilerService_SetCurrentExecutionMode_m86A2CB713ADEC7F53CCC70207E24FE9BBE0648F3 (uint32_t ___environment0, const RuntimeMethod* method) 
+{
+	typedef void (*BurstCompilerService_SetCurrentExecutionMode_m86A2CB713ADEC7F53CCC70207E24FE9BBE0648F3_ftn) (uint32_t);
+	static BurstCompilerService_SetCurrentExecutionMode_m86A2CB713ADEC7F53CCC70207E24FE9BBE0648F3_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (BurstCompilerService_SetCurrentExecutionMode_m86A2CB713ADEC7F53CCC70207E24FE9BBE0648F3_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::SetCurrentExecutionMode(System.UInt32)");
+	_il2cpp_icall_func(___environment0);
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t BurstCompilerService_GetCurrentExecutionMode_m09F5681D99FD82BE46B952D26683672ECDB526B2 (const RuntimeMethod* method) 
+{
+	typedef uint32_t (*BurstCompilerService_GetCurrentExecutionMode_m09F5681D99FD82BE46B952D26683672ECDB526B2_ftn) ();
+	static BurstCompilerService_GetCurrentExecutionMode_m09F5681D99FD82BE46B952D26683672ECDB526B2_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (BurstCompilerService_GetCurrentExecutionMode_m09F5681D99FD82BE46B952D26683672ECDB526B2_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::GetCurrentExecutionMode()");
+	uint32_t icallRetVal = _il2cpp_icall_func();
+	return icallRetVal;
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BurstCompilerService_Log_m4224BFA55310174B3BD9E0A2F15F3CF85757C253 (void* ___userData0, int32_t ___logType1, uint8_t* ___message2, uint8_t* ___filename3, int32_t ___lineNumber4, const RuntimeMethod* method) 
+{
+	typedef void (*BurstCompilerService_Log_m4224BFA55310174B3BD9E0A2F15F3CF85757C253_ftn) (void*, int32_t, uint8_t*, uint8_t*, int32_t);
+	static BurstCompilerService_Log_m4224BFA55310174B3BD9E0A2F15F3CF85757C253_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (BurstCompilerService_Log_m4224BFA55310174B3BD9E0A2F15F3CF85757C253_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::Log(System.Void*,Unity.Burst.LowLevel.BurstCompilerService/BurstLogType,System.Byte*,System.Byte*,System.Int32)");
+	_il2cpp_icall_func(___userData0, ___logType1, ___message2, ___filename3, ___lineNumber4);
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BurstCompilerService_RuntimeLog_m564B95C963C0AF9DED99AA57BE28DCC90CFE3925 (void* ___userData0, int32_t ___logType1, uint8_t* ___message2, uint8_t* ___filename3, int32_t ___lineNumber4, const RuntimeMethod* method) 
+{
+	typedef void (*BurstCompilerService_RuntimeLog_m564B95C963C0AF9DED99AA57BE28DCC90CFE3925_ftn) (void*, int32_t, uint8_t*, uint8_t*, int32_t);
+	static BurstCompilerService_RuntimeLog_m564B95C963C0AF9DED99AA57BE28DCC90CFE3925_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (BurstCompilerService_RuntimeLog_m564B95C963C0AF9DED99AA57BE28DCC90CFE3925_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::RuntimeLog(System.Void*,Unity.Burst.LowLevel.BurstCompilerService/BurstLogType,System.Byte*,System.Byte*,System.Int32)");
+	_il2cpp_icall_func(___userData0, ___logType1, ___message2, ___filename3, ___lineNumber4);
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool BurstCompilerService_LoadBurstLibrary_m4A0D47DA27BB34AF33F5075825947D933573ABE9 (String_t* ___fullPathToLibBurstGenerated0, const RuntimeMethod* method) 
+{
+	typedef bool (*BurstCompilerService_LoadBurstLibrary_m4A0D47DA27BB34AF33F5075825947D933573ABE9_ftn) (String_t*);
+	static BurstCompilerService_LoadBurstLibrary_m4A0D47DA27BB34AF33F5075825947D933573ABE9_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (BurstCompilerService_LoadBurstLibrary_m4A0D47DA27BB34AF33F5075825947D933573ABE9_ftn)il2cpp_codegen_resolve_icall ("Unity.Burst.LowLevel.BurstCompilerService::LoadBurstLibrary(System.String)");
+	bool icallRetVal = _il2cpp_icall_func(___fullPathToLibBurstGenerated0);
 	return icallRetVal;
 }
 #ifdef __clang__
@@ -6620,6 +6716,54 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t SortingLayer_GetLayerValueFromID_mEB8
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float Keyframe_get_time_mB8886F64CBB373936C0C25C4C68397C05779F661 (Keyframe_tB9C67DCBFE10C0AE9C52CB5C66E944255C9254F0* __this, const RuntimeMethod* method) 
+{
+	float V_0 = 0.0f;
+	{
+		float L_0 = __this->___m_Time_0;
+		V_0 = L_0;
+		goto IL_000a;
+	}
+
+IL_000a:
+	{
+		float L_1 = V_0;
+		return L_1;
+	}
+}
+IL2CPP_EXTERN_C  float Keyframe_get_time_mB8886F64CBB373936C0C25C4C68397C05779F661_AdjustorThunk (RuntimeObject* __this, const RuntimeMethod* method)
+{
+	Keyframe_tB9C67DCBFE10C0AE9C52CB5C66E944255C9254F0* _thisAdjusted;
+	int32_t _offset = 1;
+	_thisAdjusted = reinterpret_cast<Keyframe_tB9C67DCBFE10C0AE9C52CB5C66E944255C9254F0*>(__this + _offset);
+	float _returnValue;
+	_returnValue = Keyframe_get_time_mB8886F64CBB373936C0C25C4C68397C05779F661(_thisAdjusted, method);
+	return _returnValue;
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float Keyframe_get_value_m53E6B7609086AAAA46E24BAF734EF08E16A3FD6C (Keyframe_tB9C67DCBFE10C0AE9C52CB5C66E944255C9254F0* __this, const RuntimeMethod* method) 
+{
+	float V_0 = 0.0f;
+	{
+		float L_0 = __this->___m_Value_1;
+		V_0 = L_0;
+		goto IL_000a;
+	}
+
+IL_000a:
+	{
+		float L_1 = V_0;
+		return L_1;
+	}
+}
+IL2CPP_EXTERN_C  float Keyframe_get_value_m53E6B7609086AAAA46E24BAF734EF08E16A3FD6C_AdjustorThunk (RuntimeObject* __this, const RuntimeMethod* method)
+{
+	Keyframe_tB9C67DCBFE10C0AE9C52CB5C66E944255C9254F0* _thisAdjusted;
+	int32_t _offset = 1;
+	_thisAdjusted = reinterpret_cast<Keyframe_tB9C67DCBFE10C0AE9C52CB5C66E944255C9254F0*>(__this + _offset);
+	float _returnValue;
+	_returnValue = Keyframe_get_value_m53E6B7609086AAAA46E24BAF734EF08E16A3FD6C(_thisAdjusted, method);
+	return _returnValue;
+}
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -6712,6 +6856,15 @@ IL_0018:
 	{
 		return;
 	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float AnimationCurve_Evaluate_m50B857043DE251A186032ADBCBB4CEF817F4EE3C (AnimationCurve_tCBFFAAD05CEBB35EF8D8631BD99914BE1A6BB354* __this, float ___time0, const RuntimeMethod* method) 
+{
+	typedef float (*AnimationCurve_Evaluate_m50B857043DE251A186032ADBCBB4CEF817F4EE3C_ftn) (AnimationCurve_tCBFFAAD05CEBB35EF8D8631BD99914BE1A6BB354*, float);
+	static AnimationCurve_Evaluate_m50B857043DE251A186032ADBCBB4CEF817F4EE3C_ftn _il2cpp_icall_func;
+	if (!_il2cpp_icall_func)
+	_il2cpp_icall_func = (AnimationCurve_Evaluate_m50B857043DE251A186032ADBCBB4CEF817F4EE3C_ftn)il2cpp_codegen_resolve_icall ("UnityEngine.AnimationCurve::Evaluate(System.Single)");
+	float icallRetVal = _il2cpp_icall_func(__this, ___time0);
+	return icallRetVal;
 }
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void AnimationCurve__ctor_mEABC98C03805713354D61E50D9340766BD5B717E (AnimationCurve_tCBFFAAD05CEBB35EF8D8631BD99914BE1A6BB354* __this, KeyframeU5BU5D_t63250A46914A6A07B2A6689850D47D7D19D80BA3* ___keys0, const RuntimeMethod* method) 
 {

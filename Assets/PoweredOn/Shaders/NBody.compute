@@ -1,0 +1,70 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}
+
+Shader "Custom/NBody" {
+    Properties{
+        _AttractionRepulsionBuffer("Attraction/Repulsion Factors", Buffer) = "" {}
+        _PositionBuffer("Positions", Buffer) = "" {}
+    }
+
+        SubShader{
+            Tags {"Queue" = "Compute"}
+            LOD 100
+
+            CGPROGRAM
+            #pragma kernel NBodyKernel
+
+            struct Body {
+                float3 position;
+                float attractionRepulsionFactor;
+            };
+
+    // Buffers for data
+    RWStructuredBuffer<Body> _PositionBuffer;
+    RWStructuredBuffer<float> _AttractionRepulsionBuffer;
+
+    [numthreads(8, 1, 1)]
+    void NBodyKernel(uint3 id : SV_DispatchThreadID) {
+        // Get the current body index
+        uint index = id.x;
+
+        // Get the current body
+        Body currentBody = _PositionBuffer[index];
+
+        // Loop through all bodies
+        for (int i = 0; i < _PositionBuffer.length; i++) {
+            if (i == index) continue; // Skip the current body
+
+            // Get the other body
+            Body otherBody = _PositionBuffer[i];
+
+            // Calculate the distance between the bodies
+            float distance = distance(currentBody.position, otherBody.position);
+
+            // Calculate the force of attraction/repulsion
+            float force = _AttractionRepulsionBuffer[i] * _AttractionRepulsionBuffer[index] / (distance * distance);
+
+            // Update the position of the current body
+            currentBody.position += force * (otherBody.position - currentBody.position);
+        }
+
+        // Update the current body in the buffer
+        _PositionBuffer[index] = currentBody;
+    }
+    ENDCG
+    }
+
+        FallBack "Diffuse"
+}

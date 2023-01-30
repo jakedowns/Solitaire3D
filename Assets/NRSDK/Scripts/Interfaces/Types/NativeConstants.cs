@@ -94,7 +94,7 @@ namespace NRKernal
         #endregion
 
         #region settings
-        public const int RECORD_FPS_DEFAULT = 30;
+        public const int RECORD_FPS_DEFAULT = 60;
         public const int RECORD_VIDEO_BITRATE_DEFAULT = 10240000;
         public const int RECORD_AUDIO_BITRATE_DEFAULT = 128000;
         public const int RECORD_AUDIO_SAMPLERATE_DEFAULT = 16000;

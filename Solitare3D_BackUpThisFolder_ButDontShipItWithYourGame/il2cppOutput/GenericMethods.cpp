@@ -912,6 +912,10 @@ struct Activator_tB31D4E2D282C5AA90D61D6EB0A297A5D3D41DA24  : public RuntimeObje
 {
 };
 
+struct Aliasing_t7A6C81C1A5903944F6D1A99D91B35D77CAADC996  : public RuntimeObject
+{
+};
+
 struct AndroidJNI_t531BC9A6383F7C0F76A1270297952462F52308EE  : public RuntimeObject
 {
 };
@@ -1250,6 +1254,11 @@ struct SharedStatic_1_t33583FDAFE4C36D5BA68FE6F5444170BB42F98C0
 };
 
 struct SharedStatic_1_t965CBE4F8A30F785649BF3D97C277D0927858D08 
+{
+	void* ____buffer_0;
+};
+
+struct SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C 
 {
 	void* ____buffer_0;
 };
@@ -3697,10 +3706,12 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t List_1_get_Count_m4407E4C
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Nullable_1__ctor_m141FA88563AC0B5179132FB929EABD02C47FF703_gshared (Nullable_1_tCF32C56A2641879C053C86F273C0C6EC1B40BC28* __this, int32_t ___value0, const RuntimeMethod* method) ;
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t Nullable_1_GetValueOrDefault_m8D130DB7F2A1E694736B449176F9C26DB456597B_gshared_inline (Nullable_1_tCF32C56A2641879C053C86F273C0C6EC1B40BC28* __this, const RuntimeMethod* method) ;
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR bool Nullable_1_get_HasValue_mCF2FD8B3055FA87FC9C504F2122B3B0FAEDE3EC9_gshared_inline (Nullable_1_tCF32C56A2641879C053C86F273C0C6EC1B40BC28* __this, const RuntimeMethod* method) ;
-IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int64_t BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t194E9263F9E278076331CFC3296E74ABAA89D391_mF521C55221FF0D0F2200C5A5881E77D03F6F1742_gshared (const RuntimeMethod* method) ;
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int64_t BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t7CDBD1AFA2F1CBE61EBADCED6B1FCB6C26C8B850_mCCAF0C970F42C27E5D4F05A87D24DE8F68A221E4_gshared (const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t UnsafeUtility_SizeOf_TisIntPtr_t_mB2B3CFF1CB804C99734D4E2F5D8A8C9DB0D209A8_gshared (const RuntimeMethod* method) ;
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void SharedStatic_1__ctor_mF83D06637E10F1C230BA4F1A841E742F6A5ED399_gshared_inline (SharedStatic_1_t33583FDAFE4C36D5BA68FE6F5444170BB42F98C0* __this, void* ___buffer0, const RuntimeMethod* method) ;
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int64_t BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t194E9263F9E278076331CFC3296E74ABAA89D391_mF521C55221FF0D0F2200C5A5881E77D03F6F1742_gshared (const RuntimeMethod* method) ;
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void SharedStatic_1__ctor_m467F9A64986F442AA4853C5C314D0A54D887CDDC_gshared_inline (SharedStatic_1_t965CBE4F8A30F785649BF3D97C277D0927858D08* __this, void* ___buffer0, const RuntimeMethod* method) ;
+IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void SharedStatic_1__ctor_m57842D87210A109206E3DAFEBD441B46EDBC809E_gshared_inline (SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C* __this, void* ___buffer0, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void FromAsyncTrimPromise_1__ctor_mB70C0819ACF4C395D239289203F9819BB3499891_gshared (FromAsyncTrimPromise_1_tD68DEC921B8ED0D5E2D521C49A8C1FEC886D11A2* __this, RuntimeObject* ___thisRef0, Func_3_tDAAD31BAF6C284129F857C2B5AEC7BFA8D4B35F1* ___endMethod1, const RuntimeMethod* method) ;
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR RuntimeObject* Func_5_Invoke_m392D0C4E7D4413D3636EE05EC3A70F8D58CC74A1_gshared_inline (Func_5_tBD83535470C7532DCD8D3FEC6FAAEABA156B6E6C* __this, RuntimeObject* ___arg10, ReadWriteParameters_t14911E85F7252B5A39D9A53466C7EDE243327033 ___arg21, RuntimeObject* ___arg32, RuntimeObject* ___arg43, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void FromAsyncTrimPromise_1_Complete_m56AE76FCEF30ABD41523638898E9B529F718D951_gshared (FromAsyncTrimPromise_1_tD68DEC921B8ED0D5E2D521C49A8C1FEC886D11A2* __this, RuntimeObject* ___thisRef0, Func_3_tDAAD31BAF6C284129F857C2B5AEC7BFA8D4B35F1* ___endMethod1, RuntimeObject* ___asyncResult2, bool ___requiresSynchronization3, const RuntimeMethod* method) ;
@@ -4071,9 +4082,9 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool Type_op_Equality_m99930A0E44E420A685FABA
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* TypeUtility_GetTypeDisplayName_m45C565A0737008926DD1D4CA6B453A475C8E77FD (Type_t* ___type0, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* String_Concat_m647EBF831F54B6DF7D5AFA5FD012CF4EE7571B6A (StringU5BU5D_t7674CD946EC0CE7B3AE0BE70E6EE85F2ECD9F248* ___values0, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Debug_LogWarning_m33EF1B897E0C7C6FF538989610BFAFFEF4628CA9 (RuntimeObject* ___message0, const RuntimeMethod* method) ;
-inline int64_t BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t194E9263F9E278076331CFC3296E74ABAA89D391_mF521C55221FF0D0F2200C5A5881E77D03F6F1742 (const RuntimeMethod* method)
+inline int64_t BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t7CDBD1AFA2F1CBE61EBADCED6B1FCB6C26C8B850_mCCAF0C970F42C27E5D4F05A87D24DE8F68A221E4 (const RuntimeMethod* method)
 {
-	return ((  int64_t (*) (const RuntimeMethod*))BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t194E9263F9E278076331CFC3296E74ABAA89D391_mF521C55221FF0D0F2200C5A5881E77D03F6F1742_gshared)(method);
+	return ((  int64_t (*) (const RuntimeMethod*))BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t7CDBD1AFA2F1CBE61EBADCED6B1FCB6C26C8B850_mCCAF0C970F42C27E5D4F05A87D24DE8F68A221E4_gshared)(method);
 }
 inline int32_t UnsafeUtility_SizeOf_TisIntPtr_t_mB2B3CFF1CB804C99734D4E2F5D8A8C9DB0D209A8 (const RuntimeMethod* method)
 {
@@ -4084,9 +4095,18 @@ inline void SharedStatic_1__ctor_mF83D06637E10F1C230BA4F1A841E742F6A5ED399_inlin
 {
 	((  void (*) (SharedStatic_1_t33583FDAFE4C36D5BA68FE6F5444170BB42F98C0*, void*, const RuntimeMethod*))SharedStatic_1__ctor_mF83D06637E10F1C230BA4F1A841E742F6A5ED399_gshared_inline)(__this, ___buffer0, method);
 }
+inline int64_t BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t194E9263F9E278076331CFC3296E74ABAA89D391_mF521C55221FF0D0F2200C5A5881E77D03F6F1742 (const RuntimeMethod* method)
+{
+	return ((  int64_t (*) (const RuntimeMethod*))BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t194E9263F9E278076331CFC3296E74ABAA89D391_mF521C55221FF0D0F2200C5A5881E77D03F6F1742_gshared)(method);
+}
 inline void SharedStatic_1__ctor_m467F9A64986F442AA4853C5C314D0A54D887CDDC_inline (SharedStatic_1_t965CBE4F8A30F785649BF3D97C277D0927858D08* __this, void* ___buffer0, const RuntimeMethod* method)
 {
 	((  void (*) (SharedStatic_1_t965CBE4F8A30F785649BF3D97C277D0927858D08*, void*, const RuntimeMethod*))SharedStatic_1__ctor_m467F9A64986F442AA4853C5C314D0A54D887CDDC_gshared_inline)(__this, ___buffer0, method);
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void* SharedStatic_GetOrCreateSharedStaticInternal_m9850783202F2E2DCA43597CD97C129C683D6FEBD (int64_t ___getHashCode640, int64_t ___getSubHashCode641, uint32_t ___sizeOf2, uint32_t ___alignment3, const RuntimeMethod* method) ;
+inline void SharedStatic_1__ctor_m57842D87210A109206E3DAFEBD441B46EDBC809E_inline (SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C* __this, void* ___buffer0, const RuntimeMethod* method)
+{
+	((  void (*) (SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C*, void*, const RuntimeMethod*))SharedStatic_1__ctor_m57842D87210A109206E3DAFEBD441B46EDBC809E_gshared_inline)(__this, ___buffer0, method);
 }
 inline void FromAsyncTrimPromise_1__ctor_mB70C0819ACF4C395D239289203F9819BB3499891 (FromAsyncTrimPromise_1_tD68DEC921B8ED0D5E2D521C49A8C1FEC886D11A2* __this, RuntimeObject* ___thisRef0, Func_3_tDAAD31BAF6C284129F857C2B5AEC7BFA8D4B35F1* ___endMethod1, const RuntimeMethod* method)
 {
@@ -6937,6 +6957,23 @@ IL_00b8:
 		return;
 	}
 }
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR SharedStatic_1_t33583FDAFE4C36D5BA68FE6F5444170BB42F98C0 SharedStatic_1_GetOrCreate_TisParallelForJobStruct_1_t7CDBD1AFA2F1CBE61EBADCED6B1FCB6C26C8B850_mA5CF7358653F9C6FD8D7BE5D471395BF112371F5_gshared (uint32_t ___alignment0, const RuntimeMethod* method) 
+{
+	il2cpp_rgctx_method_init(method);
+	{
+		int64_t L_0;
+		L_0 = BurstRuntime_GetHashCode64_TisParallelForJobStruct_1_t7CDBD1AFA2F1CBE61EBADCED6B1FCB6C26C8B850_mCCAF0C970F42C27E5D4F05A87D24DE8F68A221E4(il2cpp_rgctx_method(method->rgctx_data, 0));
+		int32_t L_1;
+		L_1 = UnsafeUtility_SizeOf_TisIntPtr_t_mB2B3CFF1CB804C99734D4E2F5D8A8C9DB0D209A8(il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 3));
+		uint32_t L_2 = ___alignment0;
+		void* L_3;
+		L_3 = SharedStatic_GetOrCreateSharedStaticInternal_mA2EDCD03A23E5C9D8AC312E73F81232E126DA304(L_0, ((int64_t)0), (uint32_t)L_1, L_2, NULL);
+		SharedStatic_1_t33583FDAFE4C36D5BA68FE6F5444170BB42F98C0 L_4;
+		memset((&L_4), 0, sizeof(L_4));
+		SharedStatic_1__ctor_mF83D06637E10F1C230BA4F1A841E742F6A5ED399_inline((&L_4), L_3, il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 4));
+		return L_4;
+	}
+}
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR SharedStatic_1_t33583FDAFE4C36D5BA68FE6F5444170BB42F98C0 SharedStatic_1_GetOrCreate_TisParallelForJobStruct_1_t194E9263F9E278076331CFC3296E74ABAA89D391_m8F0A8535D17A235493ABF341520F40613C401D6D_gshared (uint32_t ___alignment0, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -6969,6 +7006,148 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR SharedStatic_1_t965CBE4F8A30F785649BF3D97C277
 		memset((&L_4), 0, sizeof(L_4));
 		SharedStatic_1__ctor_m467F9A64986F442AA4853C5C314D0A54D887CDDC_inline((&L_4), L_3, il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 4));
 		return L_4;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C SharedStatic_1_GetOrCreate_TisIl2CppFullySharedGenericAny_m81680C541BEC597AC94046D6444ED6041C195C4D_gshared (uint32_t ___alignment0, const RuntimeMethod* method) 
+{
+	il2cpp_rgctx_method_init(method);
+	{
+		uint32_t L_0 = ___alignment0;
+		int64_t L_1;
+		L_1 = ((  int64_t (*) (const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(method->rgctx_data, 0)))(il2cpp_rgctx_method(method->rgctx_data, 0));
+		SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C L_2;
+		L_2 = ((  SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C (*) (uint32_t, int64_t, int64_t, const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 3)))(L_0, L_1, ((int64_t)0), il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 3));
+		return L_2;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C SharedStatic_1_GetOrCreate_TisIl2CppFullySharedGenericAny_TisIl2CppFullySharedGenericAny_m62EBD46343F75A03CD42B5E372C17F7C38BC6B11_gshared (uint32_t ___alignment0, const RuntimeMethod* method) 
+{
+	il2cpp_rgctx_method_init(method);
+	{
+		uint32_t L_0 = ___alignment0;
+		int64_t L_1;
+		L_1 = ((  int64_t (*) (const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(method->rgctx_data, 0)))(il2cpp_rgctx_method(method->rgctx_data, 0));
+		int64_t L_2;
+		L_2 = ((  int64_t (*) (const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(method->rgctx_data, 1)))(il2cpp_rgctx_method(method->rgctx_data, 1));
+		SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C L_3;
+		L_3 = ((  SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C (*) (uint32_t, int64_t, int64_t, const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 3)))(L_0, L_1, L_2, il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 3));
+		return L_3;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C SharedStatic_1_GetOrCreatePartiallyUnsafeWithHashCode_TisIl2CppFullySharedGenericAny_m24F755B0C049B8184818666FC2B637100E3C8F74_gshared (uint32_t ___alignment0, int64_t ___hashCode1, const RuntimeMethod* method) 
+{
+	il2cpp_rgctx_method_init(method);
+	int32_t G_B2_0 = 0;
+	int64_t G_B2_1 = 0;
+	int64_t G_B2_2 = 0;
+	int32_t G_B1_0 = 0;
+	int64_t G_B1_1 = 0;
+	int64_t G_B1_2 = 0;
+	uint32_t G_B3_0 = 0;
+	int32_t G_B3_1 = 0;
+	int64_t G_B3_2 = 0;
+	int64_t G_B3_3 = 0;
+	{
+		int64_t L_0 = ___hashCode1;
+		int64_t L_1;
+		L_1 = ((  int64_t (*) (const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(method->rgctx_data, 0)))(il2cpp_rgctx_method(method->rgctx_data, 0));
+		int32_t L_2;
+		L_2 = ((  int32_t (*) (const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 5)))(il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 5));
+		uint32_t L_3 = ___alignment0;
+		if (!L_3)
+		{
+			G_B2_0 = L_2;
+			G_B2_1 = L_1;
+			G_B2_2 = L_0;
+			goto IL_0011;
+		}
+		G_B1_0 = L_2;
+		G_B1_1 = L_1;
+		G_B1_2 = L_0;
+	}
+	{
+		uint32_t L_4 = ___alignment0;
+		G_B3_0 = L_4;
+		G_B3_1 = G_B1_0;
+		G_B3_2 = G_B1_1;
+		G_B3_3 = G_B1_2;
+		goto IL_0012;
+	}
+
+IL_0011:
+	{
+		G_B3_0 = ((uint32_t)(4));
+		G_B3_1 = G_B2_0;
+		G_B3_2 = G_B2_1;
+		G_B3_3 = G_B2_2;
+	}
+
+IL_0012:
+	{
+		void* L_5;
+		L_5 = SharedStatic_GetOrCreateSharedStaticInternal_m9850783202F2E2DCA43597CD97C129C683D6FEBD(G_B3_3, G_B3_2, (uint32_t)G_B3_1, G_B3_0, NULL);
+		SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C L_6;
+		memset((&L_6), 0, sizeof(L_6));
+		SharedStatic_1__ctor_m57842D87210A109206E3DAFEBD441B46EDBC809E_inline((&L_6), L_5, il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 6));
+		return L_6;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C SharedStatic_1_GetOrCreatePartiallyUnsafeWithSubHashCode_TisIl2CppFullySharedGenericAny_mC9E6A2771C5D910CB4871C588BAA15C902291985_gshared (uint32_t ___alignment0, int64_t ___subHashCode1, const RuntimeMethod* method) 
+{
+	il2cpp_rgctx_method_init(method);
+	int32_t G_B2_0 = 0;
+	int64_t G_B2_1 = 0;
+	int64_t G_B2_2 = 0;
+	int32_t G_B1_0 = 0;
+	int64_t G_B1_1 = 0;
+	int64_t G_B1_2 = 0;
+	uint32_t G_B3_0 = 0;
+	int32_t G_B3_1 = 0;
+	int64_t G_B3_2 = 0;
+	int64_t G_B3_3 = 0;
+	{
+		int64_t L_0;
+		L_0 = ((  int64_t (*) (const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(method->rgctx_data, 0)))(il2cpp_rgctx_method(method->rgctx_data, 0));
+		int64_t L_1 = ___subHashCode1;
+		int32_t L_2;
+		L_2 = ((  int32_t (*) (const RuntimeMethod*))il2cpp_codegen_get_direct_method_pointer(il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 5)))(il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 5));
+		uint32_t L_3 = ___alignment0;
+		if (!L_3)
+		{
+			G_B2_0 = L_2;
+			G_B2_1 = L_1;
+			G_B2_2 = L_0;
+			goto IL_0011;
+		}
+		G_B1_0 = L_2;
+		G_B1_1 = L_1;
+		G_B1_2 = L_0;
+	}
+	{
+		uint32_t L_4 = ___alignment0;
+		G_B3_0 = L_4;
+		G_B3_1 = G_B1_0;
+		G_B3_2 = G_B1_1;
+		G_B3_3 = G_B1_2;
+		goto IL_0012;
+	}
+
+IL_0011:
+	{
+		G_B3_0 = ((uint32_t)(4));
+		G_B3_1 = G_B2_0;
+		G_B3_2 = G_B2_1;
+		G_B3_3 = G_B2_2;
+	}
+
+IL_0012:
+	{
+		void* L_5;
+		L_5 = SharedStatic_GetOrCreateSharedStaticInternal_m9850783202F2E2DCA43597CD97C129C683D6FEBD(G_B3_3, G_B3_2, (uint32_t)G_B3_1, G_B3_0, NULL);
+		SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C L_6;
+		memset((&L_6), 0, sizeof(L_6));
+		SharedStatic_1__ctor_m57842D87210A109206E3DAFEBD441B46EDBC809E_inline((&L_6), L_5, il2cpp_rgctx_method(InitializedTypeInfo(method->klass)->rgctx_data, 6));
+		return L_6;
 	}
 }
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Task_1_t4C228DE57804012969575431CFF12D57C875552D* TaskFactory_1_FromAsyncTrim_TisRuntimeObject_TisReadWriteParameters_t14911E85F7252B5A39D9A53466C7EDE243327033_m6830D1AB58237D998DEAF6E1C3414B273E6BB618_gshared (RuntimeObject* ___thisRef0, ReadWriteParameters_t14911E85F7252B5A39D9A53466C7EDE243327033 ___args1, Func_5_tE5E3C054A0A1D158ED2C75F19065E2DE163DC748* ___beginMethod2, Func_3_tDAAD31BAF6C284129F857C2B5AEC7BFA8D4B35F1* ___endMethod3, const RuntimeMethod* method) 
@@ -8182,6 +8361,42 @@ IL_0027:
 		L_6 = RuntimeType_CreateInstanceDefaultCtor_m049DF408DA0C9B09F8964B90B62456E3A1F135C6(G_B2_0, (bool)1, (bool)1, (bool)1, (bool)1, (&V_0), NULL);
 		void* L_8 = UnBox_Any(L_6, il2cpp_rgctx_data(method->rgctx_data, 1), L_7);
 		il2cpp_codegen_memcpy(il2cppRetVal, (((Il2CppFullySharedGenericAny)((Il2CppFullySharedGenericAny)(Il2CppFullySharedGenericAny*)L_8))), SizeOf_T_t7DFA7E7752C6CB82AD96769CC7307709CB5ACD3B);
+		return;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Aliasing_ExpectAliased_TisIl2CppFullySharedGenericStruct_m075C1120707047E87A0EBB3CE48284001FF0E74A_gshared (Il2CppFullySharedGenericStruct* ___a0, void* ___b1, const RuntimeMethod* method) 
+{
+	{
+		return;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Aliasing_ExpectAliased_TisIl2CppFullySharedGenericStruct_m1E31A467DE8A0D3CCF016356604301A86EE72E17_gshared (void* ___a0, Il2CppFullySharedGenericStruct* ___b1, const RuntimeMethod* method) 
+{
+	{
+		return;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Aliasing_ExpectAliased_TisIl2CppFullySharedGenericStruct_TisIl2CppFullySharedGenericStruct_mB1A97E157AFDEDBCC1E577053EC3587AF5412AA6_gshared (Il2CppFullySharedGenericStruct* ___a0, Il2CppFullySharedGenericStruct* ___b1, const RuntimeMethod* method) 
+{
+	{
+		return;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Aliasing_ExpectNotAliased_TisIl2CppFullySharedGenericStruct_m51216B1AF3D3593185A2A5CF457F03FC3472F486_gshared (Il2CppFullySharedGenericStruct* ___a0, void* ___b1, const RuntimeMethod* method) 
+{
+	{
+		return;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Aliasing_ExpectNotAliased_TisIl2CppFullySharedGenericStruct_mCC84E3A701DBE4F24447CDF0711F2EE48D120C56_gshared (void* ___a0, Il2CppFullySharedGenericStruct* ___b1, const RuntimeMethod* method) 
+{
+	{
+		return;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Aliasing_ExpectNotAliased_TisIl2CppFullySharedGenericStruct_TisIl2CppFullySharedGenericStruct_m92EFBB87563B467A35B0F7DCCB5D29EBA64B989A_gshared (Il2CppFullySharedGenericStruct* ___a0, Il2CppFullySharedGenericStruct* ___b1, const RuntimeMethod* method) 
+{
+	{
 		return;
 	}
 }
@@ -23607,6 +23822,14 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void SharedStatic_1__ctor_mF83D06
 	}
 }
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void SharedStatic_1__ctor_m467F9A64986F442AA4853C5C314D0A54D887CDDC_gshared_inline (SharedStatic_1_t965CBE4F8A30F785649BF3D97C277D0927858D08* __this, void* ___buffer0, const RuntimeMethod* method) 
+{
+	{
+		void* L_0 = ___buffer0;
+		__this->____buffer_0 = L_0;
+		return;
+	}
+}
+IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void SharedStatic_1__ctor_m57842D87210A109206E3DAFEBD441B46EDBC809E_gshared_inline (SharedStatic_1_t4FCF4588C706197A62B7B4C4DFA65B0457AB498C* __this, void* ___buffer0, const RuntimeMethod* method) 
 {
 	{
 		void* L_0 = ___buffer0;
