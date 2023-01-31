@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using NRKernal;
-using static PoweredOn.Managers.DeckManager;
 using PoweredOn.Managers;
+using PoweredOn;
 
 public class CardStackHitArea : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -16,10 +13,9 @@ public class CardStackHitArea : MonoBehaviour, IPointerClickHandler, IPointerEnt
 
     public int index;
 
-    [SerializeField]
-    public PlayfieldArea playfieldArea;
+    public SolitaireGame.PlayfieldArea playfieldArea;
 
-    public PlayfieldSpot spot;
+    public SolitaireGame.PlayfieldSpot spot;
 
     void Awake()
     {
@@ -30,7 +26,7 @@ public class CardStackHitArea : MonoBehaviour, IPointerClickHandler, IPointerEnt
     void Start()
     {
         m_DeckManager = GameObject.Find("DeckOfCards").GetComponent<DeckManager>();
-        spot = new PlayfieldSpot(playfieldArea, index);
+        spot = new SolitaireGame.PlayfieldSpot(playfieldArea, index);
         m_MeshRender.material.color = new Color(0.4f, 0.4f, 0.4f);
     }
 
@@ -42,7 +38,7 @@ public class CardStackHitArea : MonoBehaviour, IPointerClickHandler, IPointerEnt
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        m_DeckManager.OnSingleClickEmptyStack(this.spot);
+        m_DeckManager.game.OnSingleClickEmptyStack(this.spot);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

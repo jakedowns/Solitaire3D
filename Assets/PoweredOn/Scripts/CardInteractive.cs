@@ -12,6 +12,8 @@ using UnityEngine.EventSystems;
 using NRKernal;
 using PoweredOn.Managers;
 using System.Collections;
+using PoweredOn;
+using System.Collections.Generic;
 
 namespace PoweredOn.Objects
 {
@@ -21,6 +23,8 @@ namespace PoweredOn.Objects
         
         /// <summary> The mesh render. </summary>
         private MeshRenderer m_MeshRender;
+
+        private PoweredOn.DebugOutput m_DebugOutput;
 
         // reference to our DeckManager script on our DeckOfCards object
         private DeckManager m_DeckManager;
@@ -37,13 +41,14 @@ namespace PoweredOn.Objects
         {
             m_MeshRender = transform.GetComponent<MeshRenderer>();
             m_DeckManager = GameObject.Find("DeckOfCards").GetComponent<DeckManager>();
+            m_DebugOutput = GameObject.Find("DebugOutput").GetComponent<DebugOutput>();
         }
 
         void Start()
         {
             NRInput.AddClickListener(ControllerHandEnum.Right, ControllerButton.APP, () =>
             {
-                Debug.Log("ResetWorldMatrix");
+                m_DebugOutput.Log("ResetWorldMatrix");
                 var poseTracker = NRSessionManager.Instance.NRHMDPoseTracker;
                 poseTracker.ResetWorldMatrix();
             });
@@ -125,14 +130,30 @@ namespace PoweredOn.Objects
         {
             if(!this.card.IsFaceUp)
             {
-                Debug.LogWarning("Ignoring double click on face-down card");
+                m_DebugOutput.LogWarning("Ignoring double click on face-down card");
                 return;
             }
-            DeckManager.PlayfieldSpot? next_spot = m_DeckManager.GetNextValidPlayfieldSpotForSuitRank(this.card.GetSuitRank());
-            Debug.LogWarning($"double-click {this.card.GetSuitRank()} -> {next_spot}");
+            Game.PlayfieldSpot? next_spot = m_DeckManager.game.GetNextValidPlayfieldSpotForSuitRank(this.card.GetSuitRank());
+            m_DebugOutput.LogWarning($"double-click {this.card.GetSuitRank()} -> {next_spot}");
             if (next_spot != null)
-            {
-                m_DeckManager.SetCardGoalIDToPlayfieldSpot(card, (DeckManager.PlayfieldSpot) next_spot, true); /* faceUp = true */
+            {  
+                bool isTopCard = m_DeckManager.game.IsTopCardInPlayfieldSpot(this.card, (Game.PlayfieldSpot)next_spot);
+                
+                //if (isTopCard)
+                //{
+                    m_DeckManager.game.SetCardGoalIDToPlayfieldSpot(card, (Game.PlayfieldSpot) next_spot, true); /* faceUp = true */
+                //}
+                //else
+                //{
+                if (!isTopCard) {
+                    List<PlayingCards.SuitRank> cardStack = m_DeckManager.game.CollectCardsAboveFromTab(this.card);
+
+                    foreach (PlayingCards.SuitRank cardID in cardStack)
+                    {
+
+                    }
+                }
+                //}
             }
         }
 

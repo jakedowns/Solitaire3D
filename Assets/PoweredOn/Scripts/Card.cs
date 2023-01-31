@@ -12,8 +12,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using NRKernal;
 
-using static PoweredOn.Managers.DeckManager;
 using PoweredOn.Animations;
+using static PoweredOn.Managers.DeckManager;
+using static PoweredOn.PlayingCards;
+using PoweredOn;
 
 namespace PoweredOn.Objects
 {
@@ -41,7 +43,10 @@ namespace PoweredOn.Objects
 
         public bool IsFaceUp;
 
-        public PlayfieldSpot playfieldSpot;
+        public Game.PlayfieldSpot playfieldSpot;
+
+#nullable enable
+        public Game.PlayfieldSpot? previousPlayfieldSpot = null;
 
         // TODO: maybe move this to an interface or a trait we can inherit called Animatable or something
         private GoalIdentity goalIdentity;
@@ -137,9 +142,14 @@ namespace PoweredOn.Objects
             this.IsFaceUp = faceUp;
         }
 
-        public void SetPlayfieldSpot(PlayfieldSpot spot)
+        public void SetPlayfieldSpot(Game.PlayfieldSpot spot)
         {
             this.playfieldSpot = spot;
+        }
+
+        public void SetPreviousPlayfieldSpot(Game.PlayfieldSpot spot)
+        {
+            this.previousPlayfieldSpot = spot;
         }
     }
 }
