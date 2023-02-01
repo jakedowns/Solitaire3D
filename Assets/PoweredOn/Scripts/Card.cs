@@ -43,10 +43,8 @@ namespace PoweredOn.Objects
 
         public bool IsFaceUp;
 
-        public Game.PlayfieldSpot playfieldSpot;
-
-#nullable enable
-        public Game.PlayfieldSpot? previousPlayfieldSpot = null;
+        public Game.PlayfieldSpot playfieldSpot = new Game.PlayfieldSpot(Game.PlayfieldArea.Deck, -1, -1);
+        public Game.PlayfieldSpot previousPlayfieldSpot = new Game.PlayfieldSpot(Game.PlayfieldArea.Deck, -1, -1);
 
         // TODO: maybe move this to an interface or a trait we can inherit called Animatable or something
         private GoalIdentity goalIdentity;

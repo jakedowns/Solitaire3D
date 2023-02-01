@@ -31,6 +31,7 @@ namespace PoweredOn
         GameObject hand;
         GameObject deckOfCards;
 
+        List<SuitRank> dealtOrder;
         List<SuitRank> deckOrder;
         List<List<SuitRank>> tableauCards;
         List<SuitRank> wasteCards;
@@ -38,6 +39,8 @@ namespace PoweredOn
         List<SuitRank> stockCards;
         public List<SuitRank> handCards;
         List<SuitRank> deckCards;
+
+        bool autoPlaceEnabled = true;
 
         // card, from, to
         List<Tuple<Card, PlayfieldSpot, PlayfieldSpot>> moveLog;
@@ -51,22 +54,36 @@ namespace PoweredOn
             m_DebugOutput = GameObject.Find("DebugOutput").GetComponent<DebugOutput>();
         }
 
+        /*
+         * Reinitialize all of our tracking variables
+         * 
+         */
         public void Reset()
         {
             m_Moves = 0;
+            moveLog = new List<Tuple<Card, PlayfieldSpot, PlayfieldSpot>>();
             stockCards = new List<SuitRank>();
             wasteCards = new List<SuitRank>();
-            handCards = new List<SuitRank>();
             foundationCards = new List<List<SuitRank>>();
+            tableauCards = new List<List<SuitRank>>();
+            handCards = new List<SuitRank>();
+            dealtOrder = new List<SuitRank>();
+            deckCards = GetDeckDefaultCardOrderList();
         }
 
         public void NewGame()
         {
+            UpdateGameObjectReferences();
+            Reset();
             BuildFoundations();
             BuildTableaus();
-            UpdateGameObjectReferences();
             BuildDeck();
         }        
+
+        public void ToggleAutoPlace()
+        {
+            autoPlaceEnabled = !autoPlaceEnabled;
+        }
 
         public void Deal()
         {
@@ -132,8 +149,10 @@ namespace PoweredOn
 
                     bool faceUp = pile == round;
 
+                    dealtOrder.Add(suitRankToDeal);
+
                     // NOTE: inside this method, we handle adding SuitRank to the proper Tableau list
-                    SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Tableau, pile), faceUp);
+                    SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Tableau, pile), faceUp, 0.1f * dealtOrder.Count);
 
                     //m_DebugOutput.Log($"Dealing {card.GetGameObjectName()} {round} {pile} {faceUp}");
                 }
@@ -229,14 +248,14 @@ namespace PoweredOn
         }
 
         // when the user double-clicks on a card, we auto-move it to the next best spot
-        public PlayfieldSpot? GetNextValidPlayfieldSpotForSuitRank(SuitRank suitrank)
+        public PlayfieldSpot GetNextValidPlayfieldSpotForSuitRank(SuitRank suitrank)
         {
 
             // check the top card of the foundation first
-            m_DebugOutput.LogWarning("Checking foundation card list for rank: " + suitrank.rank + " suit int: " + (int)suitrank.suit + " " + foundationCards.Count);
+            m_DebugOutput.LogWarning("[GetNextValidPlayfieldSpotForSuitRank] Checking foundation card list for rank: " + suitrank.rank + " suit int: " + (int)suitrank.suit + " " + foundationCards.Count);
             List<SuitRank> foundationList = foundationCards[(int)suitrank.suit];
             SuitRank topCardSR;
-            m_DebugOutput.LogWarning("Foundation List: " + foundationList.Count);
+            m_DebugOutput.LogWarning("[GetNextValidPlayfieldSpotForSuitRank] Foundation List: " + foundationList.Count);
             if (foundationList.Count == 0)
             {
                 // if the foundation list is empty, that's our first choice spot
@@ -246,7 +265,7 @@ namespace PoweredOn
             else
             {
                 topCardSR = foundationList.Last();
-                m_DebugOutput.LogWarning($"checking if top card in foundation list is one rank less than the card we are trying to place {(int)topCardSR.rank} {(int)suitrank.rank}");
+                m_DebugOutput.LogWarning($"[GetNextValidPlayfieldSpotForSuitRank] checking if top card in foundation list is one rank less than the card we are trying to place {(int)topCardSR.rank} {(int)suitrank.rank}");
                 if ((int)topCardSR.rank + 1 == (int)suitrank.rank)
                 {
                     // if the top card in the foundation list is one less than this card's rank, that's our first choice spot
@@ -281,7 +300,7 @@ namespace PoweredOn
 
             m_DebugOutput.LogWarning($"no suggested playfield spot found for {suitrank.ToString()}");
 
-            return null;
+            return PlayfieldSpot.Invalid;
         }
 
         public bool CheckMoveIsValid(Card handCard, PlayfieldSpot destinationSpot)
@@ -291,11 +310,11 @@ namespace PoweredOn
 
             // placing it back down
             if (
-                handCard.previousPlayfieldSpot != null)
+                handCard.previousPlayfieldSpot.area != PlayfieldArea.Invalid)
             {
-                PlayfieldSpot ppfs = (PlayfieldSpot)handCard.previousPlayfieldSpot;
-                if (ppfs.area == destinationSpot.area)
+                if (handCard.previousPlayfieldSpot.area == destinationSpot.area)
                 {
+                    m_DebugOutput.LogWarning($"valid to place card back down where it just came from {handCard.previousPlayfieldSpot}");
                     return true;
                 }
             }
@@ -305,16 +324,19 @@ namespace PoweredOn
                 case PlayfieldArea.Hand:
                     if (handCards.Count > 0)
                     {
-                        m_DebugOutput.LogWarning("already have a card in your hand");
+                        m_DebugOutput.LogWarning("already have a card in your hand, cant hold more than one unless you pick up a substack on a tableau");
                         return false;
                     }
                     return true;
+
                 case PlayfieldArea.Stock:
                     m_DebugOutput.LogWarning("invalid dest: Stock. cannot move card back to stock");
                     return false;
+
                 case PlayfieldArea.Waste:
-                    m_DebugOutput.LogWarning("todo: if card came from top of waste, allow putting it back");
+                    m_DebugOutput.LogWarning("todo: if card came from top of waste, we should've already allowed putting it back");
                     break;
+
                 case PlayfieldArea.Tableau:
                     List<SuitRank> tabCardList = tableauCards[destinationSpot.index];
                     m_DebugOutput.LogWarning("tabCardList Count" + tabCardList.Count);
@@ -382,17 +404,20 @@ namespace PoweredOn
             return false; // default to fales
         }
 
-        public void SetCardGoalIDToPlayfieldSpot(Card card, PlayfieldSpot spot, bool faceUp)
+        public void SetCardGoalIDToPlayfieldSpot(Card card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f)
         {
-            card.SetPreviousPlayfieldSpot(card.playfieldSpot);
-            try
+            if(card.playfieldSpot.area != PlayfieldArea.Invalid)
             {
-                RemoveCardFromCurrentPlayfieldSpot(card);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                m_DebugOutput.LogError(e.ToString());
+                card.SetPreviousPlayfieldSpot(card.playfieldSpot.Clone());
+                try
+                {
+                    RemoveCardFromCurrentPlayfieldSpot(card);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                    m_DebugOutput.LogError(e.ToString());
+                }
             }
 
 
@@ -406,7 +431,7 @@ namespace PoweredOn
                     faceUp = false; // always face down when adding to stock
                     stockCards.Add(card.GetSuitRank());
                     gPos = stock.transform.position;
-                    gPos.z += stockCards.Count * -CARD_THICKNESS;
+                    gPos.z = (-0.05f) + (stockCards.Count * -CARD_THICKNESS);
                     goalID.SetGoalPositionFromWorldPosition(gPos);
                     break;
                 case PlayfieldArea.Waste:
@@ -448,8 +473,9 @@ namespace PoweredOn
             }
 
             // z-axis rotation is temporary until i fix the orientation of the mesh in blender
-            goalID.rotation = faceUp ? CARD_DEFAULT_ROTATION : Quaternion.Euler(0, 0, 90);
-
+            Quaternion[] options = new Quaternion[2] { Quaternion.Euler(0, 0, 90), CARD_DEFAULT_ROTATION };
+            goalID.rotation = (spot.area == PlayfieldArea.Hand) ? (faceUp ? options[0] : options[1]) : (faceUp ? options[1] : options[0]);
+            goalID.SetDelay(delay);
             card.SetGoalIdentity(goalID);
             card.SetPlayfieldSpot(spot);
             card.SetIsFaceUp(faceUp);
@@ -457,22 +483,72 @@ namespace PoweredOn
 
         public void RemoveCardFromCurrentPlayfieldSpot(Card card)
         {
-            switch (card.playfieldSpot.area)
+            string dbugstring = $"{card.GetGameObjectName()} {card.playfieldSpot}";
+
+#nullable enable
+            List < SuitRank >? pile = null;
+            if(card.playfieldSpot.area == PlayfieldArea.Invalid)
             {
+                m_DebugOutput.Log("card has no playfield spot. skipping list removal attempt");
+                return;
+            }
+
+
+            PlayfieldSpot pfspot = card.playfieldSpot;
+            switch (pfspot.area)
+            {
+                case PlayfieldArea.Deck:
+                    pile = deckCards;
+                    return;
                 case PlayfieldArea.Hand:
-                    // clear handcard list
-                    handCards.RemoveAt(card.playfieldSpot.subindex);
+                    pile = handCards;
                     break;
                 case PlayfieldArea.Waste:
-                    //wasteCards.RemoveAt(card.playfieldSpot.index);
-                    wasteCards.RemoveAt(wasteCards.Count - 1);
+                    pile = wasteCards;
                     break;
                 case PlayfieldArea.Foundation:
-                    foundationCards[card.playfieldSpot.index].RemoveAt(foundationCards[card.playfieldSpot.index].Count - 1);
+                    pile = foundationCards[pfspot.index];
                     break;
                 case PlayfieldArea.Tableau:
-                    tableauCards[card.playfieldSpot.index].RemoveAt(tableauCards[card.playfieldSpot.index].Count - 1);
+                    pile = tableauCards[pfspot.index];
                     break;
+            }
+
+            if(pile == null)
+            {
+                m_DebugOutput.LogWarning($"no matching pile found for playfield spot {pfspot}");
+                return;
+            }
+
+            if (pile.Count > 0)
+            {
+                string pilename = Enum.GetName(typeof(PlayfieldArea), pfspot.area);
+                int index = pile.IndexOf(card.GetSuitRank());
+
+                int topIndex = pile.Count - 1;
+                if(pfspot.area == PlayfieldArea.Stock || pfspot.area == PlayfieldArea.Waste)
+                {
+                    if(index != topIndex)
+                    {
+                        // note, this isn't ALWAYS an error
+                        // example, when passing waste cards back to stock
+                        m_DebugOutput.LogError($"error: trying to remove NON-TOP card from Stock or Waste {pfspot.subindex} got {index}");
+                    }
+                }
+
+                if(pfspot.subindex != index)
+                {
+                    m_DebugOutput.LogError($"card subindex does not match expectation found: {pfspot.subindex} got {index}");
+                }
+                if (index > -1)
+                {
+                    m_DebugOutput.LogWarning($"removing card from {pilename} {dbugstring}");
+                    pile.RemoveAt(index);
+                }
+                else
+                {
+                    m_DebugOutput.LogWarning($"unable to find card in {pilename} {dbugstring}");
+                }
             }
         }
 
@@ -483,7 +559,7 @@ namespace PoweredOn
             {
                 m_DebugOutput.LogWarning(id.ToString());
             }
-            // empty list (will be populated by calls to SetCardGoalID...
+            // empty list (will be populated by calls to SetCardGoalID...)
             handCards = new List<SuitRank>(0);
             int i = 0;
             // set the goal identity of each card to the hand
@@ -496,34 +572,45 @@ namespace PoweredOn
             }
         }
 
-        public List<SuitRank> CollectCardsAboveFromTab(Card card)
+        public List<SuitRank> CollectSubStack(Card card)
         {
-            PlayfieldSpot spot = card.playfieldSpot;
-            List<SuitRank> cardGroup = new List<SuitRank>();
-            List<SuitRank> tableauCardList = tableauCards[spot.index];
-
-            int cardIndex = tableauCardList.IndexOf(card.GetSuitRank());
-            // get the rest of the cards (if any) at a higher index in the list
-            for (int i = cardIndex; i < tableauCardList.Count; i++)
+            if(card.playfieldSpot.area == PlayfieldArea.Invalid)
             {
-                cardGroup.Add(tableauCardList[i]);
+                throw new Exception("got card with Invalid playfield spot");
             }
-            // remove the cards from the tableau
-            // note: it'll get removed when the card has it's goal identity updated
-            // tableauCardList.RemoveRange(cardIndex, cardGroup.Count);
+            else
+            {
+                PlayfieldSpot spot = card.playfieldSpot;
+                List<SuitRank> cardGroup = new List<SuitRank>(1) { card.GetSuitRank() };
+                List<SuitRank> tableauCardList = tableauCards[spot.index];
 
-            // note moveing this out of this function
-            // this function is just responsible for getting the list of cards above the current card
-            // add the cards to the hand
-            //PickUpCards(cardGroup);
+                int cardIndex = tableauCardList.IndexOf(card.GetSuitRank());
+                if(cardIndex == tableauCardList.Count - 1)
+                {
+                    return cardGroup; // single card
+                }
+                // get the rest of the cards (if any) at a higher index in the list
+                for (int i = cardIndex; i < tableauCardList.Count; i++)
+                {
+                    cardGroup.Add(tableauCardList[i]);
+                }
+                // remove the cards from the tableau
+                // note: it'll get removed when the card has it's goal identity updated
+                // tableauCardList.RemoveRange(cardIndex, cardGroup.Count);
+
+                // note moveing this out of this function
+                // this function is just responsible for getting the list of cards above the current card
+                // add the cards to the hand
+                //PickUpCards(cardGroup);
             
-            m_DebugOutput.Log("picked up cards: ");
-            foreach (SuitRank id in cardGroup)
-            {
-                m_DebugOutput.Log(id.ToString());
-            }
+                m_DebugOutput.Log("picked up cards: ");
+                foreach (SuitRank id in cardGroup)
+                {
+                    m_DebugOutput.Log(id.ToString());
+                }
 
-            return cardGroup;
+                return cardGroup;
+            }
         }
 
         void UpdateGameObjectReferences()
@@ -532,12 +619,18 @@ namespace PoweredOn
             stock = GameObject.Find("PlayPlane/PlayPlaneOffset/Stock");
             if (stock == null)
                 m_DebugOutput.LogError("stock not found");
+            
             waste = GameObject.Find("PlayPlane/PlayPlaneOffset/Waste");
             if (waste == null)
                 m_DebugOutput.LogError("waste not found");
+            
             hand = GameObject.Find("PlayPlane/Hand");
             if (hand == null)
                 m_DebugOutput.LogError("hand not found");
+
+            deckOfCards = GameObject.Find("DeckOfCards");
+            if (deckOfCards == null)
+                m_DebugOutput.LogError("deckOfCards not found");
         }
 
         void BuildDeck()
@@ -639,8 +732,22 @@ namespace PoweredOn
             return textBlock;
         }
 
-#nullable enable
-        public void TryPickupCardInSpot(PlayfieldSpot spot, Card? card = null)
+        public void FlipCardFaceUp(Card card)
+        {
+            GameObject cardGO = card.GetGameObject();
+            Transform cardTX = cardGO.transform;
+            // retain position, just flip over y axis
+            // TODO: use rotate()
+            card.SetGoalIdentity(new GoalIdentity(
+                cardGO,
+                cardTX.localPosition,
+                cardTX.localRotation * Quaternion.Euler(0.0f, 180.0f, 0.0f),
+                cardTX.localScale
+            ));
+            card.SetIsFaceUp(true);
+        }
+        
+        public void TryPickupCardInSpot(PlayfieldSpot spot, Card card)
         {
             SuitRank topCardId;
 
@@ -651,50 +758,38 @@ namespace PoweredOn
             {
                 case PlayfieldArea.Tableau:
                     // try and pick up one or more cards from a tab pile
-                    if (card != null)
+                    List<SuitRank> tableauCardList = tableauCards[spot.index];
+                    if (!card.IsFaceUp)
                     {
-                        List<SuitRank> tableauCardList = tableauCards[spot.index];
-                        if (!card.IsFaceUp)
+                        bool IsTopCard = IsTopCardInPlayfieldSpot(card, spot);
+                        // if the card IS the top card, turn it over
+                        m_DebugOutput.LogWarning($"is top card? {IsTopCard}");
+                        if (IsTopCard)
                         {
-                            bool IsTopCard = IsTopCardInPlayfieldSpot(card, spot);
-                            // if the card IS the top card, turn it over
-                            m_DebugOutput.LogWarning($"is top card? {IsTopCard}");
-                            if (IsTopCard)
-                            {
-                                GameObject cardGO = card.GetGameObject();
-                                Transform cardTX = cardGO.transform;
-                                // retain position, just flip over y axis
-                                // TODO: use rotate()
-                                card.SetGoalIdentity(new GoalIdentity(
-                                    cardGO,
-                                    cardTX.localPosition,
-                                    cardTX.localRotation * Quaternion.Euler(0.0f, 180.0f, 0.0f),
-                                    cardTX.localScale
-                                ));
-                                card.SetIsFaceUp(true);
-                                return;
-                            }
-                            else
-                            {
-                                m_DebugOutput.LogWarning("Cannot pick up face down tableau card");
-                            }
+                            FlipCardFaceUp(card);
                             return;
                         }
                         else
                         {
-                            // if it IS face up, try to collect any additional cards
-                            List<SuitRank> cardsAboveCard = CollectCardsAboveFromTab(card);
-                            cardsAboveCard.Prepend(card.GetSuitRank());
-                            PickUpCards(cardsAboveCard);
+                            m_DebugOutput.LogWarning("Cannot pick up face down tableau card");
                         }
+                        return;
                     }
                     else
-                    { 
-                        m_DebugOutput.LogWarning("TryPickupCardInSpot need card for tableau pickup attempt");
+                    {
+                        // if it IS face up, try to collect it and any additional cards aka substack
+                        // into the hand
+                        List<SuitRank> subStack = CollectSubStack(card);
+                        PickUpCards(subStack);
+                        return;
                     }
-                    return;
 
                 case PlayfieldArea.Stock:
+                    // enforce only being able to pick up the topmost card:
+                    if (stockCards.Count == 0)
+                    {
+                        m_DebugOutput.LogError("error picking up stock card, stock pile is empty");
+                    }
                     topCardId = stockCards.Last();
                     card = deck.GetCardBySuitRank(topCardId);
 
@@ -708,21 +803,25 @@ namespace PoweredOn
                     return;
 
                 case PlayfieldArea.Foundation:
+                    // enforce only being able to pick up the topmost card:
+                    if (foundationCards[spot.index].Count == 0)
+                    {
+                        m_DebugOutput.LogError("error picking up foundation card, foundation pile is empty");
+                    }
                     topCardId = foundationCards[spot.index].Last();
                     card = deck.GetCardBySuitRank(topCardId);
                     break;
 
                 case PlayfieldArea.Waste:
+                    // enforce only being able to pick up the topmost card:
+                    if(wasteCards.Count == 0)
+                    {
+                        m_DebugOutput.LogError("error picking up waste card, waste pile is empty");
+                    }
                     topCardId = wasteCards.Last();
                     m_DebugOutput.LogWarning($"pickup from waste {topCardId}");
                     card = deck.GetCardBySuitRank(topCardId);
                     break;
-            }
-
-            if (card == null)
-            {
-                m_DebugOutput.LogWarning("TryPickupCardInSpot card is null");
-                return;
             }
 
             // this method will add the card to the handCards list
@@ -745,14 +844,15 @@ namespace PoweredOn
                 m_Moves++;
                 // move it valid, execute it
                 bool faceUp = true;
-                //SetCardGoalIDToPlayfieldSpot(cardInHand, spot, faceUp);
+                
                 foreach(SuitRank id in handCards)
                 {
                     Card card = deck.GetCardBySuitRank(id);
-                    // they will be removed from handCards as they're added
-                    // this might be problematic
+                    // they will be removed from handCards list as they're added to the new destination spot
                     SetCardGoalIDToPlayfieldSpot(card, spot, faceUp);
                 }
+
+                CheckFlipOverTopCardInTableauCardJustLeft(cardInHand);
             }
             else
             {
@@ -760,7 +860,85 @@ namespace PoweredOn
                 m_DebugOutput.LogWarning("Invalid move, try again.");
             }
         }
+        public void CheckFlipOverTopCardInTableauCardJustLeft(Card card)
+        {
+            // refer back to the tableau we just came from and see if we need to auto-flip over a card
+            if (card.previousPlayfieldSpot.area == PlayfieldArea.Tableau)
+            {
+                List<SuitRank> tCardList = tableauCards[card.previousPlayfieldSpot.index];
+                if (tCardList.Count > 0)
+                {
+                    SuitRank topmost = tCardList.Last();
+                    Card topMostCard = deck.GetCardBySuitRank(topmost);
+                    if (!topMostCard.IsFaceUp)
+                    {
+                        FlipCardFaceUp(topMostCard);
+                    }
+                }
+            }
+        }
         public void OnSingleClickCard(Card card)
+        {
+            if (card.playfieldSpot.area == PlayfieldArea.Stock)
+            {
+                // send to waste
+                StockToWaste();
+                return;
+            }
+
+            // otherwise it's in Waste,Foundation, or Tableau, and we should try to auto-place it
+
+            if (card.playfieldSpot.area == PlayfieldArea.Invalid || card.playfieldSpot.area == PlayfieldArea.Deck)
+            {
+                m_DebugOutput.LogError("invalid or deck card clicked, ignoring");
+                return;
+            }
+
+            if (card.playfieldSpot.area == PlayfieldArea.Hand)
+            {
+                m_DebugOutput.LogError("single-clicked card in hand.. could try to autoplace, but lets just ignore for now");
+                // TODO; if you implement auto-place, make sure you place the 0th card in the hand, and let any other cards be placed down on top of the ideal spot
+                return;
+            }
+
+
+            // auto-place
+            Game.PlayfieldSpot next_spot = GetNextValidPlayfieldSpotForSuitRank(card.GetSuitRank());
+            m_DebugOutput.LogWarning($"double-click {card.GetSuitRank()} -> {next_spot}");
+            if (next_spot.area == Game.PlayfieldArea.Invalid)
+            {
+                m_DebugOutput.LogWarning("no valid spot found for card, ignoring");
+                return;
+            }
+            else
+            {
+                bool isTopCard = IsTopCardInPlayfieldSpot(card, next_spot);
+
+                if (card.IsFaceUp)
+                {
+                    List<SuitRank> subStackCards = CollectSubStack(card);
+                    foreach (SuitRank suitRank in subStackCards)
+                    {
+                        Card hand_card = deck.GetCardBySuitRank(suitRank);
+                        SetCardGoalIDToPlayfieldSpot(hand_card, next_spot, true);/* true = faceUp */
+                    }
+                    CheckFlipOverTopCardInTableauCardJustLeft(card);
+                }
+                else
+                {
+                    m_DebugOutput.LogWarning("cannot move a face down card in a tableau, we can only flip it over, and it should've already flipped over");
+                    if (isTopCard)
+                    {
+                        FlipCardFaceUp(card);
+                    }else
+                    {
+                        m_DebugOutput.LogWarning("oh, it wasn't even the top card, yeah no, you can't act on this card. ignoring...");
+                        return;
+                    }
+                }
+            }
+        }
+        public void OnLongPressCard(Card card)
         {
             m_DebugOutput.Log("OnSingleClickCard handCards Count " + handCards.Count);
             if (handCards.Count < 1)
@@ -774,8 +952,15 @@ namespace PoweredOn
         }
         public void OnSingleClickEmptyStack(PlayfieldSpot destinationSpot)
         {
+            m_DebugOutput.LogWarning($"OnSingleClickEmptyStack {destinationSpot}");
             switch (destinationSpot.area)
             {
+                case PlayfieldArea.Tableau:
+                    break;
+                case PlayfieldArea.Waste:
+                    break;
+                case PlayfieldArea.Foundation:
+                    break;
                 case PlayfieldArea.Stock:
                     if(stockCards.Count == 0)
                     {
@@ -788,6 +973,24 @@ namespace PoweredOn
                     break;
             }
             TryPlaceHandCardToSpot(destinationSpot);
+        }
+
+        public void StockToWaste()
+        {
+            // if no cards left in stock, return
+            if (stockCards.Count < 1)
+            {
+                m_DebugOutput.LogWarning("StockToWaste: No cards in Stock pile");
+                //call WasteToStock(); here???
+                return;
+            }
+            // take top card (0th) from stockCards list, remove it, and append it to the Waste pile
+            // TODO: support 3 at a time mode
+            SuitRank cardSuitRank = stockCards[0];
+            stockCards.RemoveAt(0);
+
+            Card card = deck.GetCardBySuitRank(cardSuitRank);
+            SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Waste, wasteCards.Count), true);
         }
 
         public void WasteToStock()
@@ -847,6 +1050,16 @@ namespace PoweredOn
                     break;
             }
             return false;
+        }
+
+        internal void OnDoubleClickCard(Card card)
+        {
+            if (!card.IsFaceUp)
+            {
+                m_DebugOutput.LogWarning("Ignoring double click on face-down card");
+                return;
+            }
+            
         }
     }
     

@@ -17,7 +17,7 @@ using System.Collections.Generic;
 
 namespace PoweredOn.Objects
 {
-    public class CardInteractive : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+    public class CardInteractive : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         private Card card;
         
@@ -31,7 +31,11 @@ namespace PoweredOn.Objects
 
         private float? lastClickTime = null;
 
-        #nullable enable
+        private double? pointerDownAt = null;
+
+        public const float LONG_PRESS_DURATION = 0.5f;
+
+#nullable enable
         private IEnumerator? waitForDoubleClickTimeout;
 
         const float DOUBLE_CLICK_THRESHOLD = 0.4f;
@@ -93,6 +97,26 @@ namespace PoweredOn.Objects
         {
             //get controller rotation, and set the value to the cube transform
             //transform.rotation = NRInput.GetRotation();
+
+            if(pointerDownAt != null)
+            {
+                double delta = Time.realtimeSinceStartupAsDouble - (double)pointerDownAt;
+                if (delta > LONG_PRESS_DURATION)
+                {
+                    m_DeckManager.game.OnLongPressCard(this.card);
+                    pointerDownAt = null; // unflag
+                }
+            }
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            pointerDownAt = Time.realtimeSinceStartupAsDouble;
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            pointerDownAt = null;
         }
 
         /// <summary> when pointer click, set the cube color to random color. </summary>
@@ -128,33 +152,7 @@ namespace PoweredOn.Objects
 
         public void OnDoubleClick(PointerEventData eventData)
         {
-            if(!this.card.IsFaceUp)
-            {
-                m_DebugOutput.LogWarning("Ignoring double click on face-down card");
-                return;
-            }
-            Game.PlayfieldSpot? next_spot = m_DeckManager.game.GetNextValidPlayfieldSpotForSuitRank(this.card.GetSuitRank());
-            m_DebugOutput.LogWarning($"double-click {this.card.GetSuitRank()} -> {next_spot}");
-            if (next_spot != null)
-            {  
-                bool isTopCard = m_DeckManager.game.IsTopCardInPlayfieldSpot(this.card, (Game.PlayfieldSpot)next_spot);
-                
-                //if (isTopCard)
-                //{
-                    m_DeckManager.game.SetCardGoalIDToPlayfieldSpot(card, (Game.PlayfieldSpot) next_spot, true); /* faceUp = true */
-                //}
-                //else
-                //{
-                if (!isTopCard) {
-                    List<PlayingCards.SuitRank> cardStack = m_DeckManager.game.CollectCardsAboveFromTab(this.card);
-
-                    foreach (PlayingCards.SuitRank cardID in cardStack)
-                    {
-
-                    }
-                }
-                //}
-            }
+            m_DeckManager.game.OnDoubleClickCard(this.card);
         }
 
         /// <summary> when pointer hover, set the cube color to green. </summary>

@@ -8365,11 +8365,11 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void FrameBlender_CombineTexture_m64874385406
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_8 = __this->___m_RGBSource_9;
 		NullCheck(L_8);
 		int32_t L_9;
-		L_9 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_8);
+		L_9 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_8);
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_10 = __this->___m_RGBSource_9;
 		NullCheck(L_10);
 		int32_t L_11;
-		L_11 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_10);
+		L_11 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_10);
 		Rect_tA04E0F8A1830E767F40FB27ECD8D309303571F0D L_12;
 		memset((&L_12), 0, sizeof(L_12));
 		Rect__ctor_m18C3033D135097BEE424AAA68D91C706D2647F23_inline((&L_12), (0.0f), (0.0f), ((float)L_9), ((float)L_11), NULL);
@@ -8381,18 +8381,18 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void FrameBlender_CombineTexture_m64874385406
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_15 = ___foresource1;
 		NullCheck(L_15);
 		int32_t L_16;
-		L_16 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_15);
+		L_16 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_15);
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_17 = ___foresource1;
 		NullCheck(L_17);
 		int32_t L_18;
-		L_18 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_17);
+		L_18 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_17);
 		Rect_tA04E0F8A1830E767F40FB27ECD8D309303571F0D L_19;
 		memset((&L_19), 0, sizeof(L_19));
 		Rect__ctor_m18C3033D135097BEE424AAA68D91C706D2647F23_inline((&L_19), (0.0f), (0.0f), ((float)L_16), ((float)L_18), NULL);
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_20 = ___foresource1;
 		NullCheck(L_20);
 		int32_t L_21;
-		L_21 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_20);
+		L_21 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_20);
 		NullCheck(L_14);
 		Texture2D_ReadPixels_m6B45DF7C051BF599C72ED09691F21A6C769EEBD9(L_14, L_19, L_21, 0, NULL);
 		Texture2D_tE6505BC111DD8A424A9DBE8E05D7D09E11FFFCF4* L_22 = ___tempdest2;
@@ -9592,7 +9592,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EditorFrameProvider__ctor_m2C5BC6FD1D8AE
 	Material_t18053F08F347D0DCA5E1140EC7EC4533DD8A14E3* V_1 = NULL;
 	RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* V_2 = NULL;
 	{
-		NullDataFrameProvider__ctor_m7BF7CCA5C3859AADCF6AFA6CE8CD4F6F07D1FF5B(__this, ((int32_t)60), NULL);
+		NullDataFrameProvider__ctor_m7BF7CCA5C3859AADCF6AFA6CE8CD4F6F07D1FF5B(__this, ((int32_t)24), NULL);
 		Texture2D_tE6505BC111DD8A424A9DBE8E05D7D09E11FFFCF4* L_0;
 		L_0 = Resources_Load_TisTexture2D_tE6505BC111DD8A424A9DBE8E05D7D09E11FFFCF4_mBEC87DD291ED9662B46356519E0723C0ABB12877(_stringLiteralB4993E5AA8787610CF9C69ACA95BA422F314AF68, Resources_Load_TisTexture2D_tE6505BC111DD8A424A9DBE8E05D7D09E11FFFCF4_mBEC87DD291ED9662B46356519E0723C0ABB12877_RuntimeMethod_var);
 		V_0 = L_0;
@@ -9604,11 +9604,11 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EditorFrameProvider__ctor_m2C5BC6FD1D8AE
 		Texture_t791CBB51219779964E0E8A2ED7C1AA5F92A4A700* L_3 = V_0;
 		NullCheck(L_3);
 		int32_t L_4;
-		L_4 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_3);
+		L_4 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_3);
 		Texture_t791CBB51219779964E0E8A2ED7C1AA5F92A4A700* L_5 = V_0;
 		NullCheck(L_5);
 		int32_t L_6;
-		L_6 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_5);
+		L_6 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_5);
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_7;
 		L_7 = UnityExtendedUtility_CreateRenderTexture_m8BA5E7D8B83689668F578C4B5BF163DF545AA1BB(L_4, L_6, ((int32_t)24), 0, (bool)0, NULL);
 		V_2 = L_7;
@@ -10205,7 +10205,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void CameraParameters__ctor_mED26EA35456A8CF5
 		int32_t L_0 = ___webCamMode0;
 		CameraParameters_set_camMode_mA850370C5CC3377F3CF2E6624F57AAD4B2B5187D_inline(__this, L_0, NULL);
 		CameraParameters_set_hologramOpacity_mB77196D0EB0BBA7FC6346DC1B381BFB4FD11C983_inline(__this, (1.0f), NULL);
-		CameraParameters_set_frameRate_mD7B425F204423C9183D466AA889BA3089663A833_inline(__this, ((int32_t)60), NULL);
+		CameraParameters_set_frameRate_mD7B425F204423C9183D466AA889BA3089663A833_inline(__this, ((int32_t)24), NULL);
 		CameraParameters_set_cameraResolutionWidth_m55003EF41630C11B7ADC8BE801833DFB7254A6D5_inline(__this, ((int32_t)1280), NULL);
 		CameraParameters_set_cameraResolutionHeight_mFC86B731B438B425F64FA3C9281D14A78EA7A647_inline(__this, ((int32_t)720), NULL);
 		CameraParameters_set_pixelFormat_m6C72B0AD184B3F241F08D0FC0EA2FC62E317715F_inline(__this, 0, NULL);
@@ -15742,7 +15742,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool U3CGetSupportedFrameRatesForResolutionU3
 IL_0010:
 	{
 		__this->___U3CU3E1__state_0 = (-1);
-		__this->___U3CU3E2__current_1 = ((int32_t)60);
+		__this->___U3CU3E2__current_1 = ((int32_t)24);
 		__this->___U3CU3E1__state_0 = 1;
 		return (bool)1;
 	}
@@ -15929,7 +15929,7 @@ IL_004c:
 		NativeResolution_tE621398579AE0AACA056F76C2F0A41969F7E89B0 L_7 = V_1;
 		int32_t L_8 = L_7.___height_1;
 		Resolution_set_height_mA67D0309CD9456F183E92776C49A83E7085BAD57((&V_4), L_8, NULL);
-		Resolution_set_refreshRate_mB61C36CDAF7BDAD39CEEC52AFF243DD67A0E0CCB((&V_4), ((int32_t)60), NULL);
+		Resolution_set_refreshRate_mB61C36CDAF7BDAD39CEEC52AFF243DD67A0E0CCB((&V_4), ((int32_t)24), NULL);
 		Resolution_tDF215F567EEFFD07B9A8FB7CEACC08EA6B8B9525 L_9 = V_4;
 		__this->___U3Cstand_resolutionU3E5__2_3 = L_9;
 		Resolution_tDF215F567EEFFD07B9A8FB7CEACC08EA6B8B9525 L_10 = __this->___U3Cstand_resolutionU3E5__2_3;
@@ -15950,7 +15950,7 @@ IL_0094:
 		int32_t L_14;
 		L_14 = Resolution_get_height_mD46754FA3634CA816BE91D1610D1FEBDECCEBE5B(L_13, NULL);
 		Resolution_set_height_mA67D0309CD9456F183E92776C49A83E7085BAD57((&V_4), ((int32_t)(L_14/2)), NULL);
-		Resolution_set_refreshRate_mB61C36CDAF7BDAD39CEEC52AFF243DD67A0E0CCB((&V_4), ((int32_t)60), NULL);
+		Resolution_set_refreshRate_mB61C36CDAF7BDAD39CEEC52AFF243DD67A0E0CCB((&V_4), ((int32_t)24), NULL);
 		Resolution_tDF215F567EEFFD07B9A8FB7CEACC08EA6B8B9525 L_15 = V_4;
 		V_2 = L_15;
 		Resolution_tDF215F567EEFFD07B9A8FB7CEACC08EA6B8B9525 L_16 = V_2;
@@ -15971,7 +15971,7 @@ IL_00e7:
 		int32_t L_20;
 		L_20 = Resolution_get_height_mD46754FA3634CA816BE91D1610D1FEBDECCEBE5B(L_19, NULL);
 		Resolution_set_height_mA67D0309CD9456F183E92776C49A83E7085BAD57((&V_4), ((int32_t)(((int32_t)il2cpp_codegen_multiply(L_20, 3))/2)), NULL);
-		Resolution_set_refreshRate_mB61C36CDAF7BDAD39CEEC52AFF243DD67A0E0CCB((&V_4), ((int32_t)60), NULL);
+		Resolution_set_refreshRate_mB61C36CDAF7BDAD39CEEC52AFF243DD67A0E0CCB((&V_4), ((int32_t)24), NULL);
 		Resolution_tDF215F567EEFFD07B9A8FB7CEACC08EA6B8B9525 L_21 = V_4;
 		V_3 = L_21;
 		Resolution_tDF215F567EEFFD07B9A8FB7CEACC08EA6B8B9525 L_22 = V_3;
@@ -25455,7 +25455,7 @@ IL_0047:
 		L_17 = Resolution_get_height_mD46754FA3634CA816BE91D1610D1FEBDECCEBE5B(L_16, NULL);
 		CameraParameters_set_cameraResolutionHeight_mFC86B731B438B425F64FA3C9281D14A78EA7A647_inline((&V_0), L_17, NULL);
 		CameraParameters_set_pixelFormat_m6C72B0AD184B3F241F08D0FC0EA2FC62E317715F_inline((&V_0), 0, NULL);
-		CameraParameters_set_frameRate_mD7B425F204423C9183D466AA889BA3089663A833_inline((&V_0), ((int32_t)60), NULL);
+		CameraParameters_set_frameRate_mD7B425F204423C9183D466AA889BA3089663A833_inline((&V_0), ((int32_t)24), NULL);
 		CameraParameters_set_blendMode_mF18D2176CFA29D106CDCEA203B0FAE07D0AB557A_inline((&V_0), 0, NULL);
 		PhotoCaptureExample_t5F6FB98C8C26BCA31151765FEE9C73349C898BC2* L_18 = __this->___U3CU3E4__this_0;
 		NullCheck(L_18);

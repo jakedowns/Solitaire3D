@@ -19,7 +19,15 @@ namespace PoweredOn
         {
             //logMessages = new List<string>();
             m_DeckManager = GameObject.Find("DeckOfCards").GetComponent<DeckManager>();
+            if (m_DeckManager == null)
+            {
+                Debug.LogError("DeckManager not found");
+            }
             m_TextComponent = transform.GetComponent<Text>();
+            if(m_TextComponent == null)
+            {
+                Debug.LogWarning("text component not found");
+            }
         }
 
         // Update is called once per frame

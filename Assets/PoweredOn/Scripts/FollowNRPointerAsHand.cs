@@ -15,7 +15,9 @@ public class FollowNRPointerAsHand : MonoBehaviour
     private float FollowSpeed = 5.0f;
     public float currentDistance = 0.5f;
     private ControllerHandEnum m_CurrentDebugHand;
-    private Vector2 previousTouch;
+#nullable enable
+    private Vector2? previousTouch;
+#nullable disable
     public float currentRotationAngle = 0.0f;
     public float HAND_ROTATE_ANGLE_INCREMENT = 0.5f;
     public float DISTANCE_CONTROL_INCREMENT = 0.1f;
@@ -101,8 +103,14 @@ public class FollowNRPointerAsHand : MonoBehaviour
     }
 
     void OnTrackpad(Vector2 touchPos){
-        float deltaY = touchPos.y - previousTouch.y;
-        float deltaX = touchPos.x - previousTouch.x;
+        if(previousTouch == null)
+        {
+            previousTouch = touchPos;
+            return;
+        }
+        Vector2 prevTouch = (Vector2)previousTouch;
+        float deltaY = touchPos.y - prevTouch.y;
+        float deltaX = touchPos.x - prevTouch.x;
         if (Mathf.Abs(deltaY) > 0.01f)
         {
             if (m_PlayfieldSelected)
@@ -140,7 +148,7 @@ public class FollowNRPointerAsHand : MonoBehaviour
 
     void OnTrackpadUp()
     {
-        
+        previousTouch = null;
     }
 
 }

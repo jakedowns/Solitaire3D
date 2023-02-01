@@ -8,6 +8,19 @@ namespace PoweredOn
 {
     public class PlayingCards
     {
+        internal static List<SuitRank> GetDeckDefaultCardOrderList()
+        {
+            List <SuitRank> defaultDeckOrder = new List<SuitRank>();
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 13; j++)
+                {
+                    defaultDeckOrder.Add(new SuitRank((Suit)i, (Rank)j));
+                }
+            }
+            return defaultDeckOrder;
+        }
+
         // suit enum
         public enum Suit
         {

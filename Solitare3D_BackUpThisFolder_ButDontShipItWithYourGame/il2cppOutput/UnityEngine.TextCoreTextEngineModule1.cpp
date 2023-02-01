@@ -15398,7 +15398,7 @@ IL_032e:
 		L_186 = SpriteAsset_get_spriteSheet_mC53205114A12A79F7495FA5F5EFC9948F151256B(L_185, NULL);
 		NullCheck(L_186);
 		int32_t L_187;
-		L_187 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_186);
+		L_187 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_186);
 		TextElement_tCEF567A8810788262275B39DC39CBA6EBE7472DA* L_188 = __this->___m_CachedTextElement_91;
 		NullCheck(L_188);
 		Glyph_t700CF8EBE04ED4AEAB520885AAA1B309E02A103F* L_189;
@@ -15415,7 +15415,7 @@ IL_032e:
 		L_193 = SpriteAsset_get_spriteSheet_mC53205114A12A79F7495FA5F5EFC9948F151256B(L_192, NULL);
 		NullCheck(L_193);
 		int32_t L_194;
-		L_194 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_193);
+		L_194 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_193);
 		Vector2__ctor_m9525B79969AFFE3254B303A40997A56DEEB6F548_inline((&V_5), ((float)(((float)L_184)/((float)L_187))), ((float)(((float)L_191)/((float)L_194))), NULL);
 		Vector2_t1FD6F485C871E832B347AB2DC8CBA08B739D8DF7 L_195 = V_5;
 		float L_196 = L_195.___x_0;
@@ -15445,7 +15445,7 @@ IL_032e:
 		L_206 = SpriteAsset_get_spriteSheet_mC53205114A12A79F7495FA5F5EFC9948F151256B(L_205, NULL);
 		NullCheck(L_206);
 		int32_t L_207;
-		L_207 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_206);
+		L_207 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_206);
 		Vector2__ctor_m9525B79969AFFE3254B303A40997A56DEEB6F548_inline((&V_6), L_196, ((float)(((float)((int32_t)il2cpp_codegen_add(L_200, L_204)))/((float)L_207))), NULL);
 		TextElement_tCEF567A8810788262275B39DC39CBA6EBE7472DA* L_208 = __this->___m_CachedTextElement_91;
 		NullCheck(L_208);
@@ -15473,7 +15473,7 @@ IL_032e:
 		L_217 = SpriteAsset_get_spriteSheet_mC53205114A12A79F7495FA5F5EFC9948F151256B(L_216, NULL);
 		NullCheck(L_217);
 		int32_t L_218;
-		L_218 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_217);
+		L_218 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_217);
 		Vector2_t1FD6F485C871E832B347AB2DC8CBA08B739D8DF7 L_219 = V_6;
 		float L_220 = L_219.___y_1;
 		Vector2__ctor_m9525B79969AFFE3254B303A40997A56DEEB6F548_inline((&V_7), ((float)(((float)((int32_t)il2cpp_codegen_add(L_211, L_215)))/((float)L_218))), L_220, NULL);

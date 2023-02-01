@@ -8906,7 +8906,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EventInterestReflectionUtils_GetDefaultE
 		Type_t* L_4 = ___elementType0;
 		NullCheck(L_4);
 		Type_t* L_5;
-		L_5 = VirtualFuncInvoker0< Type_t* >::Invoke(109, L_4);
+		L_5 = VirtualFuncInvoker0< Type_t* >::Invoke(110, L_4);
 		V_2 = L_5;
 		Type_t* L_6 = V_2;
 		il2cpp_codegen_runtime_class_init_inline(Type_t_il2cpp_TypeInfo_var);
@@ -28797,11 +28797,11 @@ IL_0056:
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_15 = ___dst0;
 		NullCheck(L_15);
 		int32_t L_16;
-		L_16 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_15);
+		L_16 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_15);
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_17 = ___dst0;
 		NullCheck(L_17);
 		int32_t L_18;
-		L_18 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_17);
+		L_18 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_17);
 		GL_LoadPixelMatrix_mF1C5A4508C5F110512C116A5DDE7AB0483FE961A((0.0f), ((float)L_16), (0.0f), ((float)L_18), NULL);
 		RenderTexture_tBA90C4C3AD9EECCFDDCC632D97C29FAB80D60D27* L_19 = ___dst0;
 		il2cpp_codegen_runtime_class_init_inline(Graphics_t99CD970FFEA58171C70F54DF0C06D315BD452F2C_il2cpp_TypeInfo_var);
@@ -28940,13 +28940,13 @@ IL_007d:
 		Texture_t791CBB51219779964E0E8A2ED7C1AA5F92A4A700* L_31 = L_30.___src_0;
 		NullCheck(L_31);
 		int32_t L_32;
-		L_32 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_31);
+		L_32 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_31);
 		V_10 = ((float)((1.0f)/((float)L_32)));
 		BlitInfo_t6D4C0580BBEF65F5EAD39FB6DBC85F360CF6A357 L_33 = V_9;
 		Texture_t791CBB51219779964E0E8A2ED7C1AA5F92A4A700* L_34 = L_33.___src_0;
 		NullCheck(L_34);
 		int32_t L_35;
-		L_35 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_34);
+		L_35 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_34);
 		V_11 = ((float)((1.0f)/((float)L_35)));
 		Vector2Int_t69B2886EBAB732D9B880565E18E7568F3DE0CE6A* L_36 = (&(&V_9)->___dstPos_2);
 		int32_t L_37;

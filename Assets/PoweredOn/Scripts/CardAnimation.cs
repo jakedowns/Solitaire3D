@@ -7,6 +7,8 @@ namespace PoweredOn.Animations
 {
     public struct GoalIdentity
     {
+        public float delaySetAt;
+        public float delayStart;
         public Vector3 position {
             get {
                 if(goalObject != null)
@@ -68,6 +70,8 @@ namespace PoweredOn.Animations
             this._position = Vector3.zero;
             this._rotation = Quaternion.identity;
             this._scale = Vector3.one;
+            this.delaySetAt = 0.0f;
+            this.delayStart = 0.0f;
         }
 
         public GoalIdentity(GameObject gameObject, Vector3 position, Quaternion rotation, Vector3 scale)
@@ -77,6 +81,14 @@ namespace PoweredOn.Animations
             this._position = position;
             this._rotation = rotation;
             this._scale = scale;
+            this.delaySetAt = 0.0f;
+            this.delayStart = 0.0f;
+        }
+
+        public void SetDelay(float delay)
+        {
+            delaySetAt = Time.realtimeSinceStartup;
+            delayStart = delay;
         }
     }
     

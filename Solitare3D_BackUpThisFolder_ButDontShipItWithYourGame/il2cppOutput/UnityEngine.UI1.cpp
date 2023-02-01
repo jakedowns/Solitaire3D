@@ -3744,7 +3744,7 @@ IL_007d:
 		L_27 = Sprite_get_texture_mEEA6640C1B5D38F84CB64C775B201D7D9F48E045(L_26, NULL);
 		NullCheck(L_27);
 		bool L_28;
-		L_28 = VirtualFuncInvoker0< bool >::Invoke(8, L_27);
+		L_28 = VirtualFuncInvoker0< bool >::Invoke(11, L_27);
 		G_B11_0 = ((int32_t)(L_28));
 		goto IL_00b1;
 	}
@@ -3793,7 +3793,7 @@ IL_00b1:
 		L_38 = Sprite_get_texture_mEEA6640C1B5D38F84CB64C775B201D7D9F48E045(L_37, NULL);
 		NullCheck(L_38);
 		bool L_39;
-		L_39 = VirtualFuncInvoker0< bool >::Invoke(8, L_38);
+		L_39 = VirtualFuncInvoker0< bool >::Invoke(11, L_38);
 		if (L_39)
 		{
 			goto IL_0110;
@@ -3878,7 +3878,7 @@ IL_011d:
 		L_57 = Sprite_get_texture_mEEA6640C1B5D38F84CB64C775B201D7D9F48E045(L_56, NULL);
 		NullCheck(L_57);
 		bool L_58;
-		L_58 = VirtualFuncInvoker0< bool >::Invoke(8, L_57);
+		L_58 = VirtualFuncInvoker0< bool >::Invoke(11, L_57);
 		if (L_58)
 		{
 			goto IL_01ac;
@@ -4293,7 +4293,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Image_set_alphaHitTestMinimumThreshold_m
 		L_7 = Sprite_get_texture_mEEA6640C1B5D38F84CB64C775B201D7D9F48E045(L_6, NULL);
 		NullCheck(L_7);
 		bool L_8;
-		L_8 = VirtualFuncInvoker0< bool >::Invoke(8, L_7);
+		L_8 = VirtualFuncInvoker0< bool >::Invoke(11, L_7);
 		if (L_8)
 		{
 			goto IL_0042;
@@ -9182,7 +9182,7 @@ IL_0041:
 		L_11 = Sprite_get_texture_mEEA6640C1B5D38F84CB64C775B201D7D9F48E045(L_10, NULL);
 		NullCheck(L_11);
 		int32_t L_12;
-		L_12 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_11);
+		L_12 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_11);
 		Sprite_tAFF74BC83CD68037494CB0B4F28CBDF8971CAB99* L_13;
 		L_13 = Image_get_activeSprite_m0F639A03B26FD25CA1D8EEA006D0B0C322037034(__this, NULL);
 		NullCheck(L_13);
@@ -9190,7 +9190,7 @@ IL_0041:
 		L_14 = Sprite_get_texture_mEEA6640C1B5D38F84CB64C775B201D7D9F48E045(L_13, NULL);
 		NullCheck(L_14);
 		int32_t L_15;
-		L_15 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_14);
+		L_15 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_14);
 		Vector2_t1FD6F485C871E832B347AB2DC8CBA08B739D8DF7 L_16;
 		memset((&L_16), 0, sizeof(L_16));
 		Vector2__ctor_m9525B79969AFFE3254B303A40997A56DEEB6F548_inline((&L_16), ((float)L_12), ((float)L_15), NULL);
@@ -9237,7 +9237,7 @@ IL_007f:
 		L_37 = Sprite_get_texture_mEEA6640C1B5D38F84CB64C775B201D7D9F48E045(L_36, NULL);
 		NullCheck(L_37);
 		int32_t L_38;
-		L_38 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_37);
+		L_38 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_37);
 		V_2 = ((float)(L_35/((float)L_38)));
 		Vector2_t1FD6F485C871E832B347AB2DC8CBA08B739D8DF7 L_39 = V_0;
 		float L_40 = L_39.___y_1;
@@ -9248,7 +9248,7 @@ IL_007f:
 		L_42 = Sprite_get_texture_mEEA6640C1B5D38F84CB64C775B201D7D9F48E045(L_41, NULL);
 		NullCheck(L_42);
 		int32_t L_43;
-		L_43 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_42);
+		L_43 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_42);
 		V_3 = ((float)(L_40/((float)L_43)));
 	}
 	try

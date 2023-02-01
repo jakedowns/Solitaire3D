@@ -24,7 +24,6 @@ namespace PoweredOn.Managers
         Solitaire3DTests testManager = new Solitaire3DTests();
 
         float lerpSpeed = 5f;
-        private int m_Moves;
 
         private void Awake()
         {
@@ -48,6 +47,8 @@ namespace PoweredOn.Managers
             //SetCardGoalsToDeckPositions();
             
             // instead, just deal
+
+            //todo let's wait for user to click deck to deal cards
             game.Deal();
 
             // Now that they have goal positions, we want to start a coroutine that animates them
@@ -67,22 +68,7 @@ namespace PoweredOn.Managers
 
         
         
-        /*public void StockToWaste()
-        {
-            // if no cards left in stock, return
-            if (stockCards.Count < 1)
-            {
-                m_DebugOutput.LogWarning("StockToWaste: No cards in Stock pile");
-                return;
-            }
-            // take top card (0th) from stockCards list, remove it, and append it to the Waste pile
-            // TODO: support 3 at a time mode
-            SuitRank cardSuitRank = stockCards[0];
-            stockCards.RemoveAt(0);
-
-            Card card = GetCardBySuitRank(cardSuitRank);
-            SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Waste, wasteCards.Count), true);
-        }*/
+        
 
         
 
@@ -177,8 +163,10 @@ namespace PoweredOn.Managers
             NativeArray<Quaternion> goalRotations = new NativeArray<Quaternion>(game.deck.cards.Count, Allocator.Persistent);
             NativeArray<Vector3> startScales = new NativeArray<Vector3>(game.deck.cards.Count, Allocator.Persistent);
             NativeArray<Vector3> goalScales = new NativeArray<Vector3>(game.deck.cards.Count, Allocator.Persistent);
+            NativeArray<bool> delayTimings = new NativeArray<bool>(game.deck.cards.Count, Allocator.Persistent);
             while (true)
             {
+                float nowTime = Time.realtimeSinceStartup;
                 for (int i = 0; i < game.deck.cards.Count; i++)
                 {
                     GoalIdentity goalID = game.deck.cards[i].GetGoalIdentity();
@@ -191,6 +179,17 @@ namespace PoweredOn.Managers
                     goalPositions[i] = goalID.position;
                     goalRotations[i] = goalID.rotation;
                     goalScales[i] = goalID.scale;
+
+                    float delaySetAt = goalID.delaySetAt;
+
+                    if(goalID.delayStart > 0.0f)
+                    {
+                        delayTimings[i] = (nowTime - delaySetAt) > 0 ? true : false;
+                    }
+                    else
+                    {
+                        delayTimings[i] = false;
+                    }
                 }
 
                 // Create and schedule the job
@@ -204,7 +203,8 @@ namespace PoweredOn.Managers
                     startScales = startScales,
                     goalScales = goalScales,
                     lerpSpeed = lerpSpeed,
-                    deltaTime = Time.deltaTime
+                    deltaTime = Time.deltaTime,
+                    delayTimings = delayTimings
                 };
                 JobHandle handle = job.Schedule(startPositions.Length, game.deck.cards.Count);
 
@@ -268,14 +268,16 @@ namespace PoweredOn.Managers
             public NativeArray<Vector3> goalScales;
             public float lerpSpeed;
             public float deltaTime;
+            public NativeArray<bool> delayTimings;
 
             public void Execute(int i)
             {
-                float laggedTime = deltaTime; // - (i * 1f);
-                //m_DebugOutput.Log(i + " deltaTime "+deltaTime);
-                startPositions[i] = Vector3.Lerp(startPositions[i], goalPositions[i], laggedTime * lerpSpeed);
-                startRotations[i] = Quaternion.Lerp(startRotations[i], goalRotations[i], laggedTime * lerpSpeed);
-                startScales[i] = Vector3.Lerp(startScales[i], goalScales[i], laggedTime * lerpSpeed);
+                /*if (delayTimings[i]){
+                    return;
+                }*/
+                startPositions[i] = Vector3.Lerp(startPositions[i], goalPositions[i], deltaTime * lerpSpeed);
+                startRotations[i] = Quaternion.Lerp(startRotations[i], goalRotations[i], deltaTime * lerpSpeed);
+                startScales[i] = Vector3.Lerp(startScales[i], goalScales[i], deltaTime * lerpSpeed);
             }
         }
 

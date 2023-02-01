@@ -4726,11 +4726,11 @@ IL_001f:
 		Texture_t791CBB51219779964E0E8A2ED7C1AA5F92A4A700* L_13 = V_0;
 		NullCheck(L_13);
 		int32_t L_14;
-		L_14 = VirtualFuncInvoker0< int32_t >::Invoke(4, L_13);
+		L_14 = VirtualFuncInvoker0< int32_t >::Invoke(5, L_13);
 		Texture_t791CBB51219779964E0E8A2ED7C1AA5F92A4A700* L_15 = V_0;
 		NullCheck(L_15);
 		int32_t L_16;
-		L_16 = VirtualFuncInvoker0< int32_t >::Invoke(6, L_15);
+		L_16 = VirtualFuncInvoker0< int32_t >::Invoke(7, L_15);
 		float L_17 = ___sdfScale1;
 		TextureSlotManager_SetGpuData_m73FDAC2240F9F8F6AF1EA35ABA4BA136E55B7213(__this, L_11, L_12, L_14, L_16, L_17, NULL);
 		MaterialPropertyBlock_t2308669579033A857EFE6E4831909F638B27411D* L_18 = ___mat3;

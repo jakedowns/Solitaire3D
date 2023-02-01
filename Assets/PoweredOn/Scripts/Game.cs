@@ -9,7 +9,8 @@
             Stock,
             Waste,
             Hand,
-            Deck
+            Deck,
+            Invalid
         }
         public struct PlayfieldSpot
         {
@@ -31,9 +32,19 @@
                 this.subindex = subindex;
             }
 
+            public static PlayfieldSpot Invalid
+            {
+                get { return new PlayfieldSpot(PlayfieldArea.Invalid, -1, -1); }
+            }
+
             override public string ToString()
             {
                 return $"PlayfieldSpot: {area} {index}:{subindex}";
+            }
+
+            public PlayfieldSpot Clone()
+            {
+                return new PlayfieldSpot(this.area, this.index, this.subindex);
             }
         }
     }
