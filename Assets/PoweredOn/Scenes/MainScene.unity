@@ -3688,7 +3688,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 395675414}
         m_TargetAssemblyTypeName: FollowNRPointerAsHand, Assembly-CSharp
         m_MethodName: ToggleSelectPlayfield
         m_Mode: 1
@@ -4465,7 +4465,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1186348705}
         m_TargetAssemblyTypeName: PoweredOn.Managers.DeckManager, Assembly-CSharp
-        m_MethodName: SetCardGoalsToDeckPositions
+        m_MethodName: Collect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

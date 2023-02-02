@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using System.Linq;
-using PoweredOn.Objects;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Burst;
 using PoweredOn.Animations;
 using PoweredOn;
+using PoweredOn.PlayingCards;
 
 namespace PoweredOn.Managers
 {
@@ -291,6 +291,11 @@ namespace PoweredOn.Managers
         {
             game.SetCardGoalsToDeckPositions();
         }
+
+        public void UIRandomize()
+        {
+            game.SetCardGoalsToRandomPositions();
+        }
         
 
         public void OnSingleClickCard(Card card)
@@ -299,7 +304,7 @@ namespace PoweredOn.Managers
         }
         
 
-        /*public void TryPlaceCards(List<SuitRank> cards, PlayfieldSpot spot)
+        /*public void TryPlaceCards(CardList cards, PlayfieldSpot spot)
         {
             foreach(SuitRank id in cards)
             {

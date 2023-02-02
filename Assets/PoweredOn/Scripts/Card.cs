@@ -13,11 +13,8 @@ using UnityEngine.EventSystems;
 using NRKernal;
 
 using PoweredOn.Animations;
-using static PoweredOn.Managers.DeckManager;
-using static PoweredOn.PlayingCards;
-using PoweredOn;
 
-namespace PoweredOn.Objects
+namespace PoweredOn.PlayingCards
 {
     /// <summary> A cube interactive test. </summary>
     public class Card
@@ -148,6 +145,11 @@ namespace PoweredOn.Objects
         public void SetPreviousPlayfieldSpot(Game.PlayfieldSpot spot)
         {
             this.previousPlayfieldSpot = spot;
+        }
+
+        override public string ToString()
+        {
+            return $"{this.rank} of {this.suit} ({this.playfieldSpot}) > (prevSpot: {this.previousPlayfieldSpot})";
         }
     }
 }

@@ -15,7 +15,7 @@ using System.Collections;
 using PoweredOn;
 using System.Collections.Generic;
 
-namespace PoweredOn.Objects
+namespace PoweredOn.PlayingCards
 {
     public class CardInteractive : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {

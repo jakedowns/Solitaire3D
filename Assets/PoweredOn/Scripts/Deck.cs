@@ -1,10 +1,9 @@
-﻿using PoweredOn.Objects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static PoweredOn.PlayingCards;
+using PoweredOn.PlayingCards;
 using UnityEngine;
 
 namespace PoweredOn
@@ -14,15 +13,17 @@ namespace PoweredOn
         public List<Card> cards;
         Dictionary<SuitRank, int> cardIndexLookup;
         GameObject m_deckOfCards;
-        List<List<int>> shuffleLog;
+        public CardList deckOrderList;
+        List<List<ShuffleMove>> shuffleLog;
 
         public Deck(GameObject deckOfCards, DebugOutput m_DebugOutput)
         {
             m_deckOfCards = deckOfCards;
             // Instantiate in-memory cards
             cards = new List<Card>();
-            shuffleLog = new List<List<int>>();
+            shuffleLog = new List<List<ShuffleMove>>();
             cardIndexLookup = new Dictionary<SuitRank, int>();
+            deckOrderList = new CardList();
 
             // for 4 suits, and 13 ranks, create 52 cards
             int deckOrder = 0;
@@ -34,6 +35,8 @@ namespace PoweredOn
                     cards.Add(newCard);
 
                     cardIndexLookup.Add(newCard.GetSuitRank(), deckOrder);
+
+                    deckOrderList.Add(newCard.GetSuitRank());
 
                     deckOrder++;
 
@@ -47,6 +50,14 @@ namespace PoweredOn
                         m_DebugOutput.LogError("child not found " + gameObjectName);
                         continue;
                     }
+
+                    // remove any existing CardInteractive components
+                    CardInteractive[] prevCardInteractives = child.GetComponents<CardInteractive>();
+                    foreach (CardInteractive prevCardInteractive in prevCardInteractives)
+                    {
+                        GameObject.DestroyImmediate(prevCardInteractive);
+                    }
+
                     child.gameObject.AddComponent(typeof(CardInteractive));
 
                     CardInteractive cardInteractive = child.GetComponent<CardInteractive>();
@@ -74,30 +85,49 @@ namespace PoweredOn
 
         public void Shuffle(int numShuffles)
         {
+            shuffleLog.Clear();
             for (int i = 0; i < numShuffles; i++)
             {
                 Shuffle();
             }
         }
 
-        // TODO: make this shuffle deckOrder instead of the List<Card> cards list
+        public struct ShuffleMove {
+
+            public SuitRank suitRank;
+            public int from;
+            public int to;
+            public ShuffleMove(SuitRank suitRank, int from, int to)
+            {
+                this.suitRank = suitRank;
+                this.from = from;
+                this.to = to;
+            }
+        }
+
         public void Shuffle()
         {
-            shuffleLog.Clear();
-            //List<SuitRank> newDeckOrder = new List<SuitRank>(52);
-            List<int> iteration_log = new List<int>();
+            
+            CardList prevDeckOrderList = deckOrderList.Count > 0 ? deckOrderList : new CardList(PLAYING_CARD_DEFAULTS.DEFAULT_DECK_ORDER);
+
+            deckOrderList = new CardList(PLAYING_CARD_DEFAULTS.DEFAULT_DECK_ORDER);
+            List<ShuffleMove> iteration_log = new List<ShuffleMove>();
             for (int j = 0; j < cards.Count; j++)
             {
                 int randomIndex = UnityEngine.Random.Range(0, cards.Count);
-                Card temp = cards[j];
-                cards[j] = cards[randomIndex];
-                cards[randomIndex] = temp;
+                SuitRank temp = prevDeckOrderList[j];
+                SuitRank randomTemp = prevDeckOrderList[randomIndex];
+                deckOrderList[j] = randomTemp;
+                deckOrderList[randomIndex] = temp;
+
+                // record the moves so we can animate them
+                iteration_log.Add(new ShuffleMove(temp, j, randomIndex));
+                iteration_log.Add(new ShuffleMove(randomTemp, randomIndex, j));
+                
                 UpdateCardDeckOrder(cards[j], j);
-                UpdateCardDeckOrder(cards[randomIndex], randomIndex);
-                iteration_log.Add(randomIndex);
+                UpdateCardDeckOrder(cards[randomIndex], randomIndex);               
             }
             shuffleLog.Add(iteration_log);
-            //deckOrder = newDeckOrder;
         }
         
         void UpdateCardDeckOrder(Card card, int deckOrder)
