@@ -165,20 +165,30 @@ namespace PoweredOn
 
             //await Task.Delay(1000);
 
-            stockCards = new CardList();
-            for (int i = 0; i < 52; i++)
+            if (deck.cards.Count != 52)
+                throw new Exception($"[DEAL] invalid deck card count after shuffling {deck.cards.Count}");
+
+            if (deck.deckOrderList.Count != 52)
+                throw new Exception($"[DEAL] invalid deck deckOrderList count after shuffling {deck.deckOrderList.Count}");
+
+            stockCards = new CardList(new List<SuitRank>());
+            for (int initial_loop_index = 0; initial_loop_index < 52; initial_loop_index++)
             {
                 // capture all SuitRanks in the "stockCards" pile to begin with
-                try
-                {
-                    stockCards.Add(deck.cards[i].GetSuitRank());
-                    Card card = deck.GetCardBySuitRank(deck.cards[i].GetSuitRank());
-                    SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Stock,i), false);
-                }
+                /*try
+                {*/
+                    Card card = deck.GetCardBySuitRank(deck.deckOrderList[initial_loop_index]);
+                    SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Stock, initial_loop_index), false);
+                /*}
                 catch (Exception e)
                 {
                     m_DebugOutput.LogError(e.ToString());
-                }
+                }*/
+            }
+            
+            if(stockCards.Count != 52)
+            {
+                throw new Exception($"[DEAL] invalid stock card count after shuffling and moving from deck to stockCards list {stockCards.Count}");
             }
 
             for (int round = 0; round < 7; round++)
@@ -204,20 +214,29 @@ namespace PoweredOn
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
                     SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Tableau, pile, round), faceUp, 0.1f * dealtOrder.Count);
 
-                    //m_DebugOutput.Log($"Dealing {card.GetGameObjectName()} {round} {pile} {faceUp}");
+                    m_DebugOutput.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
                 }
+            }
+
+            if(dealtOrder.Count != 28)
+            {
+                throw new Exception($"[DEAL] invalid dealtOrder count after moving cards from stock to tableau {stockCards.Count}");
             }
 
             // then, for the remaining cards, update their GoalIdentity to place them where the "Stock" Pile should go
             // remember to offset the local Z position a bit to make the cards appear as tho they're stacked on top of each other.
             // the last card should be the lowest z-position (same z as the stock pile guide object) and then each card up to the 0th should be the highest
             // so we should loop backwards through the remaining Stock when setting the positions
-            for (int i = stockCards.Count - 1; i >= 0; i--)
+            if(stockCards.Count != 24)
             {
-                SuitRank cardSuitRank = stockCards[i];
+                throw new Exception($"[DEAL] invalid stock card count after moving cards from stock to tableau {stockCards.Count}");  
+            }
+            for (int sc = stockCards.Count - 1; sc > -1; sc--)
+            {
+                SuitRank cardSuitRank = stockCards[sc];
                 Card card = deck.GetCardBySuitRank(cardSuitRank);
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
-                SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Stock, i), false); /* always face down when adding to stock */
+                SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Stock, sc), false); /* always face down when adding to stock */
             }
         }
 
@@ -483,6 +502,7 @@ namespace PoweredOn
                 case PlayfieldArea.Stock:
                     faceUp = false; // always face down when adding to stock
                     stockCards.Add(card.GetSuitRank());
+                    Debug.Log($"stockCardsCountNow {stockCards.Count}");
                     gPos = stock.transform.position;
                     gPos.z = (-0.05f) + (stockCards.Count * -CARD_THICKNESS);
                     goalID.SetGoalPositionFromWorldPosition(gPos);
@@ -517,7 +537,7 @@ namespace PoweredOn
                     faceUp = true; // always face up when adding to hand
                     handCards.Add(card.GetSuitRank());
                     m_DebugOutput.Log("added card to hand " + handCards.Count);
-                    goalID = new GoalIdentity(card.GetGameObject(), hand);
+                    goalID = new GoalIdentity(card.GetGameObject(), hand, new Vector3(0.0f, -1.0f, 0.0f));
                     break;
                 case PlayfieldArea.Deck:
                     deckCards.Add(card.GetSuitRank());
@@ -536,7 +556,7 @@ namespace PoweredOn
 
         public void RemoveCardFromCurrentPlayfieldSpot(Card card)
         {
-            string dbugstring = $"{card.GetGameObjectName()} {card.playfieldSpot}";
+            string dbugstring = $"{card}";
 
 #nullable enable
             CardList? pile = null;
@@ -588,7 +608,7 @@ namespace PoweredOn
                     {
                         // note, this isn't ALWAYS an error
                         // example, when passing waste cards back to stock
-                        m_DebugOutput.LogWarning($"error: trying to remove NON-TOP card from Stock or Waste pile.indexof(card):{index} topIndex:{topIndex}");
+                        m_DebugOutput.LogWarning($"warn: trying to remove NON-TOP card from Stock or Waste pile.indexof(card):{index} topIndex:{topIndex}");
                     }
                 }
 
@@ -596,7 +616,7 @@ namespace PoweredOn
                 {
                     if (pfspot.subindex != index)
                     {
-                        m_DebugOutput.LogError($"card {card} | subindex does not match pile.indexof(card){index} spot.subindex:{pfspot.subindex}");
+                        m_DebugOutput.LogWarning($"card {card} | subindex does not match pile.indexof(card){index} spot.subindex:{pfspot.subindex}");
                     }
                 }
                 
@@ -968,7 +988,7 @@ namespace PoweredOn
         }
         public void OnSingleClickCard(Card card)
         {
-            m_DebugOutput.LogWarning($"on single click card {card.GetGameObjectName()} {card.playfieldSpot}");
+            m_DebugOutput.LogWarning($"on single click card {card}");
             if (card.playfieldSpot.area == PlayfieldArea.Stock)
             {
                 // send to waste
@@ -1099,7 +1119,7 @@ namespace PoweredOn
             for (int i = wasteCards.Count - 1; i > -1; i--)
             {
                 PlayfieldSpot stockSpot = new PlayfieldSpot(PlayfieldArea.Stock, order_i);
-                stockCards.Add(wasteCards[i]);
+
                 Card card = deck.GetCardBySuitRank(wasteCards[i]);
                 SetCardGoalIDToPlayfieldSpot(card, stockSpot, false);
                 order_i++;

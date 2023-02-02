@@ -12,8 +12,8 @@ namespace PoweredOn.Animations
         public Vector3 position {
             get {
                 if(goalObject != null)
-                    return gameObject.transform.InverseTransformPoint(goalObject.transform.position);
-                return this._position;
+                    return gameObject.transform.InverseTransformPoint(goalObject.transform.position) + this._offset;
+                return this._position + this._offset;
             }
             set
             {
@@ -57,6 +57,7 @@ namespace PoweredOn.Animations
         private Vector3 _position;
         private Quaternion _rotation;
         private Vector3 _scale;
+        private Vector3 _offset;
 
         public GameObject gameObject;
         
@@ -72,6 +73,19 @@ namespace PoweredOn.Animations
             this._scale = Vector3.one;
             this.delaySetAt = 0.0f;
             this.delayStart = 0.0f;
+            this._offset = Vector3.zero;
+        }
+
+        public GoalIdentity(GameObject gameObject, GameObject goalObject, Vector3 offset)
+        {
+            this.gameObject = gameObject;
+            this.goalObject = goalObject;
+            this._position = Vector3.zero;
+            this._rotation = Quaternion.identity;
+            this._scale = Vector3.one;
+            this.delaySetAt = 0.0f;
+            this.delayStart = 0.0f;
+            this._offset = offset;
         }
 
         public GoalIdentity(GameObject gameObject, Vector3 position, Quaternion rotation, Vector3 scale)
@@ -83,6 +97,7 @@ namespace PoweredOn.Animations
             this._scale = scale;
             this.delaySetAt = 0.0f;
             this.delayStart = 0.0f;
+            this._offset = Vector3.zero;
         }
 
         public void SetDelay(float delay)

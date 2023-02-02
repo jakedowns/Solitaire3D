@@ -107,25 +107,26 @@ namespace PoweredOn
 
         public void Shuffle()
         {
-            
             CardList prevDeckOrderList = deckOrderList.Count > 0 ? deckOrderList : new CardList(PLAYING_CARD_DEFAULTS.DEFAULT_DECK_ORDER);
 
-            deckOrderList = new CardList(PLAYING_CARD_DEFAULTS.DEFAULT_DECK_ORDER);
+            deckOrderList = new CardList(prevDeckOrderList);
             List<ShuffleMove> iteration_log = new List<ShuffleMove>();
-            for (int j = 0; j < cards.Count; j++)
+            for (int j = 0; j < 52; j++)
             {
-                int randomIndex = UnityEngine.Random.Range(0, cards.Count);
-                SuitRank temp = prevDeckOrderList[j];
-                SuitRank randomTemp = prevDeckOrderList[randomIndex];
-                deckOrderList[j] = randomTemp;
+                int randomIndex = UnityEngine.Random.Range(0, 52);
+                SuitRank temp = deckOrderList[j];
+                deckOrderList[j] = deckOrderList[randomIndex];
                 deckOrderList[randomIndex] = temp;
 
                 // record the moves so we can animate them
                 iteration_log.Add(new ShuffleMove(temp, j, randomIndex));
-                iteration_log.Add(new ShuffleMove(randomTemp, randomIndex, j));
+                iteration_log.Add(new ShuffleMove(deckOrderList[randomIndex], randomIndex, j));
                 
                 UpdateCardDeckOrder(cards[j], j);
                 UpdateCardDeckOrder(cards[randomIndex], randomIndex);               
+            }
+            if(deckOrderList.Count != 52) {
+                throw new Exception("invalid deckOrderList count after shuffle");
             }
             shuffleLog.Add(iteration_log);
         }
