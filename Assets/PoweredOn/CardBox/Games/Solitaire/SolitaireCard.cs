@@ -17,5 +17,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             return Managers.GameManager.Instance.game.GetFoundationCardPileForSuit(this.GetSuit());
         }
+
+        public SolitaireCard(PlayingCard card): base(card.GetSuit(), card.GetRank(), card.GetDeckOrder()){
+        }
     }
 }

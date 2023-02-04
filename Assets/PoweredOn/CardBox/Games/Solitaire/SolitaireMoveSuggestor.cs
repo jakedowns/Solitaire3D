@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PoweredOn.CardBox.Games.Solitaire.Piles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,7 +77,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
         private static SolitaireMoveList GetMovesToFoundationForCard(SolitaireGameState gameState, SolitaireCard card)
         {
             SolitaireMoveList moves = new SolitaireMoveList();
-            FoundationCardPile foundationCardPile = card.GetFoundationForCard();
+            FoundationCardPile foundationCardPile = card.GetFoundationCardPile();
+
+            if (foundationCardPile.CanAcceptCard(card))
+            {
+                moves.Add(new SolitaireMove(card, card.playfieldSpot, foundationCardPile.GetPlayfieldSpot()));
+            }
+
             return moves;
         }
     }

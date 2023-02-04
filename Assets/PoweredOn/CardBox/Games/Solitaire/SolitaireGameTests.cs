@@ -7,6 +7,7 @@ using UnityEngine.Assertions;
 
 using PoweredOn.CardBox.PlayingCards;
 using PoweredOn.CardBox.Cards;
+using PoweredOn.CardBox.Games.Solitaire.Piles;
 using UnityEngine;
 
 namespace PoweredOn.CardBox.Games.Solitaire
@@ -26,7 +27,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public static void CanCreateDeck()
         {
             var game = new SolitaireGame();
-            PlayingCardDeck deck = game.BuildDeck();
+            SolitaireDeck deck = game.BuildDeck();
             Assert.IsTrue(deck.Count == 52);
         }
 
@@ -65,13 +66,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // 1. expect there to be 24 cards in the Stock pile
             //using (CardIDList stockPile = game.GetStockCardsImmutable())
             //{
-            PlayingCardIDList stockPile = game.GetStockCardsImmutable();
+            //PlayingCardIDList stockPile = game.GetStockCardsImmutable();
+
+            StockCardPile stockPile = game.GetStockCardPile();
             Debug.Log($"stock card count = {stockPile.Count} / expected 24");
             Assert.IsTrue(stockPile.Count == 24);
             //}
 
             // 2. expect there to be 1-7 cards in each tableau
-            PlayingCardIDListGroup tabList = game.GetTableauListImmutable();
+            //PlayingCardIDListGroup tabList = game.GetTableauListImmutable();
+
+            TableauCardPileGroup tabList = game.GetTableauCardPileGroup();
             for (int i = 0; i < tabList.Count; i++)
             {
                 Debug.Log($"tableau {i} card count = {tabList[i].Count} / expected {i + 1}");
@@ -79,11 +84,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             // 3. expect there to be 0 cards in the waste pile
-            Assert.IsTrue(game.GetWasteCardsImmutable().Count == 0);
+            Assert.IsTrue(game.GetWasteCardPile().Count == 0);
 
             // 4. expect there to be 0 cards in the foundation piles
-            PlayingCardIDListGroup foundationList = game.GetFoundationCardsImmutable();
-            foreach (PlayingCardIDList foundation in foundationList)
+            FoundationCardPileGroup foundationList = game.GetFoundationCardPileGroup();
+            foreach (FoundationCardPile foundation in foundationList)
             {
                 Assert.IsTrue(foundation.Count == 0);
             }
@@ -98,33 +103,33 @@ namespace PoweredOn.CardBox.Games.Solitaire
             game.Deal();
 
             // 1. expect there to be 24 cards in the Stock pile
-            CardIDList stockPile = game.GetStockCardsImmutable();
+            StockCardPile stockPile = game.GetStockCardPile();
             Debug.Log($"stock card count = {stockPile.Count} / expected 24");
             Assert.IsTrue(stockPile.Count == 24);
 
             // 2. expect there to be 0 cards in the waste pile
-            Assert.IsTrue(game.GetWasteCardsImmutable().Count == 0);
+            Assert.IsTrue(game.GetWasteCardPile().Count == 0);
 
             for (var i = 0; i < 24; i++)
             {
                 // 3. expect there to be 1 more card in the waste pile after clicking top stock card
                 game.StockToWaste();
-                Assert.IsTrue(game.GetWasteCardsImmutable().Count == i + 1);
+                Assert.IsTrue(game.GetWasteCardPile().Count == i + 1);
 
                 // 4. expect there to be 1 less card in the stock pile after clicking top stock card
-                Assert.IsTrue(game.GetStockCardsImmutable().Count == 24 - (i + 1));
+                Assert.IsTrue(game.GetStockCardPile().Count == 24 - (i + 1));
             }
 
-            Assert.IsTrue(game.GetWasteCardsImmutable().Count == 24);
-            Assert.IsTrue(game.GetStockCardsImmutable().Count == 0);
+            Assert.IsTrue(game.GetWasteCardPile().Count == 24);
+            Assert.IsTrue(game.GetStockCardPile().Count == 0);
             Debug.Log($"[TEST] TestStockWaste confirmed 24 cards in waste pile and 0 cards in stock pile");
 
             // 5. expect there to be 0 cards in the waste pile after cycling through waste
             game.WasteToStock();
-            Assert.IsTrue(game.GetWasteCardsImmutable().Count == 0);
+            Assert.IsTrue(game.GetWasteCardPile().Count == 0);
 
             // 6. expect there to be 24 cards in the stock pile after cycling through waste
-            Assert.IsTrue(game.GetStockCardsImmutable().Count == 24);
+            Assert.IsTrue(game.GetStockCardPile().Count == 24);
 
             Debug.Log($"[TEST] TestStockWaste confirmed 0 cards in waste pile and 24 in stock pile after cycling back to stock pile");
         }

@@ -18,12 +18,12 @@ namespace PoweredOn.CardBox.PlayingCards
         private MeshRenderer m_MeshRender;
 
         // suit
-        private Suit suit;
+        protected Suit suit;
 
         // rank
-        private Rank rank;
+        protected Rank rank;
 
-        private int deckOrder;
+        protected int deckOrder;
 
         private MonoPlayingCard monoPlayingCard;
 
@@ -89,7 +89,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         public string GetGameObjectName()
         {
-            return GetRank().ToString() + "_of_" + GetSuit().ToString();
+            return GetRank().ToString() + "_of_" + GetSuit().ToString().ToLower();
         }
 
         public GameObject GetGameObject()

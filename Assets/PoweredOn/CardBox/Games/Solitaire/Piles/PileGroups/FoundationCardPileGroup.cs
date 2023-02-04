@@ -11,30 +11,46 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
 {
     public class FoundationCardPileGroup
     {
-        FoundationCardPile[] foundationCardPiles;
+        List<FoundationCardPile> piles;
 
-        FoundationCardPileGroup()
+        public FoundationCardPileGroup()
         {
-            foundationCardPiles = new FoundationCardPile[4];
+            piles = new List<FoundationCardPile>();
             for (int i = 0; i < 4; i++)
             {
-                foundationCardPiles[i] = new FoundationCardPile(i);
+                piles.Add(new FoundationCardPile(i));
             }
         }
 
-        public FoundationCardPileGroup(FoundationCardPile[] foundationCardPiles)
+        public FoundationCardPileGroup(FoundationCardPile[] piles)
         {
-            this.foundationCardPiles = foundationCardPiles;
+            this.piles = new List<FoundationCardPile>(piles);
         }
 
-        public static PlayingCardIDList GetFoundationPlayingCardIDListForSuit(Suit suit)
+        public FoundationCardPileGroup(List<FoundationCardPile> piles)
+        {
+            this.piles = new List<FoundationCardPile>(piles);
+        }
+
+        public FoundationCardPileGroup Clone()
+        {
+            List<FoundationCardPile> newPiles = new List<FoundationCardPile>(4);
+            for (int i = 0; i < 4; i++)
+            {
+                newPiles[i] = piles[i].Clone();
+            }
+
+            return new FoundationCardPileGroup(newPiles);
+        }
+
+        /*public static PlayingCardIDList GetFoundationPlayingCardIDListForSuit(Suit suit)
         {
             return Managers.GameManager.Instance.game.GetFoundationCardsImmutable()[(int)suit];
-        }
+        }*/
 
         public FoundationCardPile GetFoundationCardPileForSuit(Suit suit)
         {
-            return foundationCardPiles[(int)suit];
+            return piles[(int)suit];
         }
 
         public static PlayfieldSpot GetFoundationThatCanAcceptCard(SolitaireCard card)
@@ -60,6 +76,11 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
                 }
             }*/
             return PlayfieldSpot.INVALID;
+        }
+
+        public IEnumerator<FoundationCardPile> GetEnumerator()
+        {
+            return this.piles.GetEnumerator();
         }
     }
 }

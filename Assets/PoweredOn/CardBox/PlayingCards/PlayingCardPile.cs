@@ -11,6 +11,14 @@ namespace PoweredOn.CardBox.PlayingCards
     {
         protected PlayingCardIDList cardList;
 
+        public static PlayingCardPile EMPTY
+        {
+            get
+            {
+                return new PlayingCardPile();
+            }
+        }
+
         public PlayingCardPile()
         {
             this.cardList = new PlayingCardIDList();
@@ -29,6 +37,16 @@ namespace PoweredOn.CardBox.PlayingCards
         public PlayingCardIDList Clone()
         {
             return cardList.Clone();
+        }
+
+        public int Count
+        {
+            get { return cardList.Count; }
+        }
+
+        public SuitRank Last()
+        {
+            return this.cardList.DefaultIfEmpty(SuitRank.NONE).LastOrDefault();
         }
     }
 }

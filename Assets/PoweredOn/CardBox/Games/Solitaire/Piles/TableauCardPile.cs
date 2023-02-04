@@ -9,5 +9,13 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
 {
     public class TableauCardPile : PlayingCardPile
     {
+        public TableauCardPile(PlayingCardIDList cardList) : base(cardList)
+        {
+        }
+
+        public new TableauCardPile Clone()
+        {
+            return new TableauCardPile(cardList.Clone());
+        }
     }
 }

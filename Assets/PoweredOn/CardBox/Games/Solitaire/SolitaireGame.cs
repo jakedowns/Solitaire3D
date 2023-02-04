@@ -13,7 +13,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class SolitaireGame
     {
-        SolitaireDeck deck;
+        // TODO: make a protected getter for this that returns an immutable clone
+        public SolitaireDeck deck;
         public SolitaireDeck BuildDeck()
         {
             deck = new SolitaireDeck();
@@ -43,7 +44,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         PlayingCardIDList handCards;
         PlayingCardIDList deckCards;
 
-        //PlayingCardIDListGroup foundationCards; // old
+        PlayingCardIDListGroup foundationCards; // old
         FoundationCardPileGroup foundationCardPileGroup; // new
 
         private bool autoplaying = false;
@@ -94,6 +95,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }*/
 
+        /*
         public PlayingCardIDList GetStockCardsImmutable()
         {
             return new PlayingCardIDList(stockCards);
@@ -113,6 +115,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             return new PlayingCardIDList(handCards);
         }
+        */
 
         /*public PlayingCardIDListGroup GetFoundationCardsImmutable()
         {
@@ -127,6 +130,36 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public FoundationCardPile GetFoundationCardPileForSuit(Suit suit)
         {
             return this.foundationCardPileGroup.GetFoundationCardPileForSuit(suit);
+        }
+
+        public FoundationCardPileGroup GetFoundationCardPileGroup()
+        {
+            return this.foundationCardPileGroup;
+        }
+
+        public DeckCardPile GetDeckCardPile()
+        {
+            return new DeckCardPile(deckCards);
+        }
+
+        public HandCardPile GetHandCardPile()
+        {
+            return new HandCardPile(handCards);
+        }
+
+        public TableauCardPileGroup GetTableauCardPileGroup()
+        {
+            return new TableauCardPileGroup(tableauCards);
+        }
+
+        public StockCardPile GetStockCardPile()
+        {
+            return new StockCardPile(stockCards);
+        }
+
+        public WasteCardPile GetWasteCardPile()
+        {
+            return new WasteCardPile(wasteCards);
         }
 
         public void NewGame()
@@ -271,6 +304,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // loop through our cards, and give them a new GoalIdentity based on our calculations
             foreach (SolitaireCard card in deck.cards)
             {
+                DebugOutput.Instance.LogWarning("todo: re-enable gameobject code path in mono classes");
+                
                 Transform cardTransform = card.GetGameObject().transform;
 
                 cardTransform.position = Vector3.zero;
@@ -742,7 +777,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             // TODO: make them suit agnostic until first Ace is placed
             foundations = new List<GameObject>(4);
-            int i = 0;
+            /*int i = 0;
             Vector3 foundationOrigin = Vector3.zero;
             foreach (int suit in Enum.GetValues(typeof(Suit)))
             {
@@ -769,7 +804,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     foundations.Add(foundation);
                 }
                 i++;
-            }
+            }*/
 
             
             foundationCardPileGroup = new FoundationCardPileGroup();
@@ -984,7 +1019,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 if (tCardList.Count > 0)
                 {
                     SuitRank topmost = tCardList.Last();
-                    Card topMostCard = deck.GetCardBySuitRank(topmost);
+                    SolitaireCard topMostCard = deck.GetCardBySuitRank(topmost);
                     if (!topMostCard.IsFaceUp)
                     {
                         FlipCardFaceUp(topMostCard);
@@ -1181,11 +1216,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         }
     
-        public FoundationCardPileGroup GetFoundationCardPileGroup()
-        {
-            // TODO: return as clone (immutable)
-            return foundationCardPileGroup; //.Clone();
-        }
+
 
     }
 }

@@ -56,7 +56,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     deckOrder++;
 
-                    /*
+                    
 
                     // generate a string of the game object name based on the current suit & rank
                     // ex: "ace_of_clubs" or "king_of_spades" or "2_of_diamonds"
@@ -69,9 +69,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         continue;
                     }
 
-                    // remove any existing MonoPlayingCard components
-                    MonoPlayingCard[] prevCards = child.GetComponents<MonoPlayingCard>();
-                    foreach (MonoPlayingCard prevCard in prevCards)
+                    // remove any existing MonoSolitaireCard components
+                    MonoSolitaireCard[] prevCards = child.GetComponents<MonoSolitaireCard>();
+                    foreach (MonoSolitaireCard prevCard in prevCards)
                     {
                         GameObject.DestroyImmediate(prevCard);
                     }
@@ -87,7 +87,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // needs to be done AFTER attaching the cardInteractive component to the child
                     newCard.SetCardInteractive(cardInteractive);
 
-                    */
+                    
                 }
             }
         }
