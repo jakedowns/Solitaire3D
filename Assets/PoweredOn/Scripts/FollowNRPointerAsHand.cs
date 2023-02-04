@@ -19,8 +19,8 @@ public class FollowNRPointerAsHand : MonoBehaviour
     private Vector2? previousTouch;
 #nullable disable
     public float currentRotationAngle = 0.0f;
-    public float HAND_ROTATE_ANGLE_INCREMENT = 0.5f;
-    public float DISTANCE_CONTROL_INCREMENT = 0.1f;
+    private float HAND_ROTATE_ANGLE_INCREMENT = 0.5f;
+    private float DISTANCE_CONTROL_INCREMENT = 0.5f;
     private GameObject m_PlayPlaneOffset;
     private Text m_PlayfieldButtonLabel;
     private GameObject m_PlayfieldButton;

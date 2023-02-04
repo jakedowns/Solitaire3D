@@ -8,9 +8,22 @@ namespace PoweredOn
 {
     public class DebugOutput : MonoBehaviour
     {
+        public static DebugOutput Instance { get; private set; }
+        private void Awake()
+        {
+            // If there is an instance, and it's not me, delete myself.
+
+            if (Instance != null && Instance != this)
+            {
+                Destroy(this);
+            }
+            else
+            {
+                Instance = this;
+            }
+        }
         private float timer = 0f;
 
-        DeckManager m_DeckManager;
         Text m_TextComponent;
         List<string> logMessages = new List<string>();
 
@@ -18,11 +31,6 @@ namespace PoweredOn
         void Start()
         {
             //logMessages = new List<string>();
-            m_DeckManager = GameObject.Find("DeckOfCards").GetComponent<DeckManager>();
-            if (m_DeckManager == null)
-            {
-                Debug.LogError("DeckManager not found");
-            }
             m_TextComponent = transform.GetComponent<Text>();
             if(m_TextComponent == null)
             {
@@ -38,7 +46,7 @@ namespace PoweredOn
             {
                 // code to be executed once per second
                 timer = 0f;
-                m_TextComponent.text = m_DeckManager.game.GetDebugText();
+                m_TextComponent.text = GameManager.Instance.game.GetDebugText();
                 m_TextComponent.text += "\n";
                 //foreach (string message in logMessages)
                 for (int i = logMessages.Count - 1; i >= 0; i--)
