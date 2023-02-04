@@ -14,7 +14,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         private PlayfieldSpot _fromSpot;
         private PlayfieldSpot _toSpot;
 
-        public PlayingCard Subject
+        public SolitaireCard Subject
         {
             get
             {

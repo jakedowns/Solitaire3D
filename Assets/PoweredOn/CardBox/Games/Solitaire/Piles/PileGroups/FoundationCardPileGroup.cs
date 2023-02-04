@@ -40,7 +40,7 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
         public static PlayfieldSpot GetFoundationThatCanAcceptCard(SolitaireCard card)
         {
             FoundationCardPileGroup foundationCardPileGroup = Managers.GameManager.Instance.game.GetFoundationCardPileGroup();
-            for (int i = 0; i < foundationCardPileGroup.Count; i++)
+            /*for (int i = 0; i < foundationCardPileGroup.Count; i++)
             {
                 PlayingCardIDList foundationList = foundationCardPileGroup[i];
 
@@ -51,14 +51,14 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
                         return new PlayfieldSpot(PlayfieldArea.FOUNDATION, i, foundationList.Count);
                     }
                 }
-                else if (foundationList.Last().GetSuit() == card.GetSuit())
+                else if (foundationList.Last() == card.GetSuit())
                 {
                     if (foundationList.Last().rank == (int)card.GetRank() - 1)
                     {
                         return (PlayfieldSpot)(i + (int)PlayfieldSpot.Foundation1);
                     }
                 }
-            }
+            }*/
             return PlayfieldSpot.INVALID;
         }
     }

@@ -7,6 +7,7 @@ using PoweredOn.CardBox.Animations;
 using PoweredOn.CardBox.PlayingCards;
 using PoweredOn.CardBox.Games.Solitaire.Piles;
 using UnityEngine;
+using Unity.VisualScripting;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -227,7 +228,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     // NOTE: inside this method, we handle adding SuitRank to the proper Tableau list
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
-                    SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Tableau, pile, round), faceUp, 0.1f * dealtOrder.Count);
+                    SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.1f * dealtOrder.Count);
 
                     //DebugOutput.Instance.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
                 }
@@ -251,7 +252,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 SuitRank cardSuitRank = stockCards[sc];
                 SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
-                SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Stock, sc), false); /* always face down when adding to stock */
+                SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false); /* always face down when adding to stock */
             }
         }
 
@@ -394,7 +395,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // placing it back down
             if (
-                handCard.previousPlayfieldSpot.area != PlayfieldSpot.INVALID)
+                handCard.previousPlayfieldSpot.area != PlayfieldArea.INVALID)
             {
                 if (handCard.previousPlayfieldSpot.area == destinationSpot.area)
                 {
@@ -661,7 +662,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // set the goal identity of each card to the hand
             foreach (SuitRank id in cards)
             {
-                PlayfieldSpot handSpot = new PlayfieldSpot(PlayfieldArea.Hand, i);
+                PlayfieldSpot handSpot = new PlayfieldSpot(PlayfieldArea.HAND, i);
                 SolitaireCard card = deck.GetCardBySuitRank(id);
                 SetCardGoalIDToPlayfieldSpot(card, handSpot, card.IsFaceUp);
                 i++;
@@ -897,7 +898,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         return;
                     }
 
-                case PlayfieldArea.Stock:
+                case PlayfieldArea.STOCK:
                     // enforce only being able to pick up the topmost card:
                     if (stockCards.Count == 0)
                     {
@@ -912,11 +913,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     // move it to the waste pile; face up
                     SetCardGoalIDToPlayfieldSpot(card,
-                        new PlayfieldSpot(PlayfieldArea.Waste, wasteCards.Count), true);
+                        new PlayfieldSpot(PlayfieldArea.WASTE, wasteCards.Count), true);
 
                     return;
 
-                case PlayfieldArea.Foundation:
+                case PlayfieldArea.FOUNDATION:
                     // enforce only being able to pick up the topmost card:
                     if (foundationCards[spot.index].Count == 0)
                     {
@@ -926,7 +927,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     card = deck.GetCardBySuitRank(topCardId);
                     break;
 
-                case PlayfieldArea.Waste:
+                case PlayfieldArea.WASTE:
                     // enforce only being able to pick up the topmost card:
                     if (wasteCards.Count == 0)
                     {
@@ -939,7 +940,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             // this method will add the card to the handCards list
-            SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Hand, 0), true);
+            SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.HAND, 0), true);
         }
 
         public void TryPlaceHandCardToSpot(PlayfieldSpot spot)
@@ -977,7 +978,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void CheckFlipOverTopCardInTableauCardJustLeft(SolitaireCard card)
         {
             // refer back to the tableau we just came from and see if we need to auto-flip over a card
-            if (card.previousPlayfieldSpot.area == PlayfieldArea.Tableau)
+            if (card.previousPlayfieldSpot.area == PlayfieldArea.TABLEAU)
             {
                 PlayingCardIDList tCardList = tableauCards[card.previousPlayfieldSpot.index];
                 if (tCardList.Count > 0)
@@ -994,7 +995,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void OnSingleClickCard(SolitaireCard card)
         {
             DebugOutput.Instance.LogWarning($"on single click card {card}");
-            if (card.playfieldSpot.area == PlayfieldArea.Stock)
+            if (card.playfieldSpot.area == PlayfieldArea.STOCK)
             {
                 // send to waste
                 StockToWaste();
@@ -1108,7 +1109,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             //stockCards.RemoveAt(0);
 
             SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
-            SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.Waste, wasteCards.Count), true);
+            SetCardGoalIDToPlayfieldSpot(card, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCards.Count), true);
         }
 
         public void WasteToStock()
@@ -1179,5 +1180,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
         }
+    
+        public FoundationCardPileGroup GetFoundationCardPileGroup()
+        {
+            // TODO: return as clone (immutable)
+            return foundationCardPileGroup; //.Clone();
+        }
+
     }
 }
