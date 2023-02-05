@@ -61,5 +61,26 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             return IsInvalidSpot(this);
         }
+
+        public static PlayfieldSpot Hand
+        {
+            get
+            {
+                // TODO: could make this smart enough to set the index to the top card in the hand
+                // (for when we add multiple cards to hand)
+                // setting to -1 for now as sort of an uninitialized value
+                return new PlayfieldSpot(PlayfieldArea.HAND, -1);
+            }
+        }
+
+        public static PlayfieldSpot Waste
+        {
+            get
+            {
+                // TODO: could make this smart enough to set the index to the top card in the waste pile
+                // setting to -1 for now as sort of an uninitialized value
+                return new PlayfieldSpot(PlayfieldArea.WASTE, -1);
+            }
+        }
     }
 }

@@ -53,6 +53,8 @@ namespace PoweredOn.CardBox.PlayingCards
 
         public bool IsReadOnly => throw new NotImplementedException();
 
+        public static PlayingCardIDList EMPTY { get { return new PlayingCardIDList(); } }
+
         public void Add(SuitRank item)
         {
             this.list.Add(item);

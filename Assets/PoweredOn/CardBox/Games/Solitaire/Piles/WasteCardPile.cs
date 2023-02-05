@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
-namespace PoweredOn.CardBox.Games.Solitaire.Piles
+namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public class WasteCardPile : PlayingCardPile
+    public class WasteCardPile : SolitaireCardPile
     {
 
         public WasteCardPile() { }
@@ -15,7 +15,12 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
         public WasteCardPile(PlayingCardIDList cardList) : base(cardList)
         {
         }
-        
+
+        public new static WasteCardPile EMPTY
+        {
+            get { return new WasteCardPile(); }
+        }
+
         public new WasteCardPile Clone()
         {
             return new WasteCardPile(cardList.Clone());

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
+using UnityEngine;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -36,7 +37,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
             else
             {
-                isValid = ValidateMove(gameState, move);
+                isValid = IsValidMove(gameState, move);
             }
 
 
@@ -45,27 +46,81 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return new ValidatorResult(isValid, alternatives);
         }
 
-        public bool ValidateMove(SolitaireGameState gameState, SolitaireMove move)
+        public static bool IsValidMove(SolitaireGameState gameState, SolitaireMove move)
         {
-            SolitaireMoveTypeGroup moveTypeGroup = move.GetSolitaireMoveTypeGroup();
+            GameStateFlags bitflags = SolitaireGameState.GetBitFlagsForCurrentGameState(gameState, move);
             SolitaireMoveType moveType = move.GetSolitaireMoveType();
-            switch (moveTypeGroup)
+            SolitaireMoveTypeFromGroup moveFromGroup = move.GetSolitaireMoveTypeFromGroup();
+            SolitaireMoveTypeToGroup moveToGroup = move.GetSolitaireMoveTypeToGroup();
+
+            bool isValid = false; // false by default;
+
+            Debug.Log($"validating moveType: {moveType} with bitflags: {bitflags}");
+
+            //if(moveToGroup == SolitaireMoveTypeToGroup.HAND)
+            if(move.ToSpot.area == PlayfieldArea.HAND)
             {
-                case SolitaireMoveTypeGroup.DECK_TO:
-                    return ValidateDeckToMove(gameState, move);
-                case SolitaireMoveTypeGroup.STOCK_TO:
-                    return ValidateStockToMove(gameState, move);
-                case SolitaireMoveTypeGroup.WASTE_TO:
-                    return ValidateWasteToMove(gameState, move);
-                case SolitaireMoveTypeGroup.HAND_TO:
-                    return ValidateHandToMove(gameState, move);
-                case SolitaireMoveTypeGroup.FOUNDATION_TO:
-                    return ValidateFoundationToMove(gameState, move);
-                case SolitaireMoveTypeGroup.TABLEAU_TO:
-                    return ValidateTableauToMove(gameState, move);
-                case SolitaireMoveTypeGroup.NONE:
-                default:
+                if( (bitflags & GameStateFlags.HandIsEmpty) == 0 )
+                {
+                    Debug.Log($"blocking TO_HAND move, hand is not empty");
+                    Debug.Log($"TODO: allow exception for when we're picking up a SUBSTACK");
                     return false;
+                }
+                else
+                {
+                    // otherwise, i don't think there's any other validation to do
+                    // maybe we could add specifics like... it can't be coming straight from Stock
+                    // and... maybe some additional checks to prevent picking up cards that are face down?
+                    if (move.FromSpot.area == PlayfieldArea.STOCK)
+                    {
+                        Debug.Log($"blocking TO_HAND move, cannot pick up directly from stock");
+                        return false;
+                    }
+                    if (!move.Subject.IsFaceUp)
+                    {
+                        Debug.Log($"blocking TO_HAND move, card was not face up");
+                        return false;
+                    }
+                    
+                    return true;
+                }
+            }
+
+            switch (moveType)
+            {   
+                case SolitaireMoveType.STOCK_TO_WASTE:
+                    // we require hand to be empty, otherwise a HAND_TO move should've been requested
+                    return ( bitflags & GameStateFlags.HandIsEmpty ) == ( GameStateFlags.HandIsEmpty );
+
+                case SolitaireMoveType.WASTE_TO_HAND:
+                    return ( bitflags & GameStateFlags.HandIsEmpty ) == (GameStateFlags.HandIsEmpty);
+
+
+                /* case SolitaireMoveType.StockToAny:
+                     return false;
+                 case SolitaireMoveType.WasteToStock:
+                     return (bitflags & GameStateFlags.StockIsEmpty) == GameStateFlags.StockIsEmpty;
+                 case SolitaireMoveType.WasteToWaste:
+                     return (bitflags & GameStateFlags.WasteCanAcceptCard) == GameStateFlags.WasteCanAcceptCard;
+                 case SolitaireMoveType.WasteToFoundation:
+                     return (bitflags & GameStateFlags.FoundationCanAcceptCard) == GameStateFlags.FoundationCanAcceptCard;
+                 case SolitaireMoveType.WasteToTabealu:
+                     return (bitflags & GameStateFlags.TableauCanAcceptCard) == GameStateFlags.TableauCanAcceptCard;
+                 case SolitaireMoveType.WasteToHand:
+                     return (bitflags & GameStateFlags.HandIsEmpty) == GameStateFlags.HandIsEmpty;
+                 case SolitaireMoveType.WasteToDeck:
+                     return (bitflags & GameStateFlags.IsCollectingDeck) == GameStateFlags.IsCollectingDeck;
+                 case SolitaireMoveType.TableauToStock:
+                     return (bitflags & GameStateFlags.StockIsEmpty) == GameStateFlags.StockIsEmpty;
+                 case SolitaireMoveType.TableauToWaste:
+                     return (bitflags & GameStateFlags.WasteIsEmpty) == GameStateFlags.WasteIsEmpty;
+                 case SolitaireMoveType.TableauToFoundation:
+                     return (bitflags & GameStateFlags.FoundationCanAcceptCard) == GameStateFlags.FoundationCanAcceptCard;
+                 case SolitaireMoveType.TableauToTableau:
+                     return (bitflags & GameStateFlags.TableauCanAcceptCard) == GameStateFlags.TableauCanAcceptCard;*/
+                default:
+                    Debug.LogWarning("unhandled move type: " + moveType);
+                    return isValid;
             }
         }
 

@@ -35,7 +35,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             NRInput.AddClickListener(ControllerHandEnum.Right, ControllerButton.APP, () =>
             {
-                DebugOutput.Instance.Log("ResetWorldMatrix");
+                DebugOutput.Instance?.Log("ResetWorldMatrix");
                 var poseTracker = NRSessionManager.Instance.NRHMDPoseTracker;
                 poseTracker.ResetWorldMatrix();
             });

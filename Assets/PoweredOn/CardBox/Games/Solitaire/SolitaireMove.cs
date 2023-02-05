@@ -51,9 +51,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return SolitaireMoveSet.GetSolitaireMoveTypeForMove(this);
         }
 
-        public SolitaireMoveTypeGroup GetSolitaireMoveTypeGroup()
+        public SolitaireMoveTypeFromGroup GetSolitaireMoveTypeFromGroup()
         {
-            return SolitaireMoveSet.GetSolitaireMoveTypeGroup(this);
+            return SolitaireMoveSet.GetSolitaireMoveTypeFromGroup(this);
+        }
+
+        public SolitaireMoveTypeToGroup GetSolitaireMoveTypeToGroup()
+        {
+            return SolitaireMoveSet.GetSolitaireMoveTypeToGroup(this);
         }
 
         public override string ToString()

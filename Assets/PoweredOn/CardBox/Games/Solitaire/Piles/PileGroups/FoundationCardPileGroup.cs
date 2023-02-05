@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
-using PoweredOn.CardBox.Games.Solitaire.Piles;
 
-namespace PoweredOn.CardBox.Games.Solitaire.Piles
+namespace PoweredOn.CardBox.Games.Solitaire    
 {
-    public class FoundationCardPileGroup
+    public class FoundationCardPileGroup: SolitaireCardPileGroup
     {
-        List<FoundationCardPile> piles;
+        List<FoundationCardPile> piles = new List<FoundationCardPile>();
 
         public FoundationCardPileGroup()
         {
@@ -34,19 +32,20 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
 
         public FoundationCardPileGroup Clone()
         {
-            List<FoundationCardPile> newPiles = new List<FoundationCardPile>(4);
-            for (int i = 0; i < 4; i++)
+            List<FoundationCardPile> newPiles = new List<FoundationCardPile>();
+            UnityEngine.Debug.Log($"trying to clone {newPiles.Count} {this.piles.Count}");
+            for (int i = 0; i < this.piles.Count; i++)
             {
-                newPiles[i] = piles[i].Clone();
+                newPiles.Add(piles[i].Clone());
             }
 
             return new FoundationCardPileGroup(newPiles);
         }
 
-        /*public static PlayingCardIDList GetFoundationPlayingCardIDListForSuit(Suit suit)
+        public static FoundationCardPileGroup EMPTY
         {
-            return Managers.GameManager.Instance.game.GetFoundationCardsImmutable()[(int)suit];
-        }*/
+            get { return new FoundationCardPileGroup(); }
+        }
 
         public FoundationCardPile GetFoundationCardPileForSuit(Suit suit)
         {
@@ -78,9 +77,15 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
             return PlayfieldSpot.INVALID;
         }
 
-        public IEnumerator<FoundationCardPile> GetEnumerator()
+        public new IEnumerator<FoundationCardPile> GetEnumerator()
         {
             return this.piles.GetEnumerator();
+        }
+
+        public new FoundationCardPile this[int index]
+        {
+            get => this.piles[index];
+            set => this.piles[index] = value;
         }
     }
 }

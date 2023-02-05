@@ -89,11 +89,15 @@ namespace PoweredOn.CardBox.PlayingCards
 
         public string GetGameObjectName()
         {
-            return GetRank().ToString() + "_of_" + GetSuit().ToString().ToLower();
+            return GetRank().ToString().ToLower() + "_of_" + GetSuit().ToString().ToLower();
         }
 
         public GameObject GetGameObject()
         {
+            if(this.selfGameObject == null)
+            {
+                DebugOutput.Instance?.LogWarning($"PlayingCard {this} has no GameObject Set");
+            }
             return this.selfGameObject;
         }
 

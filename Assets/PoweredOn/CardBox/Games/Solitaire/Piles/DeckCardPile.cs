@@ -5,13 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
+using UnityEngine;
 
-namespace PoweredOn.CardBox.Games.Solitaire.Piles
+namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public class DeckCardPile : PlayingCardPile
+    public class DeckCardPile : SolitaireCardPile
     {
+        public DeckCardPile() { }
+        public DeckCardPile(DeckCardPile pile) {
+            cardList = pile.cardList.Clone();
+        }
         public DeckCardPile(PlayingCardIDList cardList) : base(cardList)
         {
+        }
+
+        public new static DeckCardPile EMPTY
+        {
+            get { return new DeckCardPile(); }
         }
 
         public new DeckCardPile Clone()

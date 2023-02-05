@@ -5,13 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
-namespace PoweredOn.CardBox.Games.Solitaire.Piles
+namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public class StockCardPile : PlayingCardPile
+    public class StockCardPile : SolitaireCardPile
     {
-
+        public StockCardPile() { }
         public StockCardPile(PlayingCardIDList idList) :base(idList) 
         { 
+        }
+
+        public new static StockCardPile EMPTY
+        {
+            get { return new StockCardPile(); }
         }
 
         public new StockCardPile Clone()

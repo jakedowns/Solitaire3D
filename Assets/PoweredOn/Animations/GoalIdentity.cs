@@ -17,7 +17,26 @@ namespace PoweredOn.CardBox.Animations
         private Vector3 _scale;
         private Vector3 _offset;
 
-        public GameObject gameObject;
+        private GameObject _gameObject;
+        public GameObject gameObject
+        {
+            get
+            {
+                if(this._gameObject == null)
+                {
+                    // NOTE: this actually spams object tree :G
+                    // need some kind of stub object :(
+                    // can you create one that's temp and DOESN'T get added to tree?
+                    return null;
+                    //return new GameObject(); // TODO: make a reusable "Invalid" or "Missing" or Faux/Stub/Placeholder game object for when we don't have access but we still want to run tests without the code blowing up... TODO: completely isolate all gameobject related code to an abstraction that can be swapped when we're running SolitaireGame.TestGame's
+                }
+                return this._gameObject;
+            }
+            set
+            {
+                this._gameObject = value;
+            }
+        }
 
 #nullable enable
         public GameObject? goalObject;

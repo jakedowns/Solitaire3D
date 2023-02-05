@@ -38,6 +38,15 @@ public class GameManagerGui : Editor
             }
         }
 
+        if(GUILayout.Button("Fan Deck"))
+        {
+            myScript.FanCardsOut();
+        }
+        if(GUILayout.Button("Collect Deck"))
+        {
+            myScript.CollectCardsToDeck();
+        }
+
     }
 }
 #endif

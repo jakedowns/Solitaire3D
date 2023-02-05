@@ -6,12 +6,25 @@ using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
 
-namespace PoweredOn.CardBox.Games.Solitaire.Piles
+namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public class HandCardPile : PlayingCardPile
+    public class HandCardPile : SolitaireCardPile
     {
+
+        private new SolitaireGameObject gameObjectType = SolitaireGameObject.Hand_Base;
+
+        public HandCardPile()
+        {
+            
+        }
+        
         public HandCardPile(PlayingCardIDList cardList) : base(cardList)
         {
+        }
+
+        public new static HandCardPile EMPTY
+        {
+            get { return new HandCardPile(); }
         }
 
         public new HandCardPile Clone()

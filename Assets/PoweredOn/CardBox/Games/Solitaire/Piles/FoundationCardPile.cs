@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoweredOn.CardBox.Games.Solitaire.Piles
+namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public class FoundationCardPile : PlayingCardPile
+    public class FoundationCardPile : SolitaireCardPile
     {
         private int _index;
 

@@ -7,11 +7,20 @@ using System.Threading.Tasks;
 using PoweredOn.CardBox.PlayingCards;
 using Unity.VisualScripting;
 
-namespace PoweredOn.CardBox.Games.Solitaire.Piles
+namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public class TableauCardPileGroup : PlayingCardPileGroup
+    public class TableauCardPileGroup : SolitaireCardPileGroup
     {
         List<TableauCardPile> piles;
+
+        public TableauCardPileGroup()
+        {
+            this.piles = new List<TableauCardPile>();
+            for(int i = 0; i < 7; i++)
+            {
+                this.piles.Add(TableauCardPile.EMPTY);
+            }
+        }
         public TableauCardPileGroup(TableauCardPile[] tableauCardPiles)
         {
             this.piles = new List<TableauCardPile>(tableauCardPiles);
@@ -22,7 +31,7 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
             piles = new List<TableauCardPile>(group.Count);
             for (int i = 0; i < group.Count; i++)
             {
-                piles[i] = new TableauCardPile(group[i]);
+                piles[i] = new TableauCardPile(group[i], i);
             }
         }
 
@@ -31,7 +40,7 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
             piles = new List<TableauCardPile>(tableauCardPileIDLists.Count());
             for (int i = 0; i < piles.Count; i++)
             {
-                piles[i] = new TableauCardPile(tableauCardPileIDLists[i]);
+                piles[i] = new TableauCardPile(tableauCardPileIDLists[i], i);
             }
         }
 
@@ -46,24 +55,20 @@ namespace PoweredOn.CardBox.Games.Solitaire.Piles
             return new TableauCardPileGroup(newPiles);
         }
 
-
-        public int Count
-        {
-            get
-            {
-                return this.piles.Count();
-            }
-        }
-
-        public TableauCardPile this[int index]
+        public new TableauCardPile this[int index]
         {
             get => this.piles[index];
             set => this.piles[index] = value;
         }
 
-        public IEnumerator<TableauCardPile> GetEnumerator()
+        public new IEnumerator<TableauCardPile> GetEnumerator()
         {
             return this.piles.GetEnumerator();
+        }
+
+        public new static TableauCardPileGroup EMPTY
+        {
+            get { return new TableauCardPileGroup(); }
         }
     }
 }

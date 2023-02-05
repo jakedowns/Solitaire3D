@@ -46,7 +46,10 @@ namespace PoweredOn
             {
                 // code to be executed once per second
                 timer = 0f;
-                m_TextComponent.text = GameManager.Instance.game.GetDebugText();
+                if(GameManager.Instance != null)
+                {
+                    m_TextComponent.text = GameManager.Instance.game.GetDebugText();
+                }
                 m_TextComponent.text += "\n";
                 //foreach (string message in logMessages)
                 for (int i = logMessages.Count - 1; i >= 0; i--)

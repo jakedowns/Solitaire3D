@@ -10,12 +10,22 @@ using Unity.Burst;
 using PoweredOn.CardBox.Animations;
 using PoweredOn.CardBox.PlayingCards;
 using PoweredOn.CardBox.Games.Solitaire;
+using PoweredOn.CardBox.Games;
 
 namespace PoweredOn.Managers
 {
+    /*
+        This singleton class holds references to all the game objects
+        so that presentation logic can be decoupled from game-business logic
+    
+        
+     */
+    [ExecuteInEditMode]
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { get; private set; }
+
+        public MonoSolitaireDeck monoDeck;
         private void Awake()
         {
             // If there is an instance, and it's not me, delete myself.
@@ -28,6 +38,10 @@ namespace PoweredOn.Managers
             {
                 Instance = this;
             }
+
+            game = new SolitaireGame();
+            if (DebugOutput.Instance == null)
+                game.SetToTestMode();
         }
 
         public SolitaireGame game;
@@ -47,7 +61,6 @@ namespace PoweredOn.Managers
         {
             m_animateCardsRoutine = null;
 
-            game = new SolitaireGame();
             game.NewGame();
 
             // Now that the cards are instantiated, we want to update the goal position of the card GameObjects to match their deck order
@@ -62,6 +75,26 @@ namespace PoweredOn.Managers
             // TODO: add a StopCoroutine we can call via the UI
             RefreshAnimationCoroutine();
         }
+
+        public void FanCardsOut()
+        {
+            if (game == null)
+            {
+                game = new SolitaireGame();
+                game.NewGame();
+            }
+            game.deck.FanCardsOut();
+        }
+        public void CollectCardsToDeck()
+        {
+            if (game == null)
+            {
+                game = new SolitaireGame();
+                game.NewGame();
+            }
+            game.deck.CollectCardsToDeck();
+        }
+
 
         public void RefreshAnimationCoroutine()
         {
@@ -191,7 +224,12 @@ namespace PoweredOn.Managers
                 for (int i = 0; i < game.deck.cards.Count; i++)
                 {
                     GoalIdentity goalID = game.deck.cards[i].GetGoalIdentity();
-                    Transform cardTX = game.deck.cards[i].GetGameObject().transform;
+                    GameObject cardGameObj = game.deck.cards[i].GetGameObject();
+                    if(cardGameObj == null)
+                    {
+                        continue;
+                    }
+                    Transform cardTX = cardGameObj.transform;
                     
                     startPositions[i] = cardTX.localPosition;
                     startRotations[i] = cardTX.localRotation;
@@ -240,10 +278,14 @@ namespace PoweredOn.Managers
                 for (int i = 0; i < game.deck.cards.Count; i++)
                 {
                     // NOTE: the lerp function writes back to the startX arrays with the lerped values
-                    Transform cardTx = game.deck.cards[i].GetGameObject().transform;
-                    cardTx.localPosition = job.startPositions[i];
-                    cardTx.localRotation = job.startRotations[i];
-                    cardTx.localScale = job.startScales[i];
+                    GameObject cardGO = game.deck.cards[i].GetGameObject();
+                    if (cardGO != null)
+                    {
+                        Transform cardTx = cardGO.transform;
+                        cardTx.localPosition = job.startPositions[i];
+                        cardTx.localRotation = job.startRotations[i];
+                        cardTx.localScale = job.startScales[i];
+                    }
                 }
 
                 yield return new WaitForFixedUpdate();
@@ -266,7 +308,7 @@ namespace PoweredOn.Managers
 
                         if (i == 0)
                         {
-                            DebugOutput.Instance.Log(card.GetGameObjectName() + " " + goal.position);
+                            DebugOutput.Instance?.Log(card.GetGameObjectName() + " " + goal.position);
                         }
 
                         Transform card_tx = card.GetGameObject().transform;
@@ -304,17 +346,12 @@ namespace PoweredOn.Managers
 
         public void NewGame()
         {
-            game = new SolitaireGame();
             game.NewGame();
-        }
-
-        public void Collect()
-        {
-            game.SetCardGoalsToDeckPositions();
         }
 
         public void UIRandomize()
         {
+            // TODO: move this off game and into Deck
             game.SetCardGoalsToRandomPositions();
         }
         
@@ -330,7 +367,7 @@ namespace PoweredOn.Managers
             foreach(SuitRank id in cards)
             {
                 SolitaireCard card = GetCardBySuitRank(id);
-                SetCardGoalIDToPlayfieldSpot(card, spot, card.IsFaceUp); // retain current face-up-ness
+                MoveCardToNewSpot(card, spot, card.IsFaceUp); // retain current face-up-ness
             }
         }*/
 
@@ -344,10 +381,24 @@ namespace PoweredOn.Managers
         // Update is called once per frame
         void Update()
         {
+            if (Input.GetMouseButtonDown(0))
+            {
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit, 100.0f))
+                {
+                    Debug.Log("You selected the " + hit.transform.name); // ensure you picked right object
+                }
+                else
+                {
+                    Debug.Log("you clicked NOTHING");
+                }
+            }
+            
             //if (!m_isDealt)
             //{
-                // lock the deck to the players hand to start?
-                // TODO: maybe they should pick it up first?
+            // lock the deck to the players hand to start?
+            // TODO: maybe they should pick it up first?
             //}
             // CheckCardAnimationsShouldPlay();   
         }

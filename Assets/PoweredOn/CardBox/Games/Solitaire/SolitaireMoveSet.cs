@@ -6,16 +6,28 @@ using System.Threading.Tasks;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public enum SolitaireMoveTypeGroup
+    public enum SolitaireMoveTypeFromGroup
     {
-        DECK_TO,
-        STOCK_TO,
-        WASTE_TO,
-        FOUNDATION_TO,
-        TABLEAU_TO,
-        HAND_TO,
+        DECK,
+        STOCK,
+        WASTE,
+        FOUNDATION,
+        TABLEAU,
+        HAND,
         NONE
     }
+
+    public enum SolitaireMoveTypeToGroup
+    {
+        DECK,
+        STOCK,
+        WASTE,
+        FOUNDATION,
+        TABLEAU,
+        HAND,
+        NONE
+    }
+    
     public enum SolitaireMoveType
     {
         // all permutations of each of these to eachother, or themselves
@@ -80,15 +92,26 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 return SolitaireMoveType.NONE;
         }
 
-        public static SolitaireMoveTypeGroup GetSolitaireMoveTypeGroup(SolitaireMove move)
+        public static SolitaireMoveTypeFromGroup GetSolitaireMoveTypeFromGroup(SolitaireMove move)
         {
             string from = Enum.GetName(typeof(PlayfieldArea), move.FromSpot.area);
-            SolitaireMoveTypeGroup type;
-            var result = Enum.TryParse<SolitaireMoveTypeGroup>($"{from}_TO", true, out type);
+            SolitaireMoveTypeFromGroup type;
+            var result = Enum.TryParse<SolitaireMoveTypeFromGroup>($"{from}", true, out type);
             if (result)
                 return type;
             else
-                return SolitaireMoveTypeGroup.NONE;
+                return SolitaireMoveTypeFromGroup.NONE;
+        }
+
+        public static SolitaireMoveTypeToGroup GetSolitaireMoveTypeToGroup(SolitaireMove move)
+        {
+            string to = Enum.GetName(typeof(PlayfieldArea), move.ToSpot.area);
+            SolitaireMoveTypeToGroup type;
+            var result = Enum.TryParse<SolitaireMoveTypeToGroup>($"{to}", true, out type);
+            if (result)
+                return type;
+            else
+                return SolitaireMoveTypeToGroup.NONE;
         }
     }
 }

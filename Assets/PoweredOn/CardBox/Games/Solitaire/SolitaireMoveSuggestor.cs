@@ -1,5 +1,4 @@
-﻿using PoweredOn.CardBox.Games.Solitaire.Piles;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
