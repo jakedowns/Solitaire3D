@@ -12,7 +12,7 @@ using PoweredOn.Managers;
 namespace PoweredOn.CardBox.Games.Solitaire
 {
     // SolitairePlayingCardPileBase ?
-    public class MonoSolitaireCardPileBase: MonoPlayingCardPileBase
+    public class MonoSolitaireCardPileBase: MonoPlayingCardPileBase, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         private PlayingCardPile playingCardPile;
 

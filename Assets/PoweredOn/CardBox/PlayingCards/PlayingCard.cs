@@ -29,7 +29,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         private SuitRank suitRank;
 
-        private GameObject selfGameObject;
+        protected GameObject selfGameObject;
 
         //public CardAnimation animation;
 
@@ -67,7 +67,7 @@ namespace PoweredOn.CardBox.PlayingCards
             return this.suitRank;
         }
 
-        public void SetMonoPlayingCard(MonoPlayingCard monoPlayingCard)
+        public void SetMonoCard(MonoPlayingCard monoPlayingCard)
         {
             this.monoPlayingCard = monoPlayingCard;
             this.selfGameObject = monoPlayingCard.GetGameObject();

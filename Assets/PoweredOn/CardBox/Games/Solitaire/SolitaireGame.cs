@@ -63,12 +63,25 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public GameObject GetGameObjectByType(SolitaireGameObject gameObjectType)
         {
+            if(gameObjectType == SolitaireGameObject.None)
+            {
+                Debug.LogWarning("Requested None SolitaireGameObject");
+                return null;
+            }
+            //Debug.LogWarning("[GetGameObjectByType] IsRunningInTestMode? " + IsRunningInTestMode);
             if (IsRunningInTestMode)
             {
                 //return new GameObject(); // this spams tree with objects
                 return null; 
             }
-            return gameObjectReferences[gameObjectType];
+            var heldReference = gameObjectReferences?[gameObjectType];
+            if(heldReference == null)
+            {
+                Debug.LogError($"{gameObjectType} missing from gameObjectReferences");
+            }
+            /*string heldRefStr = (heldReference == null) ? "false" : "true";
+            Debug.LogWarning($"held reference for type? {heldRefStr} {gameObjectType}");*/
+            return heldReference;
         }
 
         // TODO: these constants should probably be moved to a config file
@@ -434,7 +447,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // this method is being refactored...
         public void MoveCardToNewSpot(SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f)
         {
-            if(runningInTestMode) Debug.Log($"MoveCardToNewSpot {card.GetGameObjectName()} from {card.playfieldSpot} to {spot} faceup:{faceUp} delay:{delay}");
+            //if(runningInTestMode) Debug.Log($"MoveCardToNewSpot {card.GetGameObjectName()} from {card.playfieldSpot} to {spot} faceup:{faceUp} delay:{delay}");
             moveLog.Add(new SolitaireMove(card, card.previousPlayfieldSpot, spot));
 
             if (card.playfieldSpot.area != PlayfieldArea.INVALID)
@@ -451,10 +464,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
-
-            GoalIdentity goalID = new(card.GetGameObject(), Vector3.zero, Quaternion.identity, Vector3.one);
-            Transform cardTX = card.GetGameObject()?.transform ?? new GameObject().transform;
+            GameObject cardGO = card.GetGameObject();
+            GoalIdentity goalID = null;
+            Transform cardTX;
             Vector3 gPos = Vector3.zero;
+            if (cardGO != null) { 
+                goalID = new(cardGO, Vector3.zero, Quaternion.identity, Vector3.one);
+                cardTX = cardGO.transform;
+            }
 
             switch (spot.area)
             {
@@ -463,7 +480,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     stockCardPile.Add(card.GetSuitRank());
                     // todo: move this per-pile offset logic into the different pile types
                     // like stockCardPile.GetGoalIDAsCard(card) // returns the proper goal for the card based on it's position in the pile
-                    if (stockCardPile.gameObject != null)
+                    if (goalID != null && stockCardPile.gameObject != null)
                     {
                         gPos = stockCardPile.gameObject.transform.position;
                         gPos.z = (-0.1f) + (stockCardPile.Count * -CARD_THICKNESS);
@@ -475,7 +492,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     
                 case PlayfieldArea.WASTE:
                     wasteCardPile.Add(card.GetSuitRank());
-                    if (wasteCardPile.gameObject != null)
+                    if (goalID != null && wasteCardPile.gameObject != null)
                     {
                         gPos = wasteCardPile.gameObject.transform.position;
                         goalID.SetGoalPositionFromWorldPosition(gPos);
@@ -491,7 +508,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case PlayfieldArea.FOUNDATION:
                     foundationCardPileGroup[spot.index].Add(card.GetSuitRank());
                     var baseGO = foundationCardPileGroup[spot.index].gameObject;
-                    if (baseGO != null)
+                    if (goalID != null && baseGO != null)
                     {
                         gPos = baseGO.transform.position;
                         gPos.z = foundationCardPileGroup[spot.index].Count * CARD_THICKNESS;
@@ -502,7 +519,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     
                 case PlayfieldArea.TABLEAU:
                     tableauCardPileGroup[spot.index].Add(card.GetSuitRank());
-                    if (tableauCardPileGroup[spot.index].gameObject != null)
+                    if (goalID != null && tableauCardPileGroup[spot.index].gameObject != null)
                     {
                         gPos = tableauCardPileGroup[spot.index].gameObject.transform.position;
                         gPos.z = (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS;
@@ -518,7 +535,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     handCardPile.Add(card.GetSuitRank());
                     DebugOutput.Instance?.Log("added card to hand " + handCardPile.Count);
                     //var hand = GetGameObjectByType(SolitaireGameObject.Hand_Base);
-                    if (card.GetGameObject() != null && handCardPile.gameObject != null)
+                    if (goalID != null && card.GetGameObject() != null && handCardPile.gameObject != null)
                     {
                         goalID = new GoalIdentity(card.GetGameObject(), handCardPile.gameObject, new Vector3(0.0f, -1.0f, 0.0f));
                     }
@@ -527,7 +544,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     
                 case PlayfieldArea.DECK:
                     deck.AddCardToDeck(card.GetSuitRank());
-                    if (card.GetGameObject() != null && deck.DeckCardPile.gameObject != null)
+                    if (goalID != null && card.GetGameObject() != null && deck.DeckCardPile.gameObject != null)
                     {
                         goalID = new GoalIdentity(card.GetGameObject(), deck.DeckCardPile.gameObject);
                     }
@@ -536,8 +553,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // z-axis rotation is temporary until i fix the orientation of the mesh in blender
             Quaternion[] options = new Quaternion[2] { Quaternion.Euler(0, 0, 90), CARD_DEFAULT_ROTATION };
-            goalID.rotation = (spot.area == PlayfieldArea.HAND) ? (faceUp ? options[0] : options[1]) : (faceUp ? options[1] : options[0]);
-            goalID.SetDelay(delay);
+            if(goalID != null)
+            {
+                goalID.rotation = (spot.area == PlayfieldArea.HAND) ? (faceUp ? options[0] : options[1]) : (faceUp ? options[1] : options[0]);
+                goalID.SetDelay(delay);
+            }
             card.SetGoalIdentity(goalID);
             card.SetPlayfieldSpot(spot);
             card.SetIsFaceUp(faceUp);
@@ -687,14 +707,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void UpdateGameObjectReferences()
         {
+            Debug.LogWarning("[UpdatingGameObjectReferences] IsRunningInTestMode:"+IsRunningInTestMode);
             gameObjectReferences = new Dictionary<SolitaireGameObject, GameObject>();
 
-            if (DebugOutput.Instance == null)
+            if (IsRunningInTestMode)
             {
-                // we're running in the editor and don't have our full access to things
-                // just return 
+                Debug.LogWarning("[Skipping updating references]");
                 return;
             }
+            
             // TODO Change to FindObjectOfType
             var stock = GameObject.Find("PlayPlane/PlayPlaneOffset/Stock");
             if (stock == null)
@@ -716,9 +737,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             var deckOfCards = GameObject.Find("DeckOfCards");
             if (deckOfCards == null)
+            {
+                Debug.LogError("DeckOfCards game object not found?!");
                 DebugOutput.Instance?.LogError("deckOfCards not found");
+            }
             else
+            {
+                Debug.LogWarning("L@@K: i set deck_base to deckOfCards");
                 gameObjectReferences[SolitaireGameObject.Deck_Base] = deckOfCards;
+            }
         }
 
 
@@ -739,7 +766,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
             foreach (int suit in Enum.GetValues(typeof(Suit)))
             {
                 string suitName = Enum.GetName(typeof(Suit), suit);
-                string goName = "PlayPlane/PlayPlaneOffset/Foundations/" + suitName;
+                if(suitName.ToLower() == "none")
+                {
+                    continue;
+                }
+                string goName = "PlayPlane/PlayPlaneOffset/Foundations/" + suitName.ToLower();
                 // TODO Change to FindObjectOfType
                 GameObject foundation = GameObject.Find(goName);
                 if (foundation == null)

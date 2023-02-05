@@ -9,20 +9,23 @@ namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class FoundationCardPile : SolitaireCardPile
     {
-        private int _index;
+        //private int pile_index;
 
-        public FoundationCardPile(int index)
+        public FoundationCardPile(int index) : base()
         {
-            this._index = index;
+            this.pile_index = index;
         }
 
-        public FoundationCardPile(PlayingCardIDList cardList) : base(cardList)
+        public FoundationCardPile(PlayingCardIDList cardList, int pile_index) : base(cardList, pile_index)
         {
+            string typeName = $"Foundation{pile_index}_Base";
+            SolitaireGameObject theType = (SolitaireGameObject)Enum.Parse(typeof(SolitaireGameObject), typeName);
+            this.gameObjectType = theType;
         }
 
         public new FoundationCardPile Clone()
         {
-            return new FoundationCardPile(cardList.Clone());
+            return new FoundationCardPile(cardList.Clone(), this.pile_index);
         }
         public bool CanAcceptCard(SolitaireCard card)
         {
@@ -46,7 +49,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         
         public PlayfieldSpot GetPlayfieldSpot()
         {
-           return new PlayfieldSpot(PlayfieldArea.FOUNDATION, _index);
+           return new PlayfieldSpot(PlayfieldArea.FOUNDATION, pile_index);
         }
     }
 }

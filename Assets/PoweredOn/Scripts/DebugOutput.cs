@@ -46,9 +46,13 @@ namespace PoweredOn
             {
                 // code to be executed once per second
                 timer = 0f;
-                if(GameManager.Instance != null)
+                if (GameManager.Instance != null && GameManager.Instance.game != null)
                 {
                     m_TextComponent.text = GameManager.Instance.game.GetDebugText();
+                }
+                else
+                {
+                    Debug.LogWarning("game manager instance game missing");
                 }
                 m_TextComponent.text += "\n";
                 //foreach (string message in logMessages)

@@ -11,6 +11,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class DeckCardPile : SolitaireCardPile
     {
+        public new const SolitaireGameObject gameObjectType = SolitaireGameObject.Deck_Base;
         public DeckCardPile() { }
         public DeckCardPile(DeckCardPile pile) {
             cardList = pile.cardList.Clone();

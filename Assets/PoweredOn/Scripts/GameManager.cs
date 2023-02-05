@@ -15,12 +15,11 @@ using PoweredOn.CardBox.Games;
 namespace PoweredOn.Managers
 {
     /*
-        This singleton class holds references to all the game objects
-        so that presentation logic can be decoupled from game-business logic
-    
+        
+        This singleton instance should be globally available so we don't have to pass around game references to subclassses
         
      */
-    [ExecuteInEditMode]
+    /*[ExecuteInEditMode]*/
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { get; private set; }
@@ -41,7 +40,10 @@ namespace PoweredOn.Managers
 
             game = new SolitaireGame();
             if (DebugOutput.Instance == null)
-                game.SetToTestMode();
+            {
+                Debug.LogWarning("DebugOutput.Instance is null, should we set test mode here?");
+                //game.SetToTestMode();
+            }
         }
 
         public SolitaireGame game;
@@ -59,6 +61,10 @@ namespace PoweredOn.Managers
         // Start is called before the first frame update
         void Start()
         {
+            if(DebugOutput.Instance == null)
+            {
+                Debug.LogWarning("GameManager [Start] DebugOutput.Instance is still null.");
+            }
             m_animateCardsRoutine = null;
 
             game.NewGame();
@@ -92,7 +98,18 @@ namespace PoweredOn.Managers
                 game = new SolitaireGame();
                 game.NewGame();
             }
-            game.deck.CollectCardsToDeck();
+            if (game.deck == null)
+            {
+                game.Deal();
+            }
+            if(game == null || game.deck == null)
+            {
+                Debug.LogError("CollectCardsToDeck: game or game deck missing");
+            }
+            else
+            {
+                game.deck.CollectCardsToDeck();
+            }
         }
 
 

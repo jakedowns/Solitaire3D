@@ -18,7 +18,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             this.piles = new List<TableauCardPile>();
             for(int i = 0; i < 7; i++)
             {
-                this.piles.Add(TableauCardPile.EMPTY);
+                this.piles.Add(new TableauCardPile(new PlayingCardIDList(), i));
             }
         }
         public TableauCardPileGroup(TableauCardPile[] tableauCardPiles)
@@ -66,7 +66,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return this.piles.GetEnumerator();
         }
 
-        public new static TableauCardPileGroup EMPTY
+        public static TableauCardPileGroup EMPTY
         {
             get { return new TableauCardPileGroup(); }
         }

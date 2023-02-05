@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
+using Unity.VisualScripting;
+
 namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class TableauCardPile : SolitaireCardPile
@@ -28,7 +30,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public TableauCardPile(PlayingCardIDList cardList, int pile_index) : base(cardList, pile_index)
         {
-            
+            if(pile_index == -1)
+            {
+                UnityEngine.Debug.LogWarning("tab card pile with index of -1 created. are you sure?");
+            }
+            else
+            {
+                string typeName = $"Tableau{pile_index+1}_Base";
+                SolitaireGameObject theType = (SolitaireGameObject)Enum.Parse(typeof(SolitaireGameObject), typeName);
+                this.gameObjectType = theType;
+            }
         }
 
         public new TableauCardPile Clone()

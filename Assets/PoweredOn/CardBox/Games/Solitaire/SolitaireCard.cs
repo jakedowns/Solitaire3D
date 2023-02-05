@@ -50,6 +50,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void SetMonoCard(MonoSolitaireCard monoCard)
         {
             this.monoCard = monoCard;
+            this.selfGameObject = monoCard.GetGameObject();
         }
         public void SetPosition(Vector3 position)
         {

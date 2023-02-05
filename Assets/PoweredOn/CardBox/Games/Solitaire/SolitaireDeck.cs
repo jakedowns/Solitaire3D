@@ -22,7 +22,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
          * see: SolitaireGame.GetGameObjectByType(SolitaireGameObject)
          * @see SolitaireGame.GetGameObjectByType(SolitaireGameObject)
          **/
-        public const SolitaireGameObject baseGameObjectType = SolitaireGameObject.Deck_Base;
+        public new const SolitaireGameObject gameObjectType = SolitaireGameObject.Deck_Base;
 
         private SolitaireGame game;
         
@@ -353,8 +353,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // with the 51st deck position being the top
         public void CollectCardsToDeck()
         {
+            string typeName = Enum.GetName(typeof(SolitaireGameObject), (SolitaireGameObject)gameObjectType);
+            Debug.LogWarning($"deck collect cards to deck {typeName} {this.gameObject?.name ?? "not-found"}");
             // get the deck world position
-            GameObject go = this.gameObject;
+            GameObject go = this.game.GetGameObjectByType((SolitaireGameObject)gameObjectType);
             if(go == null)
             {
                 Debug.LogWarning("Solitaire Deck has no game object?");
