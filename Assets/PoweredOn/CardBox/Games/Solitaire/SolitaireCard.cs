@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using PoweredOn.CardBox.PlayingCards;
 using UnityEngine;
+using UnityEngine.EventSystems;
+
 namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class SolitaireCard : PlayingCard

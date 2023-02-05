@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public class MonoSolitaireCard: MonoPlayingCard
+    public class MonoSolitaireCard: MonoPlayingCard, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         private SolitaireCard card;
 

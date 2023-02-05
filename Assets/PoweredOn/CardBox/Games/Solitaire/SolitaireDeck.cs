@@ -25,7 +25,26 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public new const SolitaireGameObject gameObjectType = SolitaireGameObject.Deck_Base;
 
         private SolitaireGame game;
-        
+
+        GameManager gmInstance {
+            get
+            {
+                var instance = GameManager.Instance ?? GameObject.FindObjectOfType<GameManager>();
+                if(instance == null)
+                {
+                    Debug.LogError("instance STILL null???");
+                }
+                if(instance?.game == null)
+                {
+                    Debug.LogError("instance isn't but game is STILL null???");
+
+                    // try start new game
+                    instance.NewGame();
+                }
+                return instance;
+            }
+        }
+
         public List<SolitaireCard> cards;
         Dictionary<SuitRank, int> cardIndexLookup;
         
@@ -127,7 +146,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
                 else
                 {
-                    var goDeck = GameManager.Instance.game.GetGameObjectByType(SolitaireGameObject.Deck_Base);
+                    
+                    var goDeck = gmInstance.game.GetGameObjectByType(SolitaireGameObject.Deck_Base);
                     if ((int)suitRank.rank == 0 || (int)suitRank.rank > 7)
                     {
                         // texture group 2 (empty) 9_ace

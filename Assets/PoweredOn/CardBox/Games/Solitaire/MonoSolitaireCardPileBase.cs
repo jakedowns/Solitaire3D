@@ -42,17 +42,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         }
 
-        public new void OnPointerClick(PointerEventData eventData)
+        public void OnPointerClick(PointerEventData eventData)
         {
             GameManager.Instance.game.OnSingleClickEmptyStack(this.spot);
         }
 
-        public new void OnPointerEnter(PointerEventData eventData)
+        public void OnPointerEnter(PointerEventData eventData)
         {
             m_MeshRender.material.color = Color.green;
         }
 
-        public new void OnPointerExit(PointerEventData eventData)
+        public void OnPointerExit(PointerEventData eventData)
         {
             m_MeshRender.material.color = new Color(0.4f, 0.4f, 0.4f);
         }

@@ -114,35 +114,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
         int m_Moves = 0;
         public SolitaireGame(){}
 
-        /*
-         * Reinitialize all of our tracking variables
-         * 
-         */
-        public void Reset()
-        {
-            // reset game object references
-            UpdateGameObjectReferences();
-
-            dealtOrder = new List<SuitRank>();
-
-            // reset move count / log
-            m_Moves = 0;
-            moveLog = new SolitaireMoveList();
-
-            // BuildStock
-            stockCardPile = new StockCardPile();
-
-            // Build Waste
-            wasteCardPile = new WasteCardPile();
-
-            // Build Hand
-            handCardPile = new HandCardPile();
-
-            BuildFoundations();
-            BuildTableaus();
-            BuildDeck();
-        }
-
         public PlayingCardIDList GetDealtOrder()
         {
             return new PlayingCardIDList(dealtOrder);
@@ -211,7 +182,27 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void NewGame()
         {
-            Reset();
+            // reset game object references
+            UpdateGameObjectReferences();
+
+            dealtOrder = new List<SuitRank>();
+
+            // reset move count / log
+            m_Moves = 0;
+            moveLog = new SolitaireMoveList();
+
+            // BuildStock
+            stockCardPile = new StockCardPile();
+
+            // Build Waste
+            wasteCardPile = new WasteCardPile();
+
+            // Build Hand
+            handCardPile = new HandCardPile();
+
+            BuildFoundations();
+            BuildTableaus();
+            BuildDeck();
         }
 
         public void ToggleAutoPlace()
@@ -471,6 +462,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             if (cardGO != null) { 
                 goalID = new(cardGO, Vector3.zero, Quaternion.identity, Vector3.one);
                 cardTX = cardGO.transform;
+            }
+            else
+            {
+                Debug.LogWarning($"CardGameObject is null {card}");
             }
 
             switch (spot.area)
@@ -746,6 +741,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 Debug.LogWarning("L@@K: i set deck_base to deckOfCards");
                 gameObjectReferences[SolitaireGameObject.Deck_Base] = deckOfCards;
             }
+
+            Debug.LogWarning("gameObjectReferences count after update:" + gameObjectReferences.Count);
         }
 
 

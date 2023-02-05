@@ -398,6 +398,12 @@ namespace PoweredOn.Managers
         // Update is called once per frame
         void Update()
         {
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                UnityEditor.EditorWindow.focusedWindow.maximized = !UnityEditor.EditorWindow.focusedWindow.maximized;
+            }
+#endif
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;
