@@ -55,13 +55,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
             SolitaireMoveStatusFlags moveStatusFlags = SolitaireMoveSet.GetStatusFlagsForMove(gameState, move);
 
             bool isValid = false; // false by default;
-            
-            Debug.Log($"validating moveType: {moveType} with current state bitflags: {bitflags}");
+
+            Debug.Log($"validating moveType: {moveType} with current state bitflags: {bitflags} and moveStatusFlags {moveStatusFlags}");
 
             // todo block moves from player if autoplaying
 
             //if(moveToGroup == SolitaireMoveTypeToGroup.HAND)
-            if(move.ToSpot.area == PlayfieldArea.HAND)
+            if (move.ToSpot.area == PlayfieldArea.HAND)
             {
                 if( (bitflags & GameStateFlags.HandIsEmpty) == 0 )
                 {

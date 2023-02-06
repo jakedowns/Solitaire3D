@@ -783,6 +783,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void BuildFoundations()
         {
             foundationCardPileGroup = new FoundationCardPileGroup();
+            Assert.IsTrue(foundationCardPileGroup.Count == 4, "expect 4 piles in group");
 
             if(runningInTestMode)
             {

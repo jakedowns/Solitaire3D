@@ -29,6 +29,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
         public bool CanReceiveCard(SolitaireCard card)
         {
+            UnityEngine.Debug.LogWarning("[Debugging FoundationCardPile.CanReceiveCard] cardList.Count = (pile index)" + pile_index + " " + cardList.Count + $" {card}");
             if (Count == 0)
             {
                 if (card.GetRank() == Rank.ACE)

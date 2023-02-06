@@ -32,7 +32,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
             TestFromWasteMoves();
             TestFromFoundationMoves();
             TestFromTableauMoves();
-            
+
+            // it feels like it would've been more concise to test
+            // TestToHandMoves, etc...
+
+            // TODO:
+            // test GetNextValidPlayfieldSpotForSuitRank
+            // test CheckFlipOverTopCardInTableauCardJustLeft
+
             Test_StockWasteHand_HandEmpty_HandFull();
         }
 
@@ -361,7 +368,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // assert all cards still in deck
             Assert.IsTrue(game.deck.Count == 52, "assert all 52 cards still in game.deck.deckCardPile");
 
-            var cardID = game.deck.DeckCardPile.Last();
+            // INTENTIONALLY SETTING A SPECIFIC CARD HERE
+            // we don't want to accidentally get a King or an Ace which would cause the first Assertion to fail sometimes 8/52 runs
+            var cardID = new SuitRank(Suit.SPADES, Rank.TWO);
             var testCard = game.deck.GetCardBySuitRank(cardID);
 
             // put the card in the hand
@@ -383,7 +392,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 // HAND_TO_DECK         IsCollecting
                 // HAND_TO_WASTE        OnlyWhenReturning
                 // HAND_TO_FOUNDATION   ValidWhen.FoundationCanReceiveCard
-                // HAND_TO_TABLEAU      ValidWehn.TableauCanReceiveCard
+                // HAND_TO_TABLEAU      ValidWhen.TableauCanReceiveCard
                
                 Assert.IsFalse(isValid, "assert all invalid by default");
 
@@ -404,14 +413,35 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // HAND_TO_TABLEAU
                     case PlayfieldArea.TABLEAU:
                         // only when TableauCanReceiveCard
+                        game.BuildTableaus();
                         mock_game_state = game.GetGameState();
                         Suit oppositeSuit = SolitaireDeck.GetOppositeColorSuit(testCard.GetSuit());
                         int oneGreaterRank = (int)testCard.GetRank() + 1;
                         mock_game_state.TableauPileGroup[0].Add(new SuitRank(oppositeSuit, (Rank)oneGreaterRank));
+                        Assert.IsTrue(mock_game_state.TableauPileGroup.Count == 7);
+                        Assert.IsTrue(mock_game_state.TableauPileGroup[0].Count == 1);
                         bool isValidWhenDealing = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+
+                        SuitRank topCard = mock_game_state.TableauPileGroup[0].Last();
+                        Debug.LogWarning($"validating hand_to_tableau: {testCard} {topCard} {testMoveTo}");
+                        
                         Assert.IsTrue(isValidWhenDealing, "valid when tableau can receive card");
                         break;
-                    
+
+                    // HAND_TO_FOUNDATION
+                    case PlayfieldArea.FOUNDATION:
+                        game.BuildFoundations();
+                        mock_game_state = game.GetGameState();
+
+                        // only when FoundationCanReceiveCard
+                        SuitRank foundationCard = new SuitRank(testCard.GetSuit(), Rank.ACE);
+                        mock_game_state.FoundationPileGroup[(int)testCard.GetSuit()].Add(foundationCard);
+                        Assert.IsTrue(mock_game_state.FoundationPileGroup.Count == 4, $"expected 4 got {mock_game_state.FoundationPileGroup.Count}");
+                        Assert.IsTrue(mock_game_state.FoundationPileGroup[(int)testCard.GetSuit()].Count == 1);
+                        bool isValidWhenFoundationCanReceiveCard = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenFoundationCanReceiveCard, "valid when foundation can receive card");
+                        break;
+
                     // HAND_TO_WASTE
                     case PlayfieldArea.WASTE:
                         // only when returning
@@ -567,16 +597,148 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
-            Debug.LogWarning("[SolitaireGameTests > TestFromStockMoves] All Assertions Passed!");
+            Debug.LogWarning("[SolitaireGameTests > TestFromWasteMoves] All Assertions Passed!");
         }
 
         public static void TestFromFoundationMoves()
         {
+            // === TODO: extract into a setup method ===
+            var game = SolitaireGame.TestGame;
+            game.NewGame();
+            //game.Deal(); -- skip dealing, all cards are still in deck
+
+            // assert all cards still in deck
+            Assert.IsTrue(game.deck.Count == 52, "assert all 52 cards still in game.deck.deckCardPile");
+
+            // INTENTIONALLY SETTING A SPECIFIC CARD HERE
+            // we don't want to accidentally get a King or an Ace which would cause the first Assertion to fail sometimes 8/52 runs
+            var cardID = new SuitRank(Suit.SPADES, Rank.TWO);
+            var testCard = game.deck.GetCardBySuitRank(cardID);
+
+            // put the card in the FOUNDATION pile
+            // testCard.SetIsFaceUp(false);
+            PlayfieldSpot fromSpot = new PlayfieldSpot(PlayfieldArea.FOUNDATION, 0);
+            game.MoveCardToNewSpot(testCard, fromSpot, true);
+
+            foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
+            {
+                // test validity of each move type
+                var area_for_type = SolitaireMoveSet.GetPlayfieldAreaForMoveToTypeTo(toType);
+                var toSpot = new PlayfieldSpot(area_for_type, 0);
+                var testMoveTo = new SolitaireMove(testCard, fromSpot, toSpot);
+                SolitaireGameState mock_game_state = game.GetGameState();
+                var isValid = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+
+                // * FOUNDATION_TO_WASTE        WhenUndoRedo
+                // * FOUNDATION_TO_HAND         WhenHandIsEmpty (HandCanReceiveCard)
+                // * FOUNDATION_TO_STOCK        Invalid
+                // * FOUNDATION_TO_FOUNDATION   Invalid
+                // * FOUNDATION_TO_TABLEAU      WhenTableauCanReceiveCard
+                // * FOUNDATION_TO_DECK         IsCollecting
+
+                if (toSpot.area == PlayfieldArea.HAND)
+                {
+                    // assume valid since our hand is empty
+                    Assert.IsTrue(isValid, "valid for empty hand");
+                    // test would fail if hand not empty
+                    mock_game_state.HandPile.Add(game.deck.GetCardBySuitRank(new SuitRank(Suit.SPADES, Rank.THREE)));
+                    var isValidWithCardAlreadyInHand = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                    Assert.IsFalse(isValidWithCardAlreadyInHand, "[WASTE_TO_HAND] invalid for occupied hand");
+                    continue;
+                }
+
+                Assert.IsFalse(isValid, "assert all invalid by default");
+
+                // Test special state triggers that make the move valid:
+                switch (area_for_type)
+                {
+                    case PlayfieldArea.DECK:
+                        // assert only valid if "collecting"
+                        mock_game_state.SetMockIsCollectingCardsToDeck(true);
+                        bool isValidWhenCollecting = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenCollecting, "valid when collecting");
+                        break;
+                    case PlayfieldArea.TABLEAU:
+                        SolitaireCard threeOfHearts = game.deck.GetCardBySuitRank(new SuitRank(Suit.HEARTS, Rank.THREE));
+                        mock_game_state.TableauPileGroup[0].Add(threeOfHearts);
+                        bool isValidWhenTableauCanReceive = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenTableauCanReceive);
+                        break;
+
+                }
+            }
+            
             Debug.LogWarning("[SolitaireGameTests > TestFromFoundationMoves] All Assertions Passed!");
         }
 
         public static void TestFromTableauMoves()
         {
+            // === TODO: extract into a setup method ===
+            var game = SolitaireGame.TestGame;
+            game.NewGame();
+            //game.Deal(); -- skip dealing, all cards are still in deck
+
+            // assert all cards still in deck
+            Assert.IsTrue(game.deck.Count == 52, "assert all 52 cards still in game.deck.deckCardPile");
+
+            // INTENTIONALLY SETTING A SPECIFIC CARD HERE
+            // we don't want to accidentally get a King or an Ace which would cause the first Assertion to fail sometimes 8/52 runs
+            var cardID = new SuitRank(Suit.SPADES, Rank.TWO);
+            var testCard = game.deck.GetCardBySuitRank(cardID);
+
+            // put the card in the TABLEAU pile
+            // testCard.SetIsFaceUp(false);
+            PlayfieldSpot fromSpot = new PlayfieldSpot(PlayfieldArea.TABLEAU, 0);
+            game.MoveCardToNewSpot(testCard, fromSpot, true);
+
+            foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
+            {
+                // test validity of each move type
+                var area_for_type = SolitaireMoveSet.GetPlayfieldAreaForMoveToTypeTo(toType);
+                var toSpot = new PlayfieldSpot(area_for_type, 0);
+                var testMoveTo = new SolitaireMove(testCard, fromSpot, toSpot);
+                SolitaireGameState mock_game_state = game.GetGameState();
+                var isValid = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+
+                // * TABLEAU_TO_WASTE        WhenUndoRedo
+                // * TABLEAU_TO_HAND         WhenHandIsEmpty (HandCanReceiveCard)
+                // * TABLEAU_TO_STOCK        Invalid
+                // * TABLEAU_TO_FOUNDATION   WhenFoundationCanReceiveCard
+                // * TABLEAU_TO_TABLEAU      Invalid
+                // * TABLEAU_TO_DECK         IsCollecting
+
+                if (toSpot.area == PlayfieldArea.HAND)
+                {
+                    // assume valid since our hand is empty
+                    Assert.IsTrue(isValid, "valid for empty hand");
+                    // test would fail if hand not empty
+                    mock_game_state.HandPile.Add(game.deck.GetCardBySuitRank(new SuitRank(Suit.SPADES, Rank.THREE)));
+                    var isValidWithCardAlreadyInHand = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                    Assert.IsFalse(isValidWithCardAlreadyInHand, "[WASTE_TO_HAND] invalid for occupied hand");
+                    continue;
+                }
+
+                Assert.IsFalse(isValid, "assert all invalid by default");
+
+                // Test special state triggers that make the move valid:
+                switch (area_for_type)
+                {
+                    case PlayfieldArea.DECK:
+                        // assert only valid if "collecting"
+                        mock_game_state.SetMockIsCollectingCardsToDeck(true);
+                        bool isValidWhenCollecting = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenCollecting, "valid when collecting");
+                        break;
+                    case PlayfieldArea.FOUNDATION:
+                        SolitaireCard aceOfSpades = game.deck.GetCardBySuitRank(new SuitRank(Suit.SPADES, Rank.ACE));
+                        mock_game_state.FoundationPileGroup[(int)testCard.GetSuit()].Add(aceOfSpades);
+                        bool isValidWhenFoundationCanReceive = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenFoundationCanReceive);
+                        break;
+
+                }
+            }
+            
             Debug.LogWarning("[SolitaireGameTests > TestFromTableauMoves] All Assertions Passed!");
         }
     }

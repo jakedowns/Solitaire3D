@@ -9,14 +9,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class FoundationCardPileGroup: SolitaireCardPileGroup
     {
-        List<FoundationCardPile> piles = new List<FoundationCardPile>();
+        private List<FoundationCardPile> piles = new List<FoundationCardPile>();
 
         public FoundationCardPileGroup()
         {
-            piles = new List<FoundationCardPile>();
+            this.piles = new List<FoundationCardPile>();
             for (int i = 0; i < 4; i++)
             {
-                piles.Add(new FoundationCardPile(i));
+                this.piles.Add(new FoundationCardPile(i));
             }
         }
 
@@ -40,6 +40,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             return new FoundationCardPileGroup(newPiles);
+        }
+
+        // i have to reimplement this because Piles is a different Type?
+        // should've used interfaces???
+        public new int Count
+        {
+            get { return piles.Count; }
         }
 
         public static FoundationCardPileGroup EMPTY

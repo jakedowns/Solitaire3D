@@ -46,6 +46,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         internal bool CanReceiveCard(SolitaireCard card)
         {
+            Debug.LogWarning("[Debugging TableauCardPile.CanReceiveCard] cardList.Count = (pile index)" + pile_index + " " + cardList.Count);
+            Debug.LogWarning($"{card}");
             if (Count == 0)
             {
                 if (card.GetRank() == Rank.KING)

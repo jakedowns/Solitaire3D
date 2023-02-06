@@ -95,19 +95,24 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         }
 
+        /* 
+         NOTE: removing Clone so we can mutate mock_game_states 
+         we clone when we read off of Solitaire game anyway
+        */
+        
         public DeckCardPile DeckPile {
             get {
-                return this._deckPile.Clone();
+                return this._deckPile; //.Clone();
             }
         }
 
-        public StockCardPile StockPile => _stockPile.Clone();
+        public StockCardPile StockPile => _stockPile; //.Clone();
 
         public WasteCardPile WastePile
         {
             get
             {
-                return this._wastePile.Clone();
+                return this._wastePile; //.Clone();
             }
         }
 
@@ -115,7 +120,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             get
             {
-                return this._handPile.Clone();
+                return this._handPile; // .Clone();
             }
         }
 
@@ -123,7 +128,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             get
             {
-                return this._foundationPileGroup.Clone();
+                return this._foundationPileGroup; //.Clone();
             }
         }
 
@@ -131,7 +136,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             get
             {
-                return this._tableauPileGroup.Clone();
+                return this._tableauPileGroup; //.Clone();
             }
         }
 
