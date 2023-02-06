@@ -180,6 +180,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         flags |= SolitaireMoveStatusFlags.TableauCanReceiveCard;
                     break;
                 case PlayfieldArea.FOUNDATION:
+                    UnityEngine.Debug.LogWarning($"get status flags for move: foundation pile group : move.ToSpot.index {move.ToSpot.index}");
                     var foundation = gameState.FoundationPileGroup[move.ToSpot.index];
                     if (foundation.CanReceiveCard(move.Subject))
                         flags |= SolitaireMoveStatusFlags.FoundationCanReceiveCard;

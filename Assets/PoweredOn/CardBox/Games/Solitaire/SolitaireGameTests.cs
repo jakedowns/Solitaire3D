@@ -435,6 +435,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                         // only when FoundationCanReceiveCard
                         SuitRank foundationCard = new SuitRank(testCard.GetSuit(), Rank.ACE);
+                        // important: make sure we have the right foundation index set (not 0)
+                        toSpot = new(PlayfieldArea.FOUNDATION, (int)testCard.GetSuit());
+                        testMoveTo = new SolitaireMove(testCard, testCard.playfieldSpot, toSpot); 
                         mock_game_state.FoundationPileGroup[(int)testCard.GetSuit()].Add(foundationCard);
                         Assert.IsTrue(mock_game_state.FoundationPileGroup.Count == 4, $"expected 4 got {mock_game_state.FoundationPileGroup.Count}");
                         Assert.IsTrue(mock_game_state.FoundationPileGroup[(int)testCard.GetSuit()].Count == 1);
@@ -582,6 +585,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         Assert.IsTrue(isValidWhenRecyling, "valid when recylcing stock to waste");
                         break;
                     case PlayfieldArea.FOUNDATION:
+                        // important: make sure we have the right foundation index set (not 0)
+                        toSpot = new(PlayfieldArea.FOUNDATION, (int)testCard.GetSuit());
+                        testMoveTo = new SolitaireMove(testCard, testCard.playfieldSpot, toSpot);
                         SolitaireCard aceOfSpades = game.deck.GetCardBySuitRank(new SuitRank(Suit.SPADES, Rank.ACE));
                         mock_game_state.FoundationPileGroup[(int)testCard.GetSuit()].Add(aceOfSpades);
                         bool isValidWhenFoundationCanReceive = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
@@ -730,6 +736,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         Assert.IsTrue(isValidWhenCollecting, "valid when collecting");
                         break;
                     case PlayfieldArea.FOUNDATION:
+                        // important: make sure we have the right foundation index set (not 0)
+                        toSpot = new(PlayfieldArea.FOUNDATION, (int)testCard.GetSuit());
+                        testMoveTo = new SolitaireMove(testCard, testCard.playfieldSpot, toSpot);
                         SolitaireCard aceOfSpades = game.deck.GetCardBySuitRank(new SuitRank(Suit.SPADES, Rank.ACE));
                         mock_game_state.FoundationPileGroup[(int)testCard.GetSuit()].Add(aceOfSpades);
                         bool isValidWhenFoundationCanReceive = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);

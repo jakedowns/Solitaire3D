@@ -70,5 +70,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             get { return new TableauCardPileGroup(); }
         }
+
+        public new int Count
+        {
+            get { return this.piles.Count; }
+        }
     }
 }

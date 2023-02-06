@@ -23,13 +23,18 @@ namespace PoweredOn.CardBox.Games.Solitaire
             this.gameObjectType = theType;
         }
 
+        /*public new int Count
+        {
+            get { return this.cardList.Count; }
+        }*/
+
         public new FoundationCardPile Clone()
         {
             return new FoundationCardPile(cardList.Clone(), this.pile_index);
         }
         public bool CanReceiveCard(SolitaireCard card)
         {
-            UnityEngine.Debug.LogWarning("[Debugging FoundationCardPile.CanReceiveCard] cardList.Count = (pile index)" + pile_index + " " + cardList.Count + $" {card}");
+            UnityEngine.Debug.LogWarning($"[Debugging FoundationCardPile.CanReceiveCard] cardList.Count {cardList.Count} (pile index) {pile_index} | Card: {card}");
             if (Count == 0)
             {
                 if (card.GetRank() == Rank.ACE)
