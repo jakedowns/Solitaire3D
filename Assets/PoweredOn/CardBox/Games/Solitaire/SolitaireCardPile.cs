@@ -33,10 +33,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 Debug.LogWarning("game manager instance is NULL?!");
             }
-            else
-            {
-                Debug.LogWarning("game manager instance exists... it just doesn't have a game?!");
-            }
             return gmi.game.deck.GetCardBySuitRank(this.Last());
         }
 

@@ -275,7 +275,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 /*try
                 {*/
                 SolitaireCard card = deck.GetCardBySuitRank(deck.deckOrderList[initial_loop_index]);
-                MoveCardToNewSpot(card, new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index), false);
+                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index), false);
                 /*}
                 catch (Exception e)
                 {
@@ -316,9 +316,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     // NOTE: inside this method, we handle adding SuitRank to the proper Tableau list
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
-                    MoveCardToNewSpot(card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.1f * dealtOrder.Count);
+                    MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.1f * dealtOrder.Count);
 
-                    //DebugOutput.Instance?.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
+                    DebugOutput.Instance?.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
+                    Debug.LogWarning($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
                 }
             }
 
@@ -344,7 +345,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 SuitRank cardSuitRank = stockCardPile[sc];
                 SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
-                MoveCardToNewSpot(card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false); /* always face down when adding to stock */
+                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false); /* always face down when adding to stock */
             }
 
             // flag as done
@@ -468,7 +469,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
 
         // this method is being refactored...
-        public void MoveCardToNewSpot(SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f)
+        public void MoveCardToNewSpot(ref SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f)
         {
             //if(runningInTestMode) Debug.Log($"MoveCardToNewSpot {card.GetGameObjectName()} from {card.playfieldSpot} to {spot} faceup:{faceUp} delay:{delay}");
             moveLog.Add(new SolitaireMove(card, card.previousPlayfieldSpot, spot));
@@ -693,7 +694,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 PlayfieldSpot handSpot = new PlayfieldSpot(PlayfieldArea.HAND, i);
                 SolitaireCard card = deck.GetCardBySuitRank(id);
-                MoveCardToNewSpot(card, handSpot, card.IsFaceUp);
+                MoveCardToNewSpot(ref card, handSpot, card.IsFaceUp);
                 i++;
             }
         }
@@ -996,7 +997,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     card = stockCardPile.GetTopCard();
 
                     // move it to the waste pile; face up
-                    MoveCardToNewSpot(card,
+                    MoveCardToNewSpot(ref card,
                         new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
 
                     return;
@@ -1026,7 +1027,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             // this method will add the card to the handCards list
-            MoveCardToNewSpot(card, new PlayfieldSpot(PlayfieldArea.HAND, 0), true);
+            MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.HAND, 0), true);
         }
 
         public void TryPlaceHandCardToSpot(PlayfieldSpot spot)
@@ -1058,7 +1059,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 {
                     SolitaireCard card = deck.GetCardBySuitRank(id);
                     // they will be removed from handCards list as they're added to the new destination spot
-                    MoveCardToNewSpot(card, spot, faceUp);
+                    MoveCardToNewSpot(ref card, spot, faceUp);
                 }
 
                 // note: this check is done with the first card in the hand, which should be the "lowest (deepest z-wise)" (highest rank) in a substack
@@ -1143,7 +1144,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     foreach (SuitRank suitRank in subStackCards)
                     {
                         SolitaireCard hand_card = deck.GetCardBySuitRank(suitRank);
-                        MoveCardToNewSpot(hand_card, next_spot, true);/* true = faceUp */
+                        MoveCardToNewSpot(ref hand_card, next_spot, true);/* true = faceUp */
                     }
                     
                 }
@@ -1217,7 +1218,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             //stockCardPile.RemoveAt(0);
 
             SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
-            MoveCardToNewSpot(card, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
+            MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
         }
 
         public void WasteToStock()
@@ -1240,7 +1241,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 PlayfieldSpot stockSpot = new PlayfieldSpot(PlayfieldArea.STOCK, order_i);
 
                 SolitaireCard card = deck.GetCardBySuitRank(wasteCardPile[i]);
-                MoveCardToNewSpot(card, stockSpot, false);
+                MoveCardToNewSpot(ref card, stockSpot, false);
                 order_i++;
             }
             // verify the waste card pile is empty

@@ -99,7 +99,29 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 Assert.IsTrue(tabList[i].Count == i + 1);
 
                 // 2.1 expect the top card ONLY of each tableau to be face up
-                Assert.IsTrue(tabList[i].GetTopCard().IsFaceUp);
+                SolitaireCard topCard = tabList[i].GetTopCard();
+
+                Debug.LogWarning("Debugging why top card is not face up after dealing");
+                Debug.LogWarning($"topCard: {topCard} for tab list {i} (count:{tabList[i].Count}) isfaceup:{topCard.IsFaceUp}");
+                
+                Assert.IsTrue(topCard.IsFaceUp);
+
+                for(int c = 0; c < tabList[i].Count; c++)
+                {
+                    SolitaireCard checkCard = game.deck.GetCardBySuitRank(tabList[i][c]);
+
+                    Debug.Log($"top card for tab {i} {checkCard}");
+                    
+                    // verify the previous cards are face down
+                    if(c < tabList[i].Count - 1)
+                    {
+                        Assert.IsFalse(checkCard.IsFaceUp);
+                    }
+                    else
+                    {
+                        Assert.IsTrue(checkCard.IsFaceUp);
+                    }
+                }
             }
 
             // 3. expect there to be 0 cards in the waste pile
@@ -233,7 +255,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // add our card to the waste pile
             // could also call game.StockToWaste()
-            game.MoveCardToNewSpot(firstCard, toWaste, true);
+            game.MoveCardToNewSpot(ref firstCard, toWaste, true);
 
             //SolitaireCard freshFirstCard = game.deck.GetCardBySuitRank(firstCard.GetSuitRank());
             //Debug.LogWarning($" is this an immutable issue? firstCard: {firstCard.playfieldSpot} vs firstFirstCard: {freshFirstCard.playfieldSpot}");
@@ -259,7 +281,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             var moveToHand = new SolitaireMove(firstCard, firstCard.playfieldSpot, PlayfieldSpot.Hand);
             Assert.IsTrue(SolitaireMoveValidator.IsValidMove(game.GetGameState(), moveToHand));
             int countBeforeWasteToHand = game.GetWasteCardPile().Count;
-            game.MoveCardToNewSpot(firstCard, PlayfieldSpot.Hand, true); // TODO: put the faceup logic in the MoveCardToNewSpot method
+            game.MoveCardToNewSpot(ref firstCard, PlayfieldSpot.Hand, true); // TODO: put the faceup logic in the MoveCardToNewSpot method
 
                 // assert it left the waste pile
                 Assert.IsTrue(game.GetWasteCardPile().Count == countBeforeWasteToHand - 1, $"assert waste pile count is one less than before we picked up the card {game.GetWasteCardPile().Count} / {countBeforeWasteToHand - 1}"); // should be 0 i think
@@ -272,7 +294,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             
             // k, now we have to move a new stock card to the waste to try and pick it up (could also try to pick up a tableau card)
             // we'll do that in the next test method
-            game.MoveCardToNewSpot(nextStockCard, PlayfieldSpot.Waste, true);
+            game.MoveCardToNewSpot(ref nextStockCard, PlayfieldSpot.Waste, true);
 
                 // assert it's in the waste
                 Assert.IsTrue(game.GetWasteCardPile().Count == 1);
@@ -376,7 +398,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // put the card in the hand
             testCard.SetIsFaceUp(true);
             PlayfieldSpot handSpot = PlayfieldSpot.HAND;
-            game.MoveCardToNewSpot(testCard, handSpot, true);
+            game.MoveCardToNewSpot(ref testCard, handSpot, true);
 
             var fromSpot = handSpot;
             foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
@@ -475,7 +497,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // put the card in the stock pile
             // testCard.SetIsFaceUp(false);
             PlayfieldSpot fromSpot = PlayfieldSpot.STOCK;
-            game.MoveCardToNewSpot(testCard, fromSpot, true);
+            game.MoveCardToNewSpot(ref testCard, fromSpot, true);
 
             foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
             {
@@ -539,7 +561,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // put the card in the WASTE pile
             // testCard.SetIsFaceUp(false);
             PlayfieldSpot fromSpot = PlayfieldSpot.WASTE;
-            game.MoveCardToNewSpot(testCard, fromSpot, true);
+            game.MoveCardToNewSpot(ref testCard, fromSpot, true);
 
             foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
             {
@@ -624,7 +646,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // put the card in the FOUNDATION pile
             // testCard.SetIsFaceUp(false);
             PlayfieldSpot fromSpot = new PlayfieldSpot(PlayfieldArea.FOUNDATION, 0);
-            game.MoveCardToNewSpot(testCard, fromSpot, true);
+            game.MoveCardToNewSpot(ref testCard, fromSpot, true);
 
             foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
             {
@@ -695,7 +717,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // put the card in the TABLEAU pile
             // testCard.SetIsFaceUp(false);
             PlayfieldSpot fromSpot = new PlayfieldSpot(PlayfieldArea.TABLEAU, 0);
-            game.MoveCardToNewSpot(testCard, fromSpot, true);
+            game.MoveCardToNewSpot(ref testCard, fromSpot, true);
 
             foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
             {

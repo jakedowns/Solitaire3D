@@ -14,9 +14,6 @@ namespace PoweredOn.CardBox.PlayingCards
 
     public class PlayingCard: Card
     {
-        /// <summary> The mesh render. </summary>
-        private MeshRenderer m_MeshRender;
-
         // suit
         protected Suit suit;
 
@@ -35,7 +32,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         /*private SolitaireGame game;*/
 
-        public bool IsFaceUp;
+        public bool IsFaceUp { get; internal set; }
 
         public PlayfieldSpot playfieldSpot = new PlayfieldSpot(PlayfieldArea.DECK, -1, -1);
         public PlayfieldSpot previousPlayfieldSpot = new PlayfieldSpot(PlayfieldArea.DECK, -1, -1);
@@ -51,16 +48,6 @@ namespace PoweredOn.CardBox.PlayingCards
             this.deckOrder = deckOrder;
             this.suitRank = new SuitRank(suit, rank);
         }
-
-        /*public bool CanBeMovedToFoundation()
-        {
-            return Managers.GameManager.Instance.game.GetFoundation().CanReceiveCard(this.GetSuitRank());
-        }*/
-
-        /*public void SetGame(SolitaireGame game)
-        {
-            this.game = game;
-        }*/
 
         public SuitRank GetSuitRank()
         {
@@ -163,7 +150,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         override public string ToString()
         {
-            return $"{this.rank} of {this.suit} ({this.playfieldSpot}) > (prevSpot: {this.previousPlayfieldSpot})";
+            return $"{this.rank} of {this.suit} \n:IsFaceUp:{this.IsFaceUp} \n: spot:[{this.playfieldSpot}] \n: prevSpot:[{this.previousPlayfieldSpot}])";
         }
     }
 }
