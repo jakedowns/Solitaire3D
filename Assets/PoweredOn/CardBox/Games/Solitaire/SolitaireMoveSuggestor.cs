@@ -70,6 +70,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             if (moves.Count > 0)
                 return moves;
 
+            moves = GetMovesToTableauForCard(gameState, card);
+            if (moves.Count > 0)
+                return moves;
+
             return moves;
         }
 
@@ -78,9 +82,25 @@ namespace PoweredOn.CardBox.Games.Solitaire
             SolitaireMoveList moves = new SolitaireMoveList();
             FoundationCardPile foundationCardPile = card.GetFoundationCardPile();
 
-            if (foundationCardPile.CanAcceptCard(card))
+            if (foundationCardPile.CanReceiveCard(card))
             {
                 moves.Add(new SolitaireMove(card, card.playfieldSpot, foundationCardPile.GetPlayfieldSpot()));
+            }
+
+            return moves;
+        }
+
+        private static SolitaireMoveList GetMovesToTableauForCard(SolitaireGameState gameState, SolitaireCard card)
+        {
+            SolitaireMoveList moves = new SolitaireMoveList();
+
+            for (int i = 0; i < 7; i++)
+            {
+                TableauCardPile tableauCardPile = gameState.TableauPileGroup[i];
+                if (tableauCardPile.CanReceiveCard(card))
+                {
+                    moves.Add(new SolitaireMove(card, card.playfieldSpot, tableauCardPile.GetPlayfieldSpot()));
+                }
             }
 
             return moves;

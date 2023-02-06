@@ -33,12 +33,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         void Start()
         {
-            NRInput.AddClickListener(ControllerHandEnum.Right, ControllerButton.APP, () =>
-            {
-                DebugOutput.Instance?.Log("ResetWorldMatrix");
-                var poseTracker = NRSessionManager.Instance.NRHMDPoseTracker;
-                poseTracker.ResetWorldMatrix();
-            });
+            
         }
 
         public IEnumerator WaitForDoubleClickTimeout()
@@ -94,6 +89,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            double delta = Time.realtimeSinceStartupAsDouble - (double)(pointerDownAt ?? Time.realtimeSinceStartupAsDouble);
+            if (delta < LONG_PRESS_DURATION)
+            {
+                GameManager.Instance.OnSingleClickCard(this.card);
+            }
             pointerDownAt = null;
         }
 
@@ -104,6 +104,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             //m_MeshRender.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 
             float now = Time.realtimeSinceStartup;
+            /*
 
             if (waitForDoubleClickTimeout == null && lastClickTime == null)
             {
@@ -124,27 +125,29 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
                 OnDoubleClick(eventData);
                 lastClickTime = null;
-            }
+            }*/
             lastClickTime = now;
         }
 
-        public void OnDoubleClick(PointerEventData eventData)
+        /*public void OnDoubleClick(PointerEventData eventData)
         {
             GameManager.Instance.game.OnDoubleClickCard(this.card);
-        }
+        }*/
 
         /// <summary> when pointer hover, set the cube color to green. </summary>
         /// <param name="eventData"> Current event data.</param>
         public new void OnPointerEnter(PointerEventData eventData)
         {
-            m_MeshRender.material.color = Color.green;
+            //m_MeshRender.material.color = Color.green;
+            this.card.UpdateGoalIDScale(Vector3.one * 1.1f);
         }
 
         /// <summary> when pointer exit hover, set the cube color to white. </summary>
         /// <param name="eventData"> Current event data.</param>
         public new void OnPointerExit(PointerEventData eventData)
         {
-            m_MeshRender.material.color = Color.white;
+            //m_MeshRender.material.color = Color.white;
+            this.card.UpdateGoalIDScale(Vector3.one);
         }
     }
 }

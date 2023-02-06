@@ -11,7 +11,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
     public class HandCardPile : SolitaireCardPile
     {
 
-        private new SolitaireGameObject gameObjectType = SolitaireGameObject.Hand_Base;
+        public new const SolitaireGameObject gameObjectType = SolitaireGameObject.Hand_Base;
 
         public HandCardPile()
         {
@@ -30,6 +30,34 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public new HandCardPile Clone()
         {
             return new HandCardPile(cardList.Clone());
+        }
+
+        public bool CanReceiveCard(SolitaireCard card)
+        {
+            // TODO: if undoing or redoing move; return true
+            
+            if(Count > 0 && !PoweredOn.Managers.GameManager.Instance.game.IsPickingUpSubstack)
+            {
+                // block if we already have a card in our hand and we're not picking up a substack
+                return false;
+            }
+            
+            // cannot pick up cards from deck or hand
+            if (
+                card.playfieldSpot.area == PlayfieldArea.DECK
+                || card.playfieldSpot.area == PlayfieldArea.HAND
+            )
+            {
+                return false;
+            }
+
+            if (!card.IsFaceUp)
+            {
+                // block if the card is not face up
+                return false;
+            }
+            
+            return true;
         }
     }
 }

@@ -17,6 +17,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // or GameManager.Instance.DeckManager.Deck
         private SolitaireDeck _deck;
 
+        bool _isDealing = false;
+        public bool IsDealing { get { return _isDealing; } }
+
+        public bool IsRecyclingWasteToStock { get; internal set; }
+
         public static SolitaireGame TestGame
         {
             get
@@ -54,6 +59,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
+        public bool IsPickingUpSubstack { get; internal set; }
+
         // TODO: maybe make this a method of SolitaireDealer or SolitaireDeckManager
         public SolitaireDeck BuildDeck()
         {
@@ -90,7 +97,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public const float TAB_SPACING = 0.1f;
         const float RANDOM_AMPLITUDE = 1f;
         public const float CARD_THICKNESS = 0.002f;
-        public const float TAB_VERT_OFFSET = 0.01f;
+        public const float TAB_VERT_OFFSET = 0.02f;
 
         // z-axis rotation is temporary until i fix the orientation of the mesh in blender
         public Quaternion CARD_DEFAULT_ROTATION = Quaternion.Euler(0, 180, 90);
@@ -251,6 +258,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // let's shuffle the card order 3 times (todo: artifically delay and animate this)
             deck.Shuffle(3);
 
+            // Flag for Move Validator
+            _isDealing = true;
+
             //await Task.Delay(1000);
 
             if (deck.cards.Count != 52)
@@ -272,6 +282,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     DebugOutput.Instance?.LogError(e.ToString());
                 }*/
             }
+
+            Debug.LogWarning("---------------");
             
             if (deck.DeckCardPile.Count != 0)
             {
@@ -315,6 +327,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 throw new Exception($"[DEAL] invalid dealtOrder count after moving cards from stock to tableau {stockCardPile.Count}");
             }
 
+            Debug.LogWarning("--------------- tableau cards set -------");
+
             // then, for the remaining cards, update their GoalIdentity to place them where the "Stock" Pile should go
             // remember to offset the local Z position a bit to make the cards appear as tho they're stacked on top of each other.
             // the last card should be the lowest z-position (same z as the stock pile guide object) and then each card up to the 0th should be the highest
@@ -323,6 +337,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 throw new Exception($"[DEAL] invalid stock card count after moving cards from stock to tableau {stockCardPile.Count}");
             }
+
+
             for (int sc = stockCardPile.Count - 1; sc > -1; sc--)
             {
                 SuitRank cardSuitRank = stockCardPile[sc];
@@ -330,18 +346,34 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
                 MoveCardToNewSpot(card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false); /* always face down when adding to stock */
             }
+
+            // flag as done
+            _isDealing = false;
         }
 
         public void SetCardGoalsToRandomPositions()
         {
+            var GO = deck.DeckCardPile.gameObject;
+            if(GO == null)
+            {
+                var pile = this.deck.DeckCardPile;
+                Debug.LogWarning($"deck.DeckCardPile is being weird {(SolitaireGameObject)DeckCardPile.gameObjectType}");
+                
+                UpdateGameObjectReferences();
+                
+                // yuck: manual binding/lookup instead of cached lookup
+                GO = GameObject.Find("DeckOfCards");
+
+                Debug.LogWarning($"is it available now? {GetGameObjectByType(SolitaireGameObject.Deck_Base)}");
+            }
             // get the deck world position
-            var deckOfCards = GetGameObjectByType(SolitaireGameObject.Deck_Base);
+            var deckOfCards = GO;// GetGameObjectByType(SolitaireGameObject.Deck_Base);
             Vector3 deckPosition = deckOfCards.transform.position + Vector3.zero;
 
             // loop through our cards, and give them a new GoalIdentity based on our calculations
             foreach (SolitaireCard card in deck.cards)
             {
-                Transform cardTransform = card.GetGameObject().transform;
+                Transform cardTransform = card.gameObject.transform;
 
                 // get the deck order of the current card
                 //int deckOrder = card.GetDeckOrder();
@@ -358,7 +390,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 Vector3 worldToLocal = cardTransform.InverseTransformPoint(newPosition);
 
                 GoalIdentity goalID = new GoalIdentity(
-                    card.GetGameObject(),
+                    card.gameObject,
                     worldToLocal,
                     cardTransform.localRotation,
                     cardTransform.localScale);
@@ -423,7 +455,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
-            DebugOutput.Instance?.LogWarning($"no suggested playfield spot found for {suitrank.ToString()}");
+            DebugOutput.Instance?.LogWarning($"no suggested playfield spot found for {suitrank}");
 
             return PlayfieldSpot.INVALID;
         }
@@ -455,7 +487,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
-            GameObject cardGO = card.GetGameObject();
+            GameObject cardGO = card.gameObject;
             GoalIdentity goalID = null;
             Transform cardTX;
             Vector3 gPos = Vector3.zero;
@@ -465,7 +497,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
             else
             {
-                Debug.LogWarning($"CardGameObject is null {card}");
+                if(!IsRunningInTestMode) Debug.LogWarning($"CardGameObject is null {card}");
             }
 
             switch (spot.area)
@@ -517,8 +549,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     if (goalID != null && tableauCardPileGroup[spot.index].gameObject != null)
                     {
                         gPos = tableauCardPileGroup[spot.index].gameObject.transform.position;
-                        gPos.z = (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS;
-                        gPos.y = (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET + .02f;
+                        gPos.z = (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS - .02f;;
+                        gPos.y = (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET;
                         //goalID.SetGoalPositionFromWorldPosition(gPos);
                         goalID.position = gPos;// cardTX.InverseTransformPoint(gPos);
                     }
@@ -530,18 +562,18 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     handCardPile.Add(card.GetSuitRank());
                     DebugOutput.Instance?.Log("added card to hand " + handCardPile.Count);
                     //var hand = GetGameObjectByType(SolitaireGameObject.Hand_Base);
-                    if (goalID != null && card.GetGameObject() != null && handCardPile.gameObject != null)
+                    if (goalID != null && card.gameObject != null && handCardPile.gameObject != null)
                     {
-                        goalID = new GoalIdentity(card.GetGameObject(), handCardPile.gameObject, new Vector3(0.0f, -1.0f, 0.0f));
+                        goalID = new GoalIdentity(card.gameObject, handCardPile.gameObject, new Vector3(0.0f, -1.0f, 0.0f));
                     }
                     break;
 
                     
                 case PlayfieldArea.DECK:
                     deck.AddCardToDeck(card.GetSuitRank());
-                    if (goalID != null && card.GetGameObject() != null && deck.DeckCardPile.gameObject != null)
+                    if (goalID != null && card.gameObject != null && deck.DeckCardPile.gameObject != null)
                     {
-                        goalID = new GoalIdentity(card.GetGameObject(), deck.DeckCardPile.gameObject);
+                        goalID = new GoalIdentity(card.gameObject, deck.DeckCardPile.gameObject);
                     }
                     break;
             }
@@ -724,7 +756,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             else
                 gameObjectReferences[SolitaireGameObject.Waste_Base] = waste;
 
-            var hand = GameObject.Find("PlayPlane/Hand");
+            var hand = GameObject.Find("Hand");
             if (hand == null)
                 DebugOutput.Instance?.LogError("hand not found");
             else
@@ -883,7 +915,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void FlipCardFaceUp(SolitaireCard card)
         {
-            GameObject cardGO = card.GetGameObject();
+            GameObject cardGO = card.gameObject;
             Transform cardTX = cardGO.transform;
             // retain position, just flip over y axis
             // TODO: use rotate()
@@ -1189,6 +1221,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void WasteToStock()
         {
+            // Flag Op Start (for move validation)
+            IsRecyclingWasteToStock = true;
+            
             // if no cards left in waste, return
             if (wasteCardPile.Count < 1)
             {
@@ -1210,6 +1245,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // verify the waste card pile is empty
             Assert.IsTrue(wasteCardPile.Count == 0);
             Assert.IsTrue(stockCardPile.Count == countAtStartOfOperation);
+
+            // Flag Op End
+            IsRecyclingWasteToStock = false;
         }
 
         public bool IsTopCardInPlayfieldSpot(SolitaireCard card, PlayfieldSpot next_spot)

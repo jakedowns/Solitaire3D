@@ -8,6 +8,10 @@ using UnityEngine.Assertions;
 using PoweredOn.CardBox.PlayingCards;
 using PoweredOn.CardBox.Cards;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
+using System.Collections;
+using UnityEngine.XR;
+using Unity.VisualScripting;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -20,6 +24,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
             DeckCanBeShuffled();
             CanDealCards();
             CheckCanCycleThroughStockToWasteAndBack();
+            
+            // Test Our Move Validation
+            TestFromHandMoves();
+            TestFromDeckMoves();
+            TestFromStockMoves();
+            TestFromWasteMoves();
+            TestFromFoundationMoves();
+            TestFromTableauMoves();
+            
             Test_StockWasteHand_HandEmpty_HandFull();
         }
 
@@ -277,6 +290,294 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // for: waste, tableau, foundation
                 // pick up card from {pile}
                 // verify valid to place card back to pile
+        }
+
+        public static void TestFromDeckMoves()
+        {
+            var game = SolitaireGame.TestGame;
+            game.NewGame();
+            //game.Deal(); -- skip dealing, all cards are still in deck
+
+            // assert all cards still in deck
+            Assert.IsTrue(game.deck.Count == 52, "assert all 52 cards still in game.deck.deckCardPile");
+            
+            var cardID = game.deck.DeckCardPile.Last();
+            var testCard = game.deck.GetCardBySuitRank(cardID);
+            
+            var fromSpot = PlayfieldSpot.DECK;
+            foreach(SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
+            {
+                // test validity of each move type
+                var area_for_type = SolitaireMoveSet.GetPlayfieldAreaForMoveToTypeTo(toType);
+                var toSpot = new PlayfieldSpot(area_for_type, 0);
+                var testMoveTo = new SolitaireMove(testCard, fromSpot, toSpot);
+                var isValid = SolitaireMoveValidator.IsValidMove(game.GetGameState(), testMoveTo);
+
+                if(area_for_type == PlayfieldArea.HAND)
+                {
+                    // set it to face up so we don't get caught by the validator for trying to put a face down card in our hand
+                    // TODO: add a separate test case for this
+                    testCard.SetIsFaceUp(true);
+                }
+
+                SolitaireGameState mock_game_state;
+
+                // the only valid moves in this set require special state cases,
+                // so ALL should be false by default
+                Assert.IsFalse(isValid, "assert invalid cases are reported as invalid");
+                switch (area_for_type)
+                {
+                    // DECK_TO_DECK
+                    case PlayfieldArea.DECK:
+                        // assert only valid if "shuffling"
+                        mock_game_state = game.GetGameState();
+                        mock_game_state.SetMockIsShuffling(true);
+                        bool isValidWhenCollecting = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenCollecting, "valid when shuffling");
+                        break;
+                    
+                    // DECK_TO_STOCK
+                    case PlayfieldArea.STOCK:
+                    // DECK_TO_TABLEAU
+                    case PlayfieldArea.TABLEAU:
+                        // assert only valid if "dealing"
+                        mock_game_state = game.GetGameState();
+                        mock_game_state.SetMockIsDealing(true);
+                        bool isValidWhenDealing = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenDealing, "valid when dealing");
+                        break;
+                }
+            }
+
+            Debug.LogWarning("[SolitaireGameTests > TestDeckToMoves (From Deck Moves)] All Assertions Passed!");
+        }
+
+        public static void TestFromHandMoves()
+        {
+            var game = SolitaireGame.TestGame;
+            game.NewGame();
+            //game.Deal(); -- skip dealing, all cards are still in deck
+
+            // assert all cards still in deck
+            Assert.IsTrue(game.deck.Count == 52, "assert all 52 cards still in game.deck.deckCardPile");
+
+            var cardID = game.deck.DeckCardPile.Last();
+            var testCard = game.deck.GetCardBySuitRank(cardID);
+
+            // put the card in the hand
+            testCard.SetIsFaceUp(true);
+            PlayfieldSpot handSpot = PlayfieldSpot.HAND;
+            game.MoveCardToNewSpot(testCard, handSpot, true);
+
+            var fromSpot = handSpot;
+            foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
+            {
+                // test validity of each move type
+                var area_for_type = SolitaireMoveSet.GetPlayfieldAreaForMoveToTypeTo(toType);
+                var toSpot = new PlayfieldSpot(area_for_type, 0);
+                var testMoveTo = new SolitaireMove(testCard, fromSpot, toSpot);
+                var isValid = SolitaireMoveValidator.IsValidMove(game.GetGameState(), testMoveTo);
+                           
+                // HAND_TO_HAND         Invalid (maybe valid for other games)
+                // HAND_TO_STOCK        Invalid
+                // HAND_TO_DECK         IsCollecting
+                // HAND_TO_WASTE        OnlyWhenReturning
+                // HAND_TO_FOUNDATION   ValidWhen.FoundationCanReceiveCard
+                // HAND_TO_TABLEAU      ValidWehn.TableauCanReceiveCard
+               
+                Assert.IsFalse(isValid, "assert all invalid by default");
+
+                SolitaireGameState mock_game_state;
+                
+                // Test special state triggers that make the move valid:
+                switch (area_for_type)
+                {
+                    // HAND_TO_DECK
+                    case PlayfieldArea.DECK:
+                        // assert only valid if "collecting"
+                        mock_game_state = game.GetGameState();
+                        mock_game_state.SetMockIsCollectingCardsToDeck(true);
+                        bool isValidWhenCollecting = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenCollecting, "valid when collecting");
+                        break;
+                    
+                    // HAND_TO_TABLEAU
+                    case PlayfieldArea.TABLEAU:
+                        // only when TableauCanReceiveCard
+                        mock_game_state = game.GetGameState();
+                        Suit oppositeSuit = SolitaireDeck.GetOppositeColorSuit(testCard.GetSuit());
+                        int oneGreaterRank = (int)testCard.GetRank() + 1;
+                        mock_game_state.TableauPileGroup[0].Add(new SuitRank(oppositeSuit, (Rank)oneGreaterRank));
+                        bool isValidWhenDealing = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenDealing, "valid when tableau can receive card");
+                        break;
+                    
+                    // HAND_TO_WASTE
+                    case PlayfieldArea.WASTE:
+                        // only when returning
+                        mock_game_state = game.GetGameState();
+                        testMoveTo.Subject.previousPlayfieldSpot.area = PlayfieldArea.WASTE;
+                        bool isValidWhenReturning = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenReturning, "valid when returning");
+                        break;
+                }
+            }
+
+            Debug.LogWarning("[SolitaireGameTests > TestHandToMoves (From Hand Moves)] All Assertions Passed!");
+        }
+    
+        public static void TestFromStockMoves()
+        {
+            // === TODO: extract into a setup method ===
+            var game = SolitaireGame.TestGame;
+            game.NewGame();
+            //game.Deal(); -- skip dealing, all cards are still in deck
+
+            // assert all cards still in deck
+            Assert.IsTrue(game.deck.Count == 52, "assert all 52 cards still in game.deck.deckCardPile");
+
+            var cardID = game.deck.DeckCardPile.Last();
+            var testCard = game.deck.GetCardBySuitRank(cardID);
+
+            // put the card in the stock pile
+            // testCard.SetIsFaceUp(false);
+            PlayfieldSpot fromSpot = PlayfieldSpot.STOCK;
+            game.MoveCardToNewSpot(testCard, fromSpot, true);
+
+            foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
+            {
+                // test validity of each move type
+                var area_for_type = SolitaireMoveSet.GetPlayfieldAreaForMoveToTypeTo(toType);
+                var toSpot = new PlayfieldSpot(area_for_type, 0);
+                var testMoveTo = new SolitaireMove(testCard, fromSpot, toSpot);
+                var isValid = SolitaireMoveValidator.IsValidMove(game.GetGameState(), testMoveTo);
+
+                // STOCK_TO_HAND         Invalid
+                // STOCK_TO_STOCK        Invalid
+                // STOCK_TO_FOUNDATION   Invalid
+                // STOCK_TO_TABLEAU      Invalid
+                // STOCK_TO_DECK         IsCollecting
+                // STOCK_TO_WASTE        Valid
+
+                if(toSpot.area == PlayfieldArea.WASTE)
+                {
+                    // to waste should be true by default, no special state needed
+                    Assert.IsTrue(isValid, "STOCK_TO_WASTE is valid");
+                }
+                else
+                {
+                    // assert the rest are false by default
+                    Assert.IsFalse(isValid, "assert all invalid by default");
+                }
+
+                SolitaireGameState mock_game_state;
+
+                // Test special state triggers that make the move valid:
+                switch (area_for_type)
+                {
+                    case PlayfieldArea.DECK:
+                        // assert only valid if "collecting"
+                        mock_game_state = game.GetGameState();
+                        mock_game_state.SetMockIsCollectingCardsToDeck(true);
+                        bool isValidWhenCollecting = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenCollecting, "valid when collecting");
+                        break;
+                }
+            }
+
+            Debug.LogWarning("[SolitaireGameTests > TestFromStockMoves] All Assertions Passed!");
+        }
+
+        public static void TestFromWasteMoves()
+        {
+            // === TODO: extract into a setup method ===
+            var game = SolitaireGame.TestGame;
+            game.NewGame();
+            //game.Deal(); -- skip dealing, all cards are still in deck
+
+            // assert all cards still in deck
+            Assert.IsTrue(game.deck.Count == 52, "assert all 52 cards still in game.deck.deckCardPile");
+
+            // INTENTIONALLY SETTING A SPECIFIC CARD HERE
+            // we don't want to accidentally get a King or an Ace which would cause the first Assertion to fail sometimes 8/52 runs
+            var cardID = new SuitRank(Suit.SPADES, Rank.TWO);
+            var testCard = game.deck.GetCardBySuitRank(cardID);
+
+            // put the card in the WASTE pile
+            // testCard.SetIsFaceUp(false);
+            PlayfieldSpot fromSpot = PlayfieldSpot.WASTE;
+            game.MoveCardToNewSpot(testCard, fromSpot, true);
+
+            foreach (SolitaireMoveTypeToGroup toType in Enum.GetValues(typeof(SolitaireMoveTypeToGroup)))
+            {
+                // test validity of each move type
+                var area_for_type = SolitaireMoveSet.GetPlayfieldAreaForMoveToTypeTo(toType);
+                var toSpot = new PlayfieldSpot(area_for_type, 0);
+                var testMoveTo = new SolitaireMove(testCard, fromSpot, toSpot);
+                SolitaireGameState mock_game_state = game.GetGameState();
+                var isValid = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+
+                // * WASTE_TO_WASTE        Invalid
+                // * WASTE_TO_HAND         WhenHandIsEmpty (HandCanReceiveCard)
+                // * WASTE_TO_STOCK        WhenRecycling
+                // * WASTE_TO_FOUNDATION   WhenFoundationCanReceiveCard
+                // * WASTE_TO_TABLEAU      WhenTableauCanReceiveCard
+                // * WASTE_TO_DECK         IsCollecting
+
+                if(toSpot.area == PlayfieldArea.HAND)
+                {
+                    // assume valid since our hand is empty
+                    Assert.IsTrue(isValid, "valid for empty hand");
+                    // test would fail if hand not empty
+                    mock_game_state.HandPile.Add(game.deck.GetCardBySuitRank(new SuitRank(Suit.SPADES, Rank.THREE)));
+                    var isValidWithCardAlreadyInHand = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                    Assert.IsFalse(isValidWithCardAlreadyInHand, "[WASTE_TO_HAND] invalid for occupied hand");
+                    continue;
+                }
+                
+                Assert.IsFalse(isValid, "assert all invalid by default");
+
+                // Test special state triggers that make the move valid:
+                switch (area_for_type)
+                {
+                    case PlayfieldArea.DECK:
+                        // assert only valid if "collecting"
+                        mock_game_state.SetMockIsCollectingCardsToDeck(true);
+                        bool isValidWhenCollecting = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenCollecting, "valid when collecting");
+                        break;
+                    case PlayfieldArea.STOCK:
+                        mock_game_state.SetMockIsRecyclingWasteToStock(true);
+                        bool isValidWhenRecyling = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenRecyling, "valid when recylcing stock to waste");
+                        break;
+                    case PlayfieldArea.FOUNDATION:
+                        SolitaireCard aceOfSpades = game.deck.GetCardBySuitRank(new SuitRank(Suit.SPADES, Rank.ACE));
+                        mock_game_state.FoundationPileGroup[(int)testCard.GetSuit()].Add(aceOfSpades);
+                        bool isValidWhenFoundationCanReceive = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenFoundationCanReceive);
+                        break;
+                    case PlayfieldArea.TABLEAU:
+                        SolitaireCard threeOfHearts = game.deck.GetCardBySuitRank(new SuitRank(Suit.HEARTS, Rank.THREE));
+                        mock_game_state.TableauPileGroup[0].Add(threeOfHearts);
+                        bool isValidWhenTableauCanReceive = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
+                        Assert.IsTrue(isValidWhenTableauCanReceive);
+                        break;
+                    
+                }
+            }
+
+            Debug.LogWarning("[SolitaireGameTests > TestFromStockMoves] All Assertions Passed!");
+        }
+
+        public static void TestFromFoundationMoves()
+        {
+            Debug.LogWarning("[SolitaireGameTests > TestFromFoundationMoves] All Assertions Passed!");
+        }
+
+        public static void TestFromTableauMoves()
+        {
+            Debug.LogWarning("[SolitaireGameTests > TestFromTableauMoves] All Assertions Passed!");
         }
     }
 }

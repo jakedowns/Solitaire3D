@@ -21,11 +21,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public SolitaireGameObject gameObjectType;
 
-        public GameObject gameObject {
+        /*public new GameObject gameObject {
             get {
+                return base.gameObject;
                 return Managers.GameManager.Instance.game.GetGameObjectByType(this.gameObjectType);
             }
-        }
+        }*/
 
         public static SolitaireCard AceOfSpades
         {
@@ -52,11 +53,20 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void SetMonoCard(MonoSolitaireCard monoCard)
         {
             this.monoCard = monoCard;
-            this.selfGameObject = monoCard.GetGameObject();
+            this.selfGameObject = monoCard.gameObject;
         }
         public void SetPosition(Vector3 position)
         {
-            this.monoCard.gameObject.transform.position = position;
+            this.monoCard.gameObject.transform.localPosition = position;
+        }
+
+        public void UpdateGoalIDScale(Vector3 newScale)
+        {
+            this.goalIdentity.scale = newScale;   
+        }
+        public void SetRotation(Quaternion rotation)
+        {
+            this.monoCard.gameObject.transform.rotation = rotation;
         }
 
         public static SolitaireCard NONE

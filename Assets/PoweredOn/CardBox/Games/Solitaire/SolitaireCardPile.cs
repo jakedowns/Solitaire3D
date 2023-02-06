@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
+using PoweredOn.Managers;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace PoweredOn.CardBox.Games.Solitaire
@@ -12,7 +14,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
     public class SolitaireCardPile: PlayingCardPile
     {
         public new SolitaireGameObject gameObjectType = SolitaireGameObject.None;
-        
+
+        protected GameManager gmi
+        {
+            get
+            {
+                return GameManager.Instance ?? GameObject.FindObjectOfType<GameManager>();
+            }
+        }
         public void Add(SolitaireCard card)
         {
             this.cardList.Add(card.GetSuitRank());
@@ -20,7 +29,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public new SolitaireCard GetTopCard()
         {
-            if (Managers.GameManager.Instance == null)
+            if (gmi == null)
             {
                 Debug.LogWarning("game manager instance is NULL?!");
             }
@@ -28,7 +37,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 Debug.LogWarning("game manager instance exists... it just doesn't have a game?!");
             }
-            return Managers.GameManager.Instance.game.deck.GetCardBySuitRank(this.Last());
+            return gmi.game.deck.GetCardBySuitRank(this.Last());
         }
 
         public new SuitRank First()
@@ -37,18 +46,18 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
         public new SolitaireCard FirstCard()
         {
-            return Managers.GameManager.Instance.game.deck.GetCardBySuitRank(this.First());
+            return gmi.game.deck.GetCardBySuitRank(this.First());
         }
 
         public new GameObject gameObject
         {
             get
             {
-                if(Managers.GameManager.Instance == null || Managers.GameManager.Instance.game == null){
-                    return null;
-                    //return new GameObject(); (this spams tree with objects :( )
+                if(this.gameObjectType == SolitaireGameObject.None)
+                {
+                    throw new Exception($"{this.GetType().Name} class does not have a proper gameObjectType defined");
                 }
-                return Managers.GameManager.Instance.game.GetGameObjectByType(gameObjectType);
+                return gmi.game.GetGameObjectByType(gameObjectType);
             }
         }
 

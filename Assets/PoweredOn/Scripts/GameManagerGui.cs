@@ -46,6 +46,14 @@ public class GameManagerGui : Editor
         {
             myScript.CollectCardsToDeck();
         }
+        if (GUILayout.Button("ReInitialize"))
+        {
+            myScript.MyInit();
+        }
+        if (GUILayout.Button("Randomize"))
+        {
+            myScript.UIRandomize();
+        }
 
     }
 }

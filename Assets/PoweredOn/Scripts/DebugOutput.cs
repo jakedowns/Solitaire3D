@@ -9,6 +9,8 @@ namespace PoweredOn
     public class DebugOutput : MonoBehaviour
     {
         public static DebugOutput Instance { get; private set; }
+
+        GameManager gameManagerInstance;
         private void Awake()
         {
             // If there is an instance, and it's not me, delete myself.
@@ -20,6 +22,11 @@ namespace PoweredOn
             else
             {
                 Instance = this;
+            }
+
+            gameManagerInstance = GameManager.Instance;
+            if(gameManagerInstance == null){
+                gameManagerInstance = GameObject.FindObjectOfType<GameManager>();
             }
         }
         private float timer = 0f;
@@ -46,14 +53,9 @@ namespace PoweredOn
             {
                 // code to be executed once per second
                 timer = 0f;
-                if (GameManager.Instance != null && GameManager.Instance.game != null)
-                {
-                    m_TextComponent.text = GameManager.Instance.game.GetDebugText();
-                }
-                else
-                {
-                    Debug.LogWarning("game manager instance game missing");
-                }
+                
+                m_TextComponent.text = gameManagerInstance.game.GetDebugText();
+
                 m_TextComponent.text += "\n";
                 //foreach (string message in logMessages)
                 for (int i = logMessages.Count - 1; i >= 0; i--)

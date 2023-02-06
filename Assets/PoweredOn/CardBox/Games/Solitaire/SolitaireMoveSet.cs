@@ -1,11 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
+
+    [Flags]
+    public enum SolitaireMoveStatusFlags
+    {
+        None,
+        TableauCanReceiveCard,
+        FoundationCanReceiveCard,
+        WasteCanReceiveCard,
+        StockCanReceiveCard,
+        HandCanReceiveCard,
+        DeckCanReceiveCard,
+        CardIsReturningFromHand
+    }
+
     public enum SolitaireMoveTypeFromGroup
     {
         DECK,
@@ -88,8 +103,38 @@ namespace PoweredOn.CardBox.Games.Solitaire
             var result = Enum.TryParse<SolitaireMoveType>($"{from}_TO_{to}", true, out type);
             if (result)
                 return type;
-            else 
+            else
                 return SolitaireMoveType.NONE;
+        }
+
+        public static Dictionary<SolitaireMoveTypeFromGroup, PlayfieldArea> FromTypeToAreaMap = new Dictionary<SolitaireMoveTypeFromGroup, PlayfieldArea>{
+            { SolitaireMoveTypeFromGroup.STOCK, PlayfieldArea.STOCK },
+            { SolitaireMoveTypeFromGroup.WASTE, PlayfieldArea.WASTE },
+            { SolitaireMoveTypeFromGroup.FOUNDATION, PlayfieldArea.FOUNDATION },
+            { SolitaireMoveTypeFromGroup.TABLEAU, PlayfieldArea.TABLEAU },
+            { SolitaireMoveTypeFromGroup.HAND, PlayfieldArea.HAND },
+            { SolitaireMoveTypeFromGroup.DECK, PlayfieldArea.DECK },
+            { SolitaireMoveTypeFromGroup.NONE, PlayfieldArea.INVALID }
+        };
+
+        public static Dictionary<SolitaireMoveTypeToGroup, PlayfieldArea> ToTypeToAreaMap = new Dictionary<SolitaireMoveTypeToGroup, PlayfieldArea>{
+            { SolitaireMoveTypeToGroup.STOCK, PlayfieldArea.STOCK },
+            { SolitaireMoveTypeToGroup.WASTE, PlayfieldArea.WASTE },
+            { SolitaireMoveTypeToGroup.FOUNDATION, PlayfieldArea.FOUNDATION },
+            { SolitaireMoveTypeToGroup.TABLEAU, PlayfieldArea.TABLEAU },
+            { SolitaireMoveTypeToGroup.HAND, PlayfieldArea.HAND },
+            { SolitaireMoveTypeToGroup.DECK, PlayfieldArea.DECK },
+            { SolitaireMoveTypeToGroup.NONE, PlayfieldArea.INVALID }
+        };
+
+        public static PlayfieldArea GetPlayfieldAreaForMoveTypeFrom(SolitaireMoveTypeFromGroup type)
+        {
+            return FromTypeToAreaMap[type];   
+        }
+
+        public static PlayfieldArea GetPlayfieldAreaForMoveToTypeTo(SolitaireMoveTypeToGroup type)
+        {
+            return ToTypeToAreaMap[type];
         }
 
         public static SolitaireMoveTypeFromGroup GetSolitaireMoveTypeFromGroup(SolitaireMove move)
@@ -112,6 +157,52 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 return type;
             else
                 return SolitaireMoveTypeToGroup.NONE;
+        }
+
+        
+        public static SolitaireMoveStatusFlags GetStatusFlagsForMove(SolitaireGameState gameState, SolitaireMove move)
+        {
+            var flags = SolitaireMoveStatusFlags.None;
+
+            if (
+                move.Subject.playfieldSpot.area == PlayfieldArea.HAND
+                && move.Subject.previousPlayfieldSpot.area == move.ToSpot.area
+            )
+            {
+                flags |= SolitaireMoveStatusFlags.CardIsReturningFromHand;
+            }
+
+            switch (move.ToSpot.area)
+            {
+                case PlayfieldArea.TABLEAU:
+                    var tableau = gameState.TableauPileGroup[move.ToSpot.index];
+                    if (tableau.CanReceiveCard(move.Subject))
+                        flags |= SolitaireMoveStatusFlags.TableauCanReceiveCard;
+                    break;
+                case PlayfieldArea.FOUNDATION:
+                    var foundation = gameState.FoundationPileGroup[move.ToSpot.index];
+                    if (foundation.CanReceiveCard(move.Subject))
+                        flags |= SolitaireMoveStatusFlags.FoundationCanReceiveCard;
+                    break;
+                case PlayfieldArea.STOCK:
+                    if (gameState.StockPile.CanReceiveCard(move.Subject))
+                        flags |= SolitaireMoveStatusFlags.StockCanReceiveCard;
+                    break;
+                case PlayfieldArea.WASTE:
+                    if (gameState.WastePile.CanRecieveCard(move.Subject))
+                        flags |= SolitaireMoveStatusFlags.WasteCanReceiveCard;
+                    break;
+                case PlayfieldArea.HAND:
+                    if (gameState.HandPile.CanReceiveCard(move.Subject))
+                        flags |= SolitaireMoveStatusFlags.HandCanReceiveCard;
+                    break;
+                case PlayfieldArea.DECK:
+                    if (gameState.DeckPile.CanReceiveCard(move.Subject))
+                        flags |= SolitaireMoveStatusFlags.DeckCanReceiveCard;
+                    break;
+            }
+
+            return flags;
         }
     }
 }

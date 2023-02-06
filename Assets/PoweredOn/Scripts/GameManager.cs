@@ -11,6 +11,7 @@ using PoweredOn.CardBox.Animations;
 using PoweredOn.CardBox.PlayingCards;
 using PoweredOn.CardBox.Games.Solitaire;
 using PoweredOn.CardBox.Games;
+using NRKernal;
 
 namespace PoweredOn.Managers
 {
@@ -38,15 +39,26 @@ namespace PoweredOn.Managers
                 Instance = this;
             }
 
-            game = new SolitaireGame();
             if (DebugOutput.Instance == null)
             {
-                Debug.LogWarning("DebugOutput.Instance is null, should we set test mode here?");
-                //game.SetToTestMode();
+                // be the first one to initialize the singleton if need be
+                _ = GameObject.FindObjectOfType<DebugOutput>();
             }
+
+            MyInit();
         }
 
-        public SolitaireGame game;
+        public SolitaireGame _game;
+        public SolitaireGame game {
+            get {
+                if (_game == null)
+                {
+                    _game = new SolitaireGame();
+                    _game.NewGame();
+                }
+                return _game;
+            }
+        }
 
 #nullable enable
         IEnumerator? m_animateCardsRoutine = null;
@@ -65,13 +77,18 @@ namespace PoweredOn.Managers
             {
                 Debug.LogWarning("GameManager [Start] DebugOutput.Instance is still null.");
             }
+            MyInit();
+        }
+
+        public void MyInit()
+        {
             m_animateCardsRoutine = null;
 
             game.NewGame();
 
             // Now that the cards are instantiated, we want to update the goal position of the card GameObjects to match their deck order
             //SetCardGoalsToDeckPositions();
-            
+
             // instead, just deal
 
             //todo let's wait for user to click deck to deal cards
@@ -84,20 +101,10 @@ namespace PoweredOn.Managers
 
         public void FanCardsOut()
         {
-            if (game == null)
-            {
-                game = new SolitaireGame();
-                game.NewGame();
-            }
             game.deck.FanCardsOut();
         }
         public void CollectCardsToDeck()
         {
-            if (game == null)
-            {
-                game = new SolitaireGame();
-                game.NewGame();
-            }
             if (game.deck == null)
             {
                 game.Deal();
@@ -162,7 +169,7 @@ namespace PoweredOn.Managers
 
             public void Execute()
             {
-                var cardTX = card.GetGameObject().transform;
+                var cardTX = card.gameObject.transform;
                 var goalID = new float3(0, 0, 0);
                 var index = spot.index;
                 var area = spot.area;
@@ -216,7 +223,7 @@ namespace PoweredOn.Managers
             int i = 0;
             foreach (Card card in game.deck.cards)
             {
-                AnimationInfinity cardAnim = new AnimationInfinity(card.GetGameObject());
+                AnimationInfinity cardAnim = new AnimationInfinity(card.gameObject);
                 cardAnim.delayStart = i * 0.1f;
                 cardAnim.delaySetAt = Time.realtimeSinceStartup;
                 cardAnim.scaleAnimation = 1.0f;
@@ -237,13 +244,15 @@ namespace PoweredOn.Managers
             NativeArray<bool> delayTimings = new NativeArray<bool>(game.deck.cards.Count, Allocator.Persistent);
             while (true)
             {
+                
                 float nowTime = Time.realtimeSinceStartup;
                 for (int i = 0; i < game.deck.cards.Count; i++)
                 {
                     GoalIdentity goalID = game.deck.cards[i].GetGoalIdentity();
-                    GameObject cardGameObj = game.deck.cards[i].GetGameObject();
+                    GameObject cardGameObj = game.deck.cards[i].gameObject;
                     if(cardGameObj == null)
                     {
+                        Debug.LogWarning("cant animate card, gameObject is null");
                         continue;
                     }
                     Transform cardTX = cardGameObj.transform;
@@ -295,7 +304,7 @@ namespace PoweredOn.Managers
                 for (int i = 0; i < game.deck.cards.Count; i++)
                 {
                     // NOTE: the lerp function writes back to the startX arrays with the lerped values
-                    GameObject cardGO = game.deck.cards[i].GetGameObject();
+                    GameObject cardGO = game.deck.cards[i].gameObject;
                     if (cardGO != null)
                     {
                         Transform cardTx = cardGO.transform;
@@ -328,7 +337,7 @@ namespace PoweredOn.Managers
                             DebugOutput.Instance?.Log(card.GetGameObjectName() + " " + goal.position);
                         }
 
-                        Transform card_tx = card.GetGameObject().transform;
+                        Transform card_tx = card.gameObject.transform;
                         card_tx.position = goal.position;
                     }
                     i++;
@@ -366,6 +375,17 @@ namespace PoweredOn.Managers
             game.NewGame();
         }
 
+        public void Deal()
+        {
+            game.Deal();
+        }
+
+        public void ResetWithPitch() 
+        {
+            var poseTracker = NRSessionManager.Instance.NRHMDPoseTracker;
+            poseTracker.ResetWorldMatrix(true); 
+        }
+
         public void UIRandomize()
         {
             // TODO: move this off game and into Deck
@@ -399,12 +419,12 @@ namespace PoweredOn.Managers
         void Update()
         {
 #if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.F1))
             {
                 UnityEditor.EditorWindow.focusedWindow.maximized = !UnityEditor.EditorWindow.focusedWindow.maximized;
             }
 #endif
-            if (Input.GetMouseButtonDown(0))
+            /*if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -416,7 +436,7 @@ namespace PoweredOn.Managers
                 {
                     Debug.Log("you clicked NOTHING");
                 }
-            }
+            }*/
             
             //if (!m_isDealt)
             //{

@@ -42,6 +42,28 @@ namespace PoweredOn.CardBox.Games.Solitaire
             get { return new PlayfieldSpot(PlayfieldArea.INVALID, -1, -1); }
         }
 
+        public static PlayfieldSpot DECK
+        {
+            get { return new PlayfieldSpot(PlayfieldArea.DECK, 0); }
+        }
+
+        public static PlayfieldSpot STOCK
+        {
+            get { return new PlayfieldSpot(PlayfieldArea.STOCK, 0); }
+        }
+
+        public static PlayfieldSpot WASTE
+        {
+            get { return new PlayfieldSpot(PlayfieldArea.WASTE, 0); }
+        }
+
+        public static PlayfieldSpot HAND
+        {
+            get { return new PlayfieldSpot(PlayfieldArea.HAND, 0); }
+        }
+
+
+
         override public string ToString()
         {
             return $"PlayfieldSpot: {area} {index}:{subindex}";

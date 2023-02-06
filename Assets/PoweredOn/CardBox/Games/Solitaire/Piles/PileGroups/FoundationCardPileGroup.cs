@@ -33,7 +33,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public FoundationCardPileGroup Clone()
         {
             List<FoundationCardPile> newPiles = new List<FoundationCardPile>();
-            UnityEngine.Debug.Log($"trying to clone {newPiles.Count} {this.piles.Count}");
+            //UnityEngine.Debug.Log($"trying to clone {newPiles.Count} {this.piles.Count}");
             for (int i = 0; i < this.piles.Count; i++)
             {
                 newPiles.Add(piles[i].Clone());
@@ -52,10 +52,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return piles[(int)suit];
         }
 
-        public static PlayfieldSpot GetFoundationThatCanAcceptCard(SolitaireCard card)
+        /*public static PlayfieldSpot GetFoundationThatCanAcceptCard(SolitaireCard card)
         {
             FoundationCardPileGroup foundationCardPileGroup = Managers.GameManager.Instance.game.GetFoundationCardPileGroup();
-            /*for (int i = 0; i < foundationCardPileGroup.Count; i++)
+            *//*for (int i = 0; i < foundationCardPileGroup.Count; i++)
             {
                 PlayingCardIDList foundationList = foundationCardPileGroup[i];
 
@@ -73,13 +73,20 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         return (PlayfieldSpot)(i + (int)PlayfieldSpot.Foundation1);
                     }
                 }
-            }*/
+            }*//*
             return PlayfieldSpot.INVALID;
-        }
+        }*/
 
         public new IEnumerator<FoundationCardPile> GetEnumerator()
         {
             return this.piles.GetEnumerator();
+        }
+
+        internal bool CanReceiveCard(SolitaireCard card)
+        {
+            // TODO: make piles suit-agnostic
+            var pile = this.piles[(int)card.GetSuit()];
+            return pile.CanReceiveCard(card);
         }
 
         public new FoundationCardPile this[int index]

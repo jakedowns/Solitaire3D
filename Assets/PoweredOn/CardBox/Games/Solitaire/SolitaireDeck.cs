@@ -26,6 +26,21 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         private SolitaireGame game;
 
+        private bool _isShuffling = false;
+        public bool IsShuffling { get { return this._isShuffling; } }
+        
+        private bool _isCollectingCardsToDeck = false;
+        
+        public bool IsCollectingCardsToDeck {  get { return this._isCollectingCardsToDeck;  } }
+
+        public new int Count
+        {
+            get
+            {
+                return this.deckCardPile.Count;
+            }
+        }
+
         GameManager gmInstance {
             get
             {
@@ -209,14 +224,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return cardIndexLookup[suitRank];
         }
 
-        public new int Count
-        {
-            get
-            {
-                return this.deckOrderList.Count;
-            }
-        }
-
         public void Shuffle(int numShuffles)
         {
             shuffleLog.Clear();
@@ -242,6 +249,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void Shuffle()
         {
+            _isShuffling = true;
+            
             PlayingCardIDList prevDeckOrderList = deckOrderList.Count > 0 ? deckOrderList : new PlayingCardIDList(DEFAULT_DECK_ORDER);
 
             deckOrderList = new PlayingCardIDList(prevDeckOrderList);
@@ -265,6 +274,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 throw new Exception("invalid deckOrderList count after shuffle");
             }
             shuffleLog.Add(iteration_log);
+            
+            _isShuffling = false;
         }
 
         void UpdateCardDeckOrder(SolitaireCard card, int deckOrder)
@@ -356,11 +367,21 @@ namespace PoweredOn.CardBox.Games.Solitaire
             CollectCardsToDeck();
             SetAllFaceUp();
 
+            const float X_SPACING = .065f;
+            const float Y_SPACING = .1f;
+
+            Vector2 offset = new((13/2) * X_SPACING, -.05f + (4/2) * Y_SPACING);
+
             foreach (SolitaireCard card in cards)
             {
-                float yPos = (float)card.GetSuit() * .2f;
-                float xPos = (float)card.GetRank() * .4f;
+                float xPos = (float)card.GetRank() * X_SPACING;
+                float yPos = (float)card.GetSuit() * Y_SPACING;
+
+                xPos -= offset.x;
+                yPos -= offset.y;
+
                 card.SetPosition(new Vector3(xPos, yPos, 0));
+                card.SetRotation(Quaternion.Euler(new Vector3(0.0f, 180.0f, 90.0f)));
             }
         }
 
@@ -373,10 +394,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // with the 51st deck position being the top
         public void CollectCardsToDeck()
         {
-            string typeName = Enum.GetName(typeof(SolitaireGameObject), (SolitaireGameObject)gameObjectType);
-            Debug.LogWarning($"deck collect cards to deck {typeName} {this.gameObject?.name ?? "not-found"}");
+            _isCollectingCardsToDeck = true;
+            
+            string typeName = Enum.GetName(typeof(SolitaireGameObject), SolitaireDeck.gameObjectType);
+            Debug.LogWarning($"deck collect cards to deck {typeName}");
             // get the deck world position
-            GameObject go = this.game.GetGameObjectByType((SolitaireGameObject)gameObjectType);
+            GameObject go = this.game.GetGameObjectByType(SolitaireGameObject.Deck_Base);
             if(go == null)
             {
                 Debug.LogWarning("Solitaire Deck has no game object?");
@@ -394,7 +417,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 // get the deck order of the current card
                 int deckOrder = card.GetDeckOrder();
 
-                Transform cardTransform = card.GetGameObject()?.transform ?? null;
+                Transform cardTransform = card.gameObject?.transform ?? null;
 
                 Vector3 worldToLocal = Vector3.zero;
                 if (cardTransform != null)
@@ -409,7 +432,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     worldToLocal += new Vector3(0, 0, SolitaireGame.CARD_THICKNESS * deckOrder);
 
                     GoalIdentity goalID = new GoalIdentity(
-                        card.GetGameObject(),
+                        card.gameObject,
                         worldToLocal,
                         cardTransform.localRotation,
                         cardTransform.localScale + Vector3.zero);
@@ -420,7 +443,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 else
                 {
                     card.SetGoalIdentity(new GoalIdentity(
-                        card.GetGameObject(),
+                        card.gameObject,
                         Vector3.zero,
                         Quaternion.identity,
                         Vector3.one
@@ -431,6 +454,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 
 
             }
+
+            _isCollectingCardsToDeck = false;
         }
 
         public void SetAllFaceUp()
@@ -447,6 +472,18 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 card.SetIsFaceUp(false);
             }
+        }
+
+        internal static Suit GetOppositeColorSuit(Suit suit)
+        {
+            int[][] suitsByColor = SuitsByColor;
+            int[] blackSuits = suitsByColor[0];
+            int[] redSuits = suitsByColor[1];
+            if (blackSuits.Contains((int)suit))
+            {
+                return (Suit)redSuits[0];
+            }
+            return (Suit)blackSuits[0];
         }
     }
 }

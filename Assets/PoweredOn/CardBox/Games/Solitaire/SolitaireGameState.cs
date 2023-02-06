@@ -16,45 +16,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
         None,
         Always,
         Never,
-        //ExceptWhen,
 
         HandIsEmpty,
         StockIsEmpty,
         WasteIsEmpty,
 
-        // do we want these?
-        Foundation1IsEmpty,
-        Foundation2IsEmpty,
-        Foundation3IsEmpty,
-        Foundation4IsEmpty,
-
-        // 1..7
-        Tab1IsEmpty,
-        Tab2IsEmpty,
-        Tab3IsEmpty,
-        Tab4IsEmpty,
-        Tab5IsEmpty,
-        Tab6IsEmpty,
-        Tab7IsEmpty,
-
-        /*MovingCardAttemptingToMoveToEmptyFoundation,
-        MovingCardAttemptingToMoveToEmptyTableau,*/
-
-        //MovingCardIsValidNextCardForFoundation1..4
-        //MovingCardIsValidNextCardForTableau1..7
-        CardIsAttemptingToReturnToPreviousSpot,
-        MovingCardIsValidNextCardForDesiredSpot,
-
         WasteCanAcceptCard,
-        
-        // 1-4
-        //FoundationCanAcceptCard,
-        
-        // 1-7
-        //TableauCanAcceptCard,
-        
-        DealerIsCollectingDeck,
-        DealerIsDealing,
+
+        IsCollectingCardsToDeck,
+        IsDealing,
+        IsShuffling
     }
     public class SolitaireGameState
     {
@@ -64,6 +35,32 @@ namespace PoweredOn.CardBox.Games.Solitaire
         HandCardPile _handPile = HandCardPile.EMPTY;
         FoundationCardPileGroup _foundationPileGroup = FoundationCardPileGroup.EMPTY;
         TableauCardPileGroup _tableauPileGroup = TableauCardPileGroup.EMPTY;
+
+        public bool IsDealing { get; protected set; }
+        public bool IsCollectingCardsToDeck { get; protected set; }
+        public bool IsShuffling { get; protected set; }
+        public bool IsRecyclingWasteToStock { get; protected set; }
+        
+        
+
+        public void SetMockIsDealing(bool value)
+        {
+            this.IsDealing = value;
+        }
+
+        public void SetMockIsCollectingCardsToDeck(bool value)
+        {
+            this.IsCollectingCardsToDeck = value;
+        }
+        public void SetMockIsShuffling(bool value)
+        {
+            this.IsShuffling = value;
+        }
+        public void SetMockIsRecyclingWasteToStock(bool value)
+        {
+            this.IsRecyclingWasteToStock = value;
+        }
+
 
         /*public SolitaireGameState()
         {
@@ -89,6 +86,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
             this._foundationPileGroup = game.GetFoundationCardPileGroup();
 
             this._tableauPileGroup = game.GetTableauCardPileGroup();
+
+            // other state flags used for validation
+            this.IsDealing = game.IsDealing;
+            this.IsCollectingCardsToDeck = game.deck.IsCollectingCardsToDeck;
+            this.IsShuffling = game.deck.IsShuffling;
+            this.IsRecyclingWasteToStock = game.IsRecyclingWasteToStock;
 
         }
 
@@ -142,6 +145,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // flag if hand is empty
             if (gameState.HandPile.Count == 0)
                 bitflags |= GameStateFlags.HandIsEmpty;
+
+            if (gameState.IsDealing)
+                bitflags |= GameStateFlags.IsDealing;
+
+            if (gameState.IsCollectingCardsToDeck)
+                bitflags |= GameStateFlags.IsCollectingCardsToDeck;
+
+            if (gameState.IsShuffling)
+                bitflags |= GameStateFlags.IsShuffling;
 
             return bitflags;
         }

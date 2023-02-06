@@ -13,10 +13,6 @@ namespace PoweredOn.CardBox.PlayingCards
 {
     public class MonoPlayingCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
-        public GameObject GetGameObject()
-        {
-            return this.gameObject;
-        }
 
         public void OnPointerClick(PointerEventData eventData)
         {

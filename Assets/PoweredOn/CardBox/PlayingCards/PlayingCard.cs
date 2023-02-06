@@ -41,7 +41,7 @@ namespace PoweredOn.CardBox.PlayingCards
         public PlayfieldSpot previousPlayfieldSpot = new PlayfieldSpot(PlayfieldArea.DECK, -1, -1);
 
         // TODO: maybe move this to an interface or a trait we can inherit called Animatable or something
-        private GoalIdentity goalIdentity;
+        protected GoalIdentity goalIdentity;
 
         // constructor that takes suit and rank
         public PlayingCard(Suit suit, Rank rank, int deckOrder)
@@ -70,7 +70,7 @@ namespace PoweredOn.CardBox.PlayingCards
         public void SetMonoCard(MonoPlayingCard monoPlayingCard)
         {
             this.monoPlayingCard = monoPlayingCard;
-            this.selfGameObject = monoPlayingCard.GetGameObject();
+            this.selfGameObject = monoPlayingCard.gameObject;
         }
 
         public MonoPlayingCard GetCardInteractive()
@@ -92,13 +92,15 @@ namespace PoweredOn.CardBox.PlayingCards
             return GetRank().ToString().ToLower() + "_of_" + GetSuit().ToString().ToLower();
         }
 
-        public GameObject GetGameObject()
-        {
-            if(this.selfGameObject == null)
+        public GameObject gameObject {
+            get
             {
-                DebugOutput.Instance?.LogWarning($"PlayingCard {this} has no GameObject Set");
+                if (this.selfGameObject == null)
+                {
+                    DebugOutput.Instance?.LogWarning($"PlayingCard {this} has no GameObject Set");
+                }
+                return this.selfGameObject;
             }
-            return this.selfGameObject;
         }
 
         public Rank GetRank()
@@ -127,6 +129,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         public void SetGoalIdentity(GoalIdentity goalIdentity)
         {
+            //Debug.LogWarning($"new goal identity {this} {goalIdentity}");
             this.goalIdentity = goalIdentity;
         }
 

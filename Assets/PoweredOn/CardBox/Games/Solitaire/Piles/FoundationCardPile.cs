@@ -18,7 +18,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public FoundationCardPile(PlayingCardIDList cardList, int pile_index) : base(cardList, pile_index)
         {
-            string typeName = $"Foundation{pile_index}_Base";
+            string typeName = $"Foundation{pile_index+1}_Base";
             SolitaireGameObject theType = (SolitaireGameObject)Enum.Parse(typeof(SolitaireGameObject), typeName);
             this.gameObjectType = theType;
         }
@@ -27,7 +27,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             return new FoundationCardPile(cardList.Clone(), this.pile_index);
         }
-        public bool CanAcceptCard(SolitaireCard card)
+        public bool CanReceiveCard(SolitaireCard card)
         {
             if (Count == 0)
             {

@@ -25,5 +25,32 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             return new WasteCardPile(cardList.Clone());
         }
+
+        public bool CanRecieveCard(SolitaireCard card)
+        {
+            if(card.playfieldSpot.area == PlayfieldArea.STOCK)
+            {
+                return true; // always valid from stock
+            }
+            
+            /*
+            if (
+              PoweredOn.Managers.GameManager.Instance.game.IsUndoingMove
+              || PoweredOn.Managers.GameManager.Instance.game.IsRedoingMove
+            )
+            {
+                return true;
+            }*/
+            
+            // if they picked up the card, and they're returning it, it's valid
+            if (
+                card.playfieldSpot.area == PlayfieldArea.HAND
+                && card.previousPlayfieldSpot.area == PlayfieldArea.WASTE 
+                && card.previousPlayfieldSpot.index == Count-1
+            ) {
+                return true;
+            }
+            return false;
+        }
     }
 }
