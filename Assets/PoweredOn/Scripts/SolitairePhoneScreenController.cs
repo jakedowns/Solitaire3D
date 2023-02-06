@@ -6,14 +6,14 @@
 * https://www.nreal.ai/        
 * 
 *****************************************************************************/
-
-namespace NRKernal
+using NRKernal;
+namespace PoweredOn
 {
     using UnityEngine;
     using UnityEngine.EventSystems;
 
     /// <summary> A controller for handling multi screens. </summary>
-    public class SolitairePhoneScreenController : MonoBehaviour, ISystemButtonStateProvider
+    public class SolitairePhoneScreenController : NRVirtualDisplayer, ISystemButtonStateProvider
     {
         private SystemButtonState m_SystemButtonState = new SystemButtonState();
         private ISystemButtonStateReceiver m_Receiver;

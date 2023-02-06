@@ -12,6 +12,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public WasteCardPile() { }
 
+        public new SolitaireGameObject GameObjectType = SolitaireGameObject.Waste_Base;
+
         public WasteCardPile(PlayingCardIDList cardList) : base(cardList)
         {
         }
