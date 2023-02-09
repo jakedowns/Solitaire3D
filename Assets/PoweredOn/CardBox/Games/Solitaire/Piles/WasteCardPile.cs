@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
+using UnityEngine;
+
 namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class WasteCardPile : SolitaireCardPile
@@ -12,7 +14,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public WasteCardPile() { }
 
-        public new SolitaireGameObject GameObjectType = SolitaireGameObject.Waste_Base;
+        public override SolitaireGameObject gameObjectType { get; set; } = SolitaireGameObject.Waste_Base;
 
         public WasteCardPile(PlayingCardIDList cardList) : base(cardList)
         {
@@ -53,6 +55,21 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 return true;
             }
             return false;
+        }
+
+        // i hate that i have to override this, and that the base implementation can't read my overridden gameObjectType here.
+        // i'm obviously doing something wrong because the whole point of inheritence is to not repeat code like this.
+        // i'm guessing i need like a virtual method or something? or an interface? i dunno
+        public new GameObject gameObject
+        {
+            get
+            {
+                if (this.gameObjectType == SolitaireGameObject.None)
+                {
+                    throw new Exception($"{this.GetType().Name} class does not have a proper gameObjectType defined");
+                }
+                return gmi.game.GetGameObjectByType(gameObjectType);
+            }
         }
     }
 }

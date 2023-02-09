@@ -14,11 +14,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public FoundationCardPile(int index) : base()
         {
             this.pile_index = index;
+            SetSelfGameObjectType();
         }
 
         public FoundationCardPile(PlayingCardIDList cardList, int pile_index) : base(cardList, pile_index)
         {
-            string typeName = $"Foundation{pile_index+1}_Base";
+            SetSelfGameObjectType();
+        }
+        void SetSelfGameObjectType()
+        {
+            string typeName = $"Foundation{pile_index + 1}_Base";
             SolitaireGameObject theType = (SolitaireGameObject)Enum.Parse(typeof(SolitaireGameObject), typeName);
             this.gameObjectType = theType;
         }

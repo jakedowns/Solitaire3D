@@ -510,10 +510,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // like stockCardPile.GetGoalIDAsCard(card) // returns the proper goal for the card based on it's position in the pile
                     if (goalID != null && stockCardPile.gameObject != null)
                     {
-                        gPos = stockCardPile.gameObject.transform.position;
-                        gPos.z = (-0.1f) + (stockCardPile.Count * -CARD_THICKNESS);
-                        //Debug.Log($"stockCardsCountNow {stockCardPile.Count} z:{gPos.z}");
-                        goalID.SetGoalPositionFromWorldPosition(gPos);
+                        Vector3 offset = new(0, 0, (-0.2f) + (stockCardPile.Count * -CARD_THICKNESS));
+                        goalID = new GoalIdentity(card.gameObject, stockCardPile.gameObject, offset);
                     }
                     break;
 
@@ -522,13 +520,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     wasteCardPile.Add(card.GetSuitRank());
                     if (goalID != null && wasteCardPile.gameObject != null)
                     {
-                        gPos = wasteCardPile.gameObject.transform.position;
-                        goalID.SetGoalPositionFromWorldPosition(gPos);
-                        goalID.position = new Vector3(
-                            goalID.position.x,
-                            goalID.position.y,
-                            goalID.position.z + (wasteCardPile.Count * -CARD_THICKNESS)
-                        );
+                        /*gPos = wasteCardPile.gameObject.transform.TransformPoint(Vector3.forward * (wasteCardPile.Count * -CARD_THICKNESS));
+                        goalID.position = gPos;*/
+
+                        Vector3 offset = new(0, 0, -0.2f + (wasteCardPile.Count * -CARD_THICKNESS));
+                        goalID = new GoalIdentity(card.gameObject, wasteCardPile.gameObject, offset);
+
                     }
                     break;
 
@@ -538,9 +535,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     var baseGO = foundationCardPileGroup[spot.index].gameObject;
                     if (goalID != null && baseGO != null)
                     {
-                        gPos = baseGO.transform.position;
-                        gPos.z = foundationCardPileGroup[spot.index].Count * CARD_THICKNESS;
-                        goalID.SetGoalPositionFromWorldPosition(gPos);
+                        goalID = new GoalIdentity(card.gameObject, baseGO, new Vector3(
+                            0,
+                            0,
+                            -0.2f + (foundationCardPileGroup[spot.index].Count * -CARD_THICKNESS)
+                        ));
                     }
                     break;
 
@@ -549,11 +548,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     tableauCardPileGroup[spot.index].Add(card.GetSuitRank());
                     if (goalID != null && tableauCardPileGroup[spot.index].gameObject != null)
                     {
-                        gPos = tableauCardPileGroup[spot.index].gameObject.transform.position;
+                        /*gPos = tableauCardPileGroup[spot.index].gameObject.transform.position;
                         gPos.z = (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS - .02f;;
                         gPos.y = (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET;
-                        //goalID.SetGoalPositionFromWorldPosition(gPos);
-                        goalID.position = gPos;// cardTX.InverseTransformPoint(gPos);
+                        goalID.position = gPos;*/
+                        goalID = new GoalIdentity(card.gameObject, tableauCardPileGroup[spot.index].gameObject, new Vector3(
+                            0,
+                            (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET,
+                            -0.2f + (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS
+                        ));
                     }
                     break;
 
@@ -584,6 +587,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             if(goalID != null)
             {
                 goalID.rotation = (spot.area == PlayfieldArea.HAND) ? (faceUp ? options[0] : options[1]) : (faceUp ? options[1] : options[0]);
+                goalID.SetUseCustomRotation(true); // use our custom rotation instead of a goalObjects (if applicable) rotation
                 goalID.SetDelay(delay);
             }
             card.SetGoalIdentity(goalID);
@@ -699,6 +703,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
+        /**
+         TODO: verify face-up-ness
+        */
         public PlayingCardIDList CollectSubStack(SolitaireCard card)
         {
             if (card.playfieldSpot.area == PlayfieldArea.INVALID)
@@ -710,24 +717,28 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 PlayfieldSpot spot = card.playfieldSpot;
                 PlayingCardIDList cardGroup = new PlayingCardIDList(1) { card.GetSuitRank() };
+                Debug.Log($"collect substack {card}");
                 TableauCardPile pile = tableauCardPileGroup[spot.index];
 
                 int cardIndex = pile.IndexOf(card.GetSuitRank());
+                Debug.Log($"card index: {cardIndex}");
                 if (cardIndex == pile.Count - 1)
                 {
-                    return cardGroup; // single card
+                    return cardGroup; // top card? picking up single card
                 }
-                // get the rest of the cards (if any) at a higher index in the list
+                
+                // else, multi-card: get the rest of the cards (if any) at a higher index in the list
                 for (int i = cardIndex; i < pile.Count; i++)
                 {
                     cardGroup.Add(pile[i]);
                 }
 
-                DebugOutput.Instance?.Log("picked up cards: ");
+                string msg = "picked up cards: ";
                 foreach (SuitRank id in cardGroup)
                 {
-                    DebugOutput.Instance?.Log(id.ToString());
+                    msg += "\n" + id.ToString();
                 }
+                Debug.Log(msg);
 
                 return cardGroup;
             }
@@ -1095,8 +1106,41 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
         }
+
+        public void OnSingleClickCardPileBase(MonoSolitaireCardPileBase pileBase)
+        {
+            switch (pileBase.playfieldArea)
+            {
+                case PlayfieldArea.STOCK:
+                    if(handCardPile.Count == 0 && stockCardPile.Count < 1 && wasteCardPile.Count > 0)
+                    {
+                        WasteToStock();
+                    }
+                    break;
+                case PlayfieldArea.WASTE:
+                    if (handCardPile.Count > 0)
+                    {
+                        TryPlaceHandCardToSpot(new PlayfieldSpot(pileBase.playfieldArea, pileBase.index));
+                    }
+                    else if (stockCardPile.Count > 0)
+                    {
+                        StockToWaste();
+                    }
+                    break;
+                case PlayfieldArea.FOUNDATION:
+                    if(handCardPile.Count > 0)
+                        TryPlaceHandCardToSpot(new PlayfieldSpot(pileBase.playfieldArea, pileBase.index));
+                    break;
+                case PlayfieldArea.TABLEAU:
+                    if (handCardPile.Count > 0)
+                        TryPlaceHandCardToSpot(new PlayfieldSpot(pileBase.playfieldArea, pileBase.index));
+                    break;
+            }
+        }
+
         public void OnSingleClickCard(SolitaireCard card)
         {
+            Debug.Log($"SolitaireGame@OnSingleClickCard {card}");
             DebugOutput.Instance?.LogWarning($"on single click card {card}");
 
 
@@ -1174,30 +1218,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 TryPlaceHandCardToSpot(card.playfieldSpot);
             }
-        }
-        public void OnSingleClickEmptyStack(PlayfieldSpot destinationSpot)
-        {
-            DebugOutput.Instance?.LogWarning($"OnSingleClickEmptyStack {destinationSpot}");
-            switch (destinationSpot.area)
-            {
-                case PlayfieldArea.TABLEAU:
-                    break;
-                case PlayfieldArea.WASTE:
-                    break;
-                case PlayfieldArea.FOUNDATION:
-                    break;
-                case PlayfieldArea.STOCK:
-                    if (stockCardPile.Count == 0)
-                    {
-                        DebugOutput.Instance?.LogWarning("resetting waste to stock");
-                        // move waste to stock
-                        WasteToStock();
-                        return;
-                    }
-                    DebugOutput.Instance?.LogWarning("ignoring click on stock, cards still in stock");
-                    break;
-            }
-            TryPlaceHandCardToSpot(destinationSpot);
         }
 
         // TODO: track in Move Log for undo/redo

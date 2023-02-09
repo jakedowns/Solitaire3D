@@ -14,7 +14,7 @@ namespace PoweredOn.CardBox.PlayingCards
     {
         protected PlayingCardIDList cardList;
 
-        public GameGameObject gameObjectType = GameGameObject.None;
+        //public virtual GameGameObject gameObjectType { get; set; } = GameGameObject.None;
 
         protected int pile_index = -1;
 

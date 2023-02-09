@@ -13,7 +13,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class SolitaireCardPile: PlayingCardPile
     {
-        public new SolitaireGameObject gameObjectType = SolitaireGameObject.None;
+        public virtual SolitaireGameObject gameObjectType { get; set; } = SolitaireGameObject.None;
 
         protected GameManager gmi
         {

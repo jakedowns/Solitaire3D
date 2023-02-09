@@ -76,8 +76,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 double delta = Time.realtimeSinceStartupAsDouble - (double)pointerDownAt;
                 if (delta > LONG_PRESS_DURATION)
                 {
-                    GameManager.Instance.game.OnLongPressCard(this.card);
                     pointerDownAt = null; // unflag
+                    GameManager.Instance.game.OnLongPressCard(this.card);
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void OnPointerUp(PointerEventData eventData)
         {
             double delta = Time.realtimeSinceStartupAsDouble - (double)(pointerDownAt ?? Time.realtimeSinceStartupAsDouble);
-            if (delta < LONG_PRESS_DURATION)
+            if (pointerDownAt != null && delta > 0 && delta < LONG_PRESS_DURATION)
             {
                 GameManager.Instance.OnSingleClickCard(this.card);
             }

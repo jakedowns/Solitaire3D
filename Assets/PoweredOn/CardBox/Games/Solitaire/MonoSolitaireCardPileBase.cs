@@ -44,7 +44,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            GameManager.Instance.game.OnSingleClickEmptyStack(this.spot);
+            GameManager.Instance.game.OnSingleClickCardPileBase(this);
         }
 
         public void OnPointerEnter(PointerEventData eventData)

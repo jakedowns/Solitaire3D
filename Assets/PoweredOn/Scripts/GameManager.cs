@@ -395,6 +395,7 @@ namespace PoweredOn.Managers
 
         public void OnSingleClickCard(SolitaireCard card)
         {
+            //Debug.Log($"[GameManager@OnSingleClickCard] {card}");
             game.OnSingleClickCard(card);
         }
 

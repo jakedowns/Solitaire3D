@@ -19,6 +19,18 @@ namespace PoweredOn.CardBox.Games.Solitaire
             this.gameObjectType = Enum.TryParse(gameObjectTypeName, out SolitaireGameObject gameObjectType) ? gameObjectType : SolitaireGameObject.None;
         }
 
+        // listen for message "OnMouseDown"
+        public void OnMouseDown(){
+            Debug.Log("OnMouseDown");
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                Debug.Log("OnMouseDown: IsPointerOverGameObject");
+                return;
+            }
+            Debug.Log("OnMouseDown: Not IsPointerOverGameObject");
+            Managers.GameManager.Instance.OnSingleClickCard(this);
+        }
+
         public SolitaireGameObject gameObjectType;
 
         /*public new GameObject gameObject {

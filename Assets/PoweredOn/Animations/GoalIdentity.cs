@@ -17,6 +17,8 @@ namespace PoweredOn.CardBox.Animations
         private Vector3 _scale;
         private Vector3 _offset;
 
+        private bool useCustomRotation = false;
+
         private GameObject _gameObject;
         public GameObject gameObject
         {
@@ -38,6 +40,11 @@ namespace PoweredOn.CardBox.Animations
             }
         }
 
+        public void SetUseCustomRotation(bool value)
+        {
+            useCustomRotation = value;
+        }
+
 #nullable enable
         public GameObject? goalObject;
         
@@ -46,7 +53,7 @@ namespace PoweredOn.CardBox.Animations
             get
             {
                 if (goalObject != null)
-                    return gameObject.transform.InverseTransformPoint(goalObject.transform.position) + this._offset;
+                    return goalObject.transform.position + this._offset;
                 return this._position + this._offset;
             }
             set
@@ -59,7 +66,7 @@ namespace PoweredOn.CardBox.Animations
         {
             get
             {
-                if (goalObject != null)
+                if (goalObject != null && !useCustomRotation)
                     return goalObject.transform.rotation;
                 return this._rotation;
             }
