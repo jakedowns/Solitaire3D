@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using UnityEngine;
 using PoweredOn.CardBox.PlayingCards;
+using PoweredOn.Managers;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -35,8 +36,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public bool CanReceiveCard(SolitaireCard card)
         {
             // TODO: if undoing or redoing move; return true
-            
-            if(Count > 0 && !PoweredOn.Managers.GameManager.Instance.game.IsPickingUpSubstack)
+            GameManager gmi = GameManager.Instance ?? GameObject.FindObjectOfType<GameManager>();
+
+
+            if (Count > 0 && !gmi.game.IsPickingUpSubstack)
             {
                 // block if we already have a card in our hand and we're not picking up a substack
                 return false;
