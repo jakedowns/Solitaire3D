@@ -285,7 +285,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 /*try
                 {*/
                 SolitaireCard card = deck.GetCardBySuitRank(deck.deckOrderList[initial_loop_index]);
-                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index), false);
+                //MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index), false);
+                deck.RemoveCardFromDeck(card.GetSuitRank());
+                stockCardPile.Add(card.GetSuitRank());
+                card.SetPlayfieldSpot(new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index));
                 /*}
                 catch (Exception e)
                 {
@@ -361,16 +364,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             float deal_delay = 0.1f * dealtOrder.Count;
-            
-            //for (int sc = stockCardPile.Count - 1; sc > -1; sc--)
-            for (int sc = 0; sc < stockCardPile.Count; sc++)
+
+            // Loop over ALL stock cards and set goal
+            for (int sc2 = stockCardPile.Count-1; sc2 >= 0; sc2--)
             {
-                SuitRank cardSuitRank = stockCardPile[sc];
-                SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
+                Debug.LogWarning("SC2: " + stockCardPile.Count + " " + sc2); //
+                SolitaireCard card = deck.GetCardBySuitRank(stockCardPile[sc2]);
+                float delay = deal_delay + (0.025f * (sc2));
+
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
-                float delay = deal_delay + (0.05f * (stockCardPile.Count - sc));
                 /* always face down when adding to stock */
-                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false, delay); 
+                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, sc2), false, delay);
             }
 
             // flag as done
@@ -457,14 +461,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
             iDebug.LogWarning("[GetNextValidPlayfieldSpotForSuitRank] Checking foundation card list for rank: " + suitrank.rank + " suit int: " + (int)suitrank.suit + " cardGroupCount:" + foundationCardPileGroup.Count);
             FoundationCardPile foundationPile = foundationCardPileGroup[(int)suitrank.suit];
             SuitRank topCardSR;
-            iDebug.LogWarning("[GetNextValidPlayfieldSpotForSuitRank] Foundation List: " + foundationPile.Count);
+            iDebug.LogWarning($"[GetNextValidPlayfieldSpotForSuitRank] Foundation List[{(int)suitrank.suit}].Count: " + foundationPile.Count);
 
             // TODO: .IsEmpty
             if (foundationPile.Count == 0)
             {
                 // if the foundation list is empty, that's our first choice spot
                 // if the rank is Rank.ace (0), return the foundation pile for the suit
-                if (suitrank.rank == Rank.ACE) { return new PlayfieldSpot(PlayfieldArea.FOUNDATION, (int)suitrank.rank, 0); }
+                if (suitrank.rank == Rank.ACE) { 
+                    return new PlayfieldSpot(PlayfieldArea.FOUNDATION, (int)suitrank.rank, 0); 
+                }
             }
             else
             {
@@ -845,7 +851,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
             else
             {
-                Debug.LogWarning("L@@K: i set deck_base to deckOfCards");
                 gameObjectReferences[SolitaireGameObject.Deck_Base] = deckOfCards;
             }
 
