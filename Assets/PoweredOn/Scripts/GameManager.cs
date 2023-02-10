@@ -22,7 +22,7 @@ namespace PoweredOn.Managers
         This singleton instance should be globally available so we don't have to pass around game references to subclassses
         
      */
-    /*[ExecuteInEditMode]*/
+    [ExecuteInEditMode]
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { get; private set; }
@@ -31,8 +31,12 @@ namespace PoweredOn.Managers
         bool nrealModeEnabled = false;
         Camera mainCamera;
         Camera nrealCamera;
+        public float gmi_id;
+        
         private void Awake()
         {
+            gmi_id = UnityEngine.Random.Range(-10.0f, 10.0f); // System.Guid.NewGuid();
+            //Debug.LogWarning("GMI Awake: set id: "+ gmi_id);
             // If there is an instance, and it's not me, delete myself.
 
             if (Instance != null && Instance != this)
@@ -51,8 +55,14 @@ namespace PoweredOn.Managers
             }
 
             mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
-
+#if !UNITY_EDITOR
             MyInit();
+#endif
+        }
+
+        public void SetGame(SolitaireGame game)
+        {
+            this._game = game;
         }
 
 #if UNITY_EDITOR
@@ -93,6 +103,7 @@ namespace PoweredOn.Managers
         // Start is called before the first frame update
         void Start()
         {
+            EnableNrealMode();
             Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
             Screen.autorotateToLandscapeLeft = true;
