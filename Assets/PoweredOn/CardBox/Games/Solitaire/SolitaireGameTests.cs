@@ -74,6 +74,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
             game.NewGame();
             game.Deal();
 
+            Managers.GameManager gmi = Managers.GameManager.Instance ?? GameObject.FindObjectOfType<Managers.GameManager>();
+
+            Debug.Log($"Test[CanDealCards] Using Game Manager id: {gmi.gmi_id}");
+            Managers.GameManager.Instance.SetGame(game);
+
             // assert deck.deckCardPile.Count == 0 (all cards have been dealt)
             Assert.IsTrue(game.deck.DeckCardPile.Count == 0);
 
@@ -99,11 +104,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 Assert.IsTrue(tabList[i].Count == i + 1);
 
                 // 2.1 expect the top card ONLY of each tableau to be face up
-                SolitaireCard topCard = tabList[i].GetTopCard();
+                // i think this is returning a card from a fresh game manager instance, not the one we've already established
+                SolitaireCard topCard = tabList[i].GetTopCard(); 
+                //SolitaireCard topCard = game.deck.GetCardBySuitRank(tabList[i].Last());
 
                 Debug.LogWarning("Debugging why top card is not face up after dealing");
                 Debug.LogWarning($"topCard: {topCard} for tab list {i} (count:{tabList[i].Count}) isfaceup:{topCard.IsFaceUp}");
-                
+
+                Debug.LogWarning("what cards are in the tab list ? " + tabList);
                 Assert.IsTrue(topCard.IsFaceUp);
 
                 for(int c = 0; c < tabList[i].Count; c++)
