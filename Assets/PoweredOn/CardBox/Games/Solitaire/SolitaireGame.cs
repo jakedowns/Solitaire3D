@@ -278,9 +278,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             if (deck.deckOrderList.Count != 52)
                 throw new Exception($"[DEAL] invalid deck deckOrderList count after shuffling {deck.deckOrderList.Count}");
 
+            // move cards from the deck to the stock pile
+            // capture all SuitRanks in the "stockCards" pile to begin with
             for (int initial_loop_index = 0; initial_loop_index < 52; initial_loop_index++)
             {
-                // capture all SuitRanks in the "stockCards" pile to begin with
                 /*try
                 {*/
                 SolitaireCard card = deck.GetCardBySuitRank(deck.deckOrderList[initial_loop_index]);
@@ -303,6 +304,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 throw new Exception($"[DEAL] invalid stock card count after shuffling and moving from deck to stockCards list {stockCardPile.Count}");
             }
+
+            /* Deal 28 cards */
 
             for (int round = 0; round < 7; round++)
             {
@@ -329,6 +332,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     iDebug.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
                     Debug.LogWarning($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
+
+                    // assert the playfield spot updated
+                    Assert.IsTrue(card.playfieldSpot.area == PlayfieldArea.TABLEAU);
+                    
+                    // assert the index within the tableau is correct
+                    Assert.IsTrue(card.playfieldSpot.index == pile);
+                    
+                    // assert the IsFaceUp value is correctly set
+                    Assert.IsTrue(card.IsFaceUp == faceUp);
                 }
             }
 
@@ -348,14 +360,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 throw new Exception($"[DEAL] invalid stock card count after moving cards from stock to tableau {stockCardPile.Count}");
             }
 
-
-            for (int sc = stockCardPile.Count - 1; sc > -1; sc--)
+            float deal_delay = 0.1f * dealtOrder.Count;
+            
+            //for (int sc = stockCardPile.Count - 1; sc > -1; sc--)
+            for (int sc = 0; sc < stockCardPile.Count; sc++)
             {
                 SuitRank cardSuitRank = stockCardPile[sc];
                 SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
-                float delay = 0.1f * (stockCardPile.Count - sc);
-                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false, delay); /* always face down when adding to stock */
+                float delay = deal_delay + (0.05f * (stockCardPile.Count - sc));
+                /* always face down when adding to stock */
+                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false, delay); 
             }
 
             // flag as done
@@ -506,6 +521,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             //if(runningInTestMode) Debug.Log($"MoveCardToNewSpot {card.GetGameObjectName()} from {card.playfieldSpot} to {spot} faceup:{faceUp} delay:{delay}");
             moveLog.Add(new SolitaireMove(card, card.previousPlayfieldSpot, spot, substackIndex));
 
+            /* Remove from previous spot (pile) if applicable */
             if (card.playfieldSpot.area != PlayfieldArea.INVALID)
             {
                 card.SetPreviousPlayfieldSpot(card.playfieldSpot.Clone());
@@ -520,6 +536,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
+
+            /* 
+                TODO: fix it so we can reference game objects in Editor mode when running tests
+                for now we just conditionally reference the game object
+             */
             GameObject cardGO = card.gameObject;
             GoalIdentity goalID = null;
             Transform cardTX;
@@ -533,6 +554,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 if(!IsRunningInTestMode) Debug.LogWarning($"CardGameObject is null {card}");
             }
 
+            /* Depending on the destination spot, record various offsets to the desired card positions */
             switch (spot.area)
             {
                 case PlayfieldArea.STOCK:
@@ -615,7 +637,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     break;
             }
 
-            // z-axis rotation is temporary until i fix the orientation of the mesh in blender
+            // Define desired rotation
+            // note: z-axis rotation is temporary until i fix the orientation of the mesh in blender
             Quaternion[] options = new Quaternion[2] { Quaternion.Euler(0, 0, 90), CARD_DEFAULT_ROTATION };
             if(goalID != null)
             {
