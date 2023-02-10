@@ -91,7 +91,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             switch (moveType)
             {
-                // === 1. Hand Moves
+                // === 1. From Hand Moves
                 case SolitaireMoveType.HAND_TO_HAND:
                     return (moveStatusFlags & SolitaireMoveStatusFlags.HandCanReceiveCard) == (SolitaireMoveStatusFlags.HandCanReceiveCard);
                 case SolitaireMoveType.HAND_TO_FOUNDATION:
@@ -107,7 +107,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case SolitaireMoveType.HAND_TO_WASTE:
                     return (moveStatusFlags & SolitaireMoveStatusFlags.CardIsReturningFromHand) == (SolitaireMoveStatusFlags.CardIsReturningFromHand);
 
-                // === 2. Deck Moves
+                // === 2. From Deck Moves
                 case SolitaireMoveType.DECK_TO_HAND:
                 case SolitaireMoveType.DECK_TO_WASTE:
                 case SolitaireMoveType.DECK_TO_FOUNDATION:
@@ -121,7 +121,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // valid when dealing
                     return (bitflags & GameStateFlags.IsDealing) == (GameStateFlags.IsDealing);
 
-                // === 3. Stock Moves
+                // === 3. From Stock Moves
                 case SolitaireMoveType.STOCK_TO_HAND:
                     return false;
                 case SolitaireMoveType.STOCK_TO_DECK:
@@ -137,13 +137,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case SolitaireMoveType.STOCK_TO_TABLEAU:
                     return false;
 
-                // === 4. Waste Moves
+                // === 4. From Waste Moves
                 case SolitaireMoveType.WASTE_TO_HAND:
                     return ( bitflags & GameStateFlags.HandIsEmpty ) == (GameStateFlags.HandIsEmpty);
                 case SolitaireMoveType.WASTE_TO_DECK:
                     return (bitflags & GameStateFlags.IsCollectingCardsToDeck) == (GameStateFlags.IsCollectingCardsToDeck);
                 case SolitaireMoveType.WASTE_TO_STOCK:
-                    return false;
+                    return (bitflags & GameStateFlags.IsRecyclingWasteToStock) == (GameStateFlags.IsRecyclingWasteToStock);
                 case SolitaireMoveType.WASTE_TO_WASTE:
                     return false;
                 case SolitaireMoveType.WASTE_TO_FOUNDATION:
@@ -151,7 +151,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case SolitaireMoveType.WASTE_TO_TABLEAU:
                     return (moveStatusFlags & SolitaireMoveStatusFlags.TableauCanReceiveCard) == (SolitaireMoveStatusFlags.TableauCanReceiveCard);
 
-                // === 5. Foundation Moves
+                // === 5. From Foundation Moves
                 case SolitaireMoveType.FOUNDATION_TO_HAND:
                     return (bitflags & GameStateFlags.HandIsEmpty) == (GameStateFlags.HandIsEmpty);
                 case SolitaireMoveType.FOUNDATION_TO_DECK:
@@ -165,7 +165,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case SolitaireMoveType.FOUNDATION_TO_TABLEAU:
                     return (moveStatusFlags & SolitaireMoveStatusFlags.TableauCanReceiveCard) == (SolitaireMoveStatusFlags.TableauCanReceiveCard);
 
-                // === 6. Tableau Moves
+                // === 6. From Tableau Moves
                 case SolitaireMoveType.TABLEAU_TO_HAND:
                     return (bitflags & GameStateFlags.HandIsEmpty) == (GameStateFlags.HandIsEmpty);
                 case SolitaireMoveType.TABLEAU_TO_DECK:

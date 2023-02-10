@@ -77,7 +77,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             Managers.GameManager gmi = Managers.GameManager.Instance ?? GameObject.FindObjectOfType<Managers.GameManager>();
 
             Debug.Log($"Test[CanDealCards] Using Game Manager id: {gmi.gmi_id}");
-            Managers.GameManager.Instance.SetGame(game);
+            gmi.SetGame(game);
 
             // assert deck.deckCardPile.Count == 0 (all cards have been dealt)
             Assert.IsTrue(game.deck.DeckCardPile.Count == 0);

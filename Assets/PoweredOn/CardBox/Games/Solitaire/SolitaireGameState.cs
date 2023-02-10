@@ -25,7 +25,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         IsCollectingCardsToDeck,
         IsDealing,
-        IsShuffling
+        IsShuffling,
+        IsRecyclingWasteToStock
     }
     public class SolitaireGameState
     {
@@ -159,6 +160,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             if (gameState.IsShuffling)
                 bitflags |= GameStateFlags.IsShuffling;
+
+            if (gameState.IsRecyclingWasteToStock)
+                bitflags |= GameStateFlags.IsRecyclingWasteToStock;
 
             return bitflags;
         }
