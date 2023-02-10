@@ -119,5 +119,15 @@ namespace PoweredOn.CardBox.PlayingCards
         {
             this.cardList.RemoveAt(index);
         }
+
+        public override string ToString()
+        {
+            var outstring = "";
+            foreach (var card in this.cardList)
+            {
+                outstring += (Managers.GameManager.Instance ?? GameObject.FindObjectOfType<Managers.GameManager>()).game.deck.GetCardBySuitRank(card) + ", \n";
+            }
+            return outstring;
+        }
     }
 }

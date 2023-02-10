@@ -75,5 +75,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             get { return this.piles.Count; }
         }
+
+        public override string ToString()
+        {
+            var outstring = "";
+            var i = 0;
+            foreach (var pile in this.piles)
+            {
+                outstring += "pile id: " + i + " " + pile.ToString() + "\n";
+                i++;
+            }
+            return outstring;
+        }
     }
 }
