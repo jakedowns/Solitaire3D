@@ -578,6 +578,7 @@ extern void CardIDListGroup__ctor_m56C5F56890025A90F5C53261464F90C3290C6B04 (voi
 extern void GoalIdentity_get_gameObject_mEE7CE630D7E8EB9377924E5FB2E12FC73AFCA486 (void);
 extern void GoalIdentity_set_gameObject_m095A12502B3CF775EBF9583DC605D0E67907BBA6 (void);
 extern void GoalIdentity_SetUseCustomRotation_m4A3E16147C9E315F35735A81540C2AABC767485C (void);
+extern void GoalIdentity_SetUseCustomScale_m5BF4718B84FCCA3F764ECA86593D2F2ED7AAD5E9 (void);
 extern void GoalIdentity_get_position_m8D461220A0609677E8DB454B207E459B9F67D332 (void);
 extern void GoalIdentity_set_position_m9BC317628D363376BD8A083CAA2E51CA63E64615 (void);
 extern void GoalIdentity_get_rotation_m8D80B83AC0089F50FD7C6A10242294D8C36F685E (void);
@@ -592,7 +593,7 @@ extern void CardAnimation_Tick_m7F0767521BE250743E6394F042BC976394170946 (void);
 extern void CardAnimation_SeekTo_m9D3F3D330E28FBD9A9C13723394D3393E9FD31C5 (void);
 extern void CardAnimation_GetGoalIdentity_mCF560EAF2D1408B1DA065C02510A0504B49622CB (void);
 extern void CardAnimation__ctor_m8DA565504A820164B573CDAAF68F5D82F1D70D3E (void);
-static Il2CppMethodPointer s_methodPointers[580] = 
+static Il2CppMethodPointer s_methodPointers[581] = 
 {
 	EmbeddedAttribute__ctor_m68CAD82666F0FF415043D7DC217986AA2D3133D1,
 	NullableAttribute__ctor_m771BA0E8EFE1DD8AAAE9E2B867CCF4D3AE8834C7,
@@ -1160,6 +1161,7 @@ static Il2CppMethodPointer s_methodPointers[580] =
 	GoalIdentity_get_gameObject_mEE7CE630D7E8EB9377924E5FB2E12FC73AFCA486,
 	GoalIdentity_set_gameObject_m095A12502B3CF775EBF9583DC605D0E67907BBA6,
 	GoalIdentity_SetUseCustomRotation_m4A3E16147C9E315F35735A81540C2AABC767485C,
+	GoalIdentity_SetUseCustomScale_m5BF4718B84FCCA3F764ECA86593D2F2ED7AAD5E9,
 	GoalIdentity_get_position_m8D461220A0609677E8DB454B207E459B9F67D332,
 	GoalIdentity_set_position_m9BC317628D363376BD8A083CAA2E51CA63E64615,
 	GoalIdentity_get_rotation_m8D80B83AC0089F50FD7C6A10242294D8C36F685E,
@@ -1210,7 +1212,7 @@ static Il2CppTokenAdjustorThunkPair s_adjustorThunks[16] =
 	{ 0x0600022C, PlayfieldSpot_Clone_mAD3B253A5BD35D2108A6462066A082DE3D320182_AdjustorThunk },
 	{ 0x0600022E, PlayfieldSpot_IsInvalid_m3BFEF15944FF9448C98626F8E2657F5E1309F442_AdjustorThunk },
 };
-static const int32_t s_InvokerIndices[580] = 
+static const int32_t s_InvokerIndices[581] = 
 {
 	7104,
 	5485,
@@ -1778,6 +1780,7 @@ static const int32_t s_InvokerIndices[580] =
 	6975,
 	5596,
 	5485,
+	5485,
 	7095,
 	5705,
 	6995,
@@ -1797,7 +1800,7 @@ IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	580,
+	581,
 	s_methodPointers,
 	16,
 	s_adjustorThunks,
