@@ -13,7 +13,19 @@ public class TouchInputMode : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+        Camera[] findsCameras = Resources.FindObjectsOfTypeAll<Camera>();
+        foreach (var _camera in findsCameras)
+        {
+            if (_camera.gameObject.name == "MainCamera")
+            {
+                mainCamera = _camera;
+            }
+        }
+
+        if (mainCamera == null)
+        {
+            Debug.LogWarning("main camera not found");
+        }
     }
 
     // Update is called once per frame

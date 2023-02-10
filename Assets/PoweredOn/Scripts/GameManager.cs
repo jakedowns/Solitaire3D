@@ -54,7 +54,15 @@ namespace PoweredOn.Managers
                 _ = GameObject.FindObjectOfType<DebugOutput>();
             }
 
-            mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+            Camera[] finds = Resources.FindObjectsOfTypeAll<Camera>();
+            foreach (var _camera in finds)
+            {
+                if (_camera.gameObject.name == "MainCamera")
+                {
+                    mainCamera = _camera;
+                }
+            }
+
 #if !UNITY_EDITOR
             MyInit();
 #endif
@@ -103,7 +111,12 @@ namespace PoweredOn.Managers
         // Start is called before the first frame update
         void Start()
         {
-            EnableNrealMode();
+            // really this only here until I can get Canvas UI buttons responding again.
+#if !UNITY_EDITOR
+            if(!Application.IsPlaying() || EditorApplication?.isPlayingOrWillChangePlaymode){
+                EnableNrealMode();
+            }
+#endif
             Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
             Screen.autorotateToLandscapeLeft = true;
@@ -155,7 +168,23 @@ namespace PoweredOn.Managers
                 nrCamera.gameObject.SetActive(value);
             }
 
-            mainCamera.gameObject.SetActive(!value);
+            Camera[] findsCameras = Resources.FindObjectsOfTypeAll<Camera>();
+            foreach (var _camera in findsCameras)
+            {
+                if (_camera.gameObject.name == "MainCamera")
+                {
+                    mainCamera = _camera;
+                }
+            }
+
+            if(mainCamera == null)
+            {
+                Debug.LogWarning("main camera not found");
+            }
+            else
+            {
+                mainCamera.gameObject.SetActive(!value);
+            }
 
             var mainCanvasCanvas = GameObject.Find("MainCanvas").GetComponent<Canvas>();
             nrealCamera = GameObject.Find("CameraParent/NRCameraRig/CenterCamera")?.GetComponent<Camera>();
