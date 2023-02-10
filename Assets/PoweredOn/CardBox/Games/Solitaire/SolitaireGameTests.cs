@@ -303,12 +303,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // k, now we have to move a new stock card to the waste to try and pick it up (could also try to pick up a tableau card)
             // we'll do that in the next test method
             game.MoveCardToNewSpot(ref nextStockCard, PlayfieldSpot.Waste, true);
+            var topWasteCard = game.GetWasteCardPile().GetTopCard();
 
                 // assert it's in the waste
                 Assert.IsTrue(game.GetWasteCardPile().Count == 1);
 
             // [FAILURE CASE] now try to pick it up from the stock with a card already in our hand
-            var moveAttemptPickUpCardWhenHandIsNotEmpty = new SolitaireMove(nextStockCard, nextStockCard.playfieldSpot, PlayfieldSpot.Hand);
+            var moveAttemptPickUpCardWhenHandIsNotEmpty = new SolitaireMove(topWasteCard, topWasteCard.playfieldSpot, PlayfieldSpot.Hand);
                 // assert it fails because we have a card in our hand!
                 Assert.IsFalse(SolitaireMoveValidator.IsValidMove(game.GetGameState(), moveAttemptPickUpCardWhenHandIsNotEmpty));
 
@@ -438,6 +439,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         mock_game_state.SetMockIsCollectingCardsToDeck(true);
                         bool isValidWhenCollecting = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
                         Assert.IsTrue(isValidWhenCollecting, "valid when collecting");
+                        mock_game_state.SetMockIsCollectingCardsToDeck(false);
                         break;
                     
                     // HAND_TO_TABLEAU
@@ -764,6 +766,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         mock_game_state.SetMockIsCollectingCardsToDeck(true);
                         bool isValidWhenCollecting = SolitaireMoveValidator.IsValidMove(mock_game_state, testMoveTo);
                         Assert.IsTrue(isValidWhenCollecting, "valid when collecting");
+                        mock_game_state.SetMockIsCollectingCardsToDeck(false);
                         break;
                     case PlayfieldArea.FOUNDATION:
                         // important: make sure we have the right foundation index set (not 0)
