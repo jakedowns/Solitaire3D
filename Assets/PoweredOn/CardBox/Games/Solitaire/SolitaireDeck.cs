@@ -403,6 +403,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             if(go == null)
             {
                 Debug.LogWarning("Solitaire Deck has no game object?");
+                _isCollectingCardsToDeck = false;
                 return;
             }
             Vector3 deckPosition = go.transform.position + Vector3.zero;
