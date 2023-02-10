@@ -587,7 +587,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case PlayfieldArea.FOUNDATION:
                     foundationCardPileGroup[spot.index].Add(card.GetSuitRank());
                     var baseGO = foundationCardPileGroup[spot.index].gameObject;
-                    Debug.LogWarning($"moving to foundation pile: {spot.index} {baseGO.name} {foundationCardPileGroup[spot.index].gameObjectType}");
+                    Debug.LogWarning($"moving to foundation pile: {spot.index} {baseGO?.name} {foundationCardPileGroup[spot.index].gameObjectType}");
                     if (goalID != null && baseGO != null)
                     {
                         goalID = new GoalIdentity(card.gameObject, baseGO, new Vector3(

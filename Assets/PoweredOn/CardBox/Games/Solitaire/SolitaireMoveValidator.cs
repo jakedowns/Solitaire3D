@@ -139,7 +139,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                 // === 4. From Waste Moves
                 case SolitaireMoveType.WASTE_TO_HAND:
-                    return ( bitflags & GameStateFlags.HandIsEmpty ) == (GameStateFlags.HandIsEmpty);
+                    return (bitflags & GameStateFlags.HandIsEmpty ) == (GameStateFlags.HandIsEmpty);
                 case SolitaireMoveType.WASTE_TO_DECK:
                     return (bitflags & GameStateFlags.IsCollectingCardsToDeck) == (GameStateFlags.IsCollectingCardsToDeck);
                 case SolitaireMoveType.WASTE_TO_STOCK:
