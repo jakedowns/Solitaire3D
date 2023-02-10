@@ -114,6 +114,16 @@ namespace PoweredOn.CardBox.PlayingCards
         {
             return this.list.GetEnumerator();
         }
+
+        public override string ToString()
+        {
+            string output = "";
+            foreach (SuitRank item in this.list)
+            {
+                output += "\n" + item.ToString();
+            }
+            return output;
+        }
     }
 
 }

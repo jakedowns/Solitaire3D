@@ -1,14 +1,15 @@
 using PoweredOn.CardBox.Games.Solitaire;
 using PoweredOn.Managers;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Profiling;
 using UnityEngine;
 
 public class TouchInputMode : MonoBehaviour
 {
     bool isTouching = false;
     Camera mainCamera;
+    const float longTouchDuration = 0.35f; // seconds
+    float touchedAt = 0;
+    bool didLongTouch = false;
+    Vector2 lastTouchPosition;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,40 +19,39 @@ public class TouchInputMode : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /* using mouse input; raycast from screenspace to world space and see if we've hit a card */
-        if (Input.GetMouseButtonDown(0))
+        /* TOUCH START */
+        if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
         {
-            if (!isTouching)
-            {
-                isTouching = true;
-                TestDidHit(Input.mousePosition);
-            }
+            isTouching = true;
+            touchedAt = Time.time;
+            didLongTouch = false;
         }
-        if(Input.GetMouseButtonUp(0))
+
+        /* MID-TOUCH */
+        if (Input.GetMouseButton(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved))
         {
-            if (isTouching)
+            if (isTouching && !didLongTouch && Time.time - touchedAt > longTouchDuration)
             {
-                isTouching = false;
+                didLongTouch = true;
+                Vector2 touchPos = Input.GetMouseButton(0) ? (Vector2)Input.mousePosition : Input.GetTouch(0).position;
+                TestDidHit(touchPos, true);
+            }
+            else
+            {
+                Vector2 touchPos = Input.GetMouseButton(0) ? (Vector2)Input.mousePosition : Input.GetTouch(0).position;
+                lastTouchPosition = touchPos;
             }
         }
 
-        /* using touch input; raycast from screenspace to world space and see if we've hit a card */
-        if (Input.touchCount > 0)
+        /* TOUCH END */
+        if (Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended))
         {
-            if (!isTouching)
-            {
-                isTouching = true;
+            isTouching = false;
 
-                Touch touch = Input.GetTouch(0);
-
-                TestDidHit(touch.position);
-            }
-        }
-        else
-        {
-            if (isTouching)
+            if (!didLongTouch)
             {
-                isTouching = false;
+                Vector2 touchPos = Input.GetMouseButtonUp(0) ? (Vector2)Input.mousePosition : lastTouchPosition;
+                TestDidHit(touchPos);
             }
         }
     }
@@ -69,7 +69,7 @@ public class TouchInputMode : MonoBehaviour
         }
     }
 
-    void TestDidHit(Vector2 touchPosition)
+    void TestDidHit(Vector2 touchPosition, bool longTouch = false)
     {
         //Debug.Log($"touchPosition {touchPosition}");
         ray = mainCamera.ScreenPointToRay(touchPosition);
@@ -84,7 +84,15 @@ public class TouchInputMode : MonoBehaviour
                     //Debug.Log($"monoCard: {monoCard}");
                     card = monoCard.GetCard();
                     //Debug.Log($"soliCard: {card}");
-                    gameManager.OnSingleClickCard(card);
+                    if (longTouch)
+                    {
+                        gameManager.game.OnLongPressCard(card);
+                    }
+                    else
+                    {
+                        gameManager.OnSingleClickCard(card);
+
+                    }
                 }
                 else if(touchedObject.tag == "PileBase")
                 {

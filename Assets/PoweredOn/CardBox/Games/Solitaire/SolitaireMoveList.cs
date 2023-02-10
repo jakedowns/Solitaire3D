@@ -20,6 +20,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
             this.moves = moves;
         }
 
+        public SolitaireMove First()
+        {
+            return this.moves.DefaultIfEmpty<SolitaireMove>(SolitaireMove.INVALID).FirstOrDefault();
+        }
+
         internal void Add(SolitaireMove move)
         {
             this.moves.Add(move);

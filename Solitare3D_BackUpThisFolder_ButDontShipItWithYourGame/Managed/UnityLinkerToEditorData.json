@@ -495,6 +495,12 @@
             "icon": "package/com.unity.modules.physics"
           },
           {
+            "name": "Required by Physics2D Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.physics2d"
+          },
+          {
             "name": "Required by RuntimeInitializeOnLoadManagerInitializer Module",
             "scenes": [],
             "dependencyType": 2,
@@ -709,6 +715,17 @@
         ]
       },
       {
+        "name": "Physics2D",
+        "dependencies": [
+          {
+            "name": "Physics2DSettings",
+            "scenes": [],
+            "dependencyType": 1,
+            "icon": null
+          }
+        ]
+      },
+      {
         "name": "RuntimeInitializeOnLoadManagerInitializer",
         "dependencies": [
           {
@@ -787,6 +804,12 @@
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.physics"
+          },
+          {
+            "name": "Required by Physics2D Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.physics2d"
           },
           {
             "name": "Required by RuntimeInitializeOnLoadManagerInitializer Module",

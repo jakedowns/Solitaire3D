@@ -13,6 +13,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
         private SolitaireCard _subject;
         private PlayfieldSpot _fromSpot;
         private PlayfieldSpot _toSpot;
+        private int _substackIndex = 0;
+
+        public static SolitaireMove INVALID
+        {
+            get {
+                return new SolitaireMove(null, PlayfieldSpot.INVALID, PlayfieldSpot.INVALID);
+            }
+        }
 
         public SolitaireCard Subject
         {
@@ -39,11 +47,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
-        public SolitaireMove(SolitaireCard subject, PlayfieldSpot fromSpot, PlayfieldSpot toSpot)
+        public SolitaireMove(SolitaireCard subject, PlayfieldSpot fromSpot, PlayfieldSpot toSpot, int substackIndex = 0)
         {
             this._subject = subject;
             this._fromSpot = fromSpot;
+            this._substackIndex = substackIndex;
             this._toSpot = toSpot;
+
         }
 
         public SolitaireMoveType GetSolitaireMoveType()
@@ -63,7 +73,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public override string ToString()
         {
-            return string.Format("Move {0} from {1} to {2}", Subject, FromSpot, ToSpot);
+            return string.Format("Move {0} from {1} to {2} (substack index {3})", Subject, FromSpot, ToSpot, _substackIndex);
         }
     }
 }

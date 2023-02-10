@@ -12,6 +12,8 @@ using PoweredOn.CardBox.PlayingCards;
 using PoweredOn.CardBox.Games.Solitaire;
 using PoweredOn.CardBox.Games;
 using NRKernal;
+using static PoweredOn.Animations.EasingFunction;
+using UnityEngine.InputSystem;
 
 namespace PoweredOn.Managers
 {
@@ -26,6 +28,9 @@ namespace PoweredOn.Managers
         public static GameManager Instance { get; private set; }
 
         public MonoSolitaireDeck monoDeck;
+        bool nrealModeEnabled = false;
+        Camera mainCamera;
+        Camera nrealCamera;
         private void Awake()
         {
             // If there is an instance, and it's not me, delete myself.
@@ -45,19 +50,34 @@ namespace PoweredOn.Managers
                 _ = GameObject.FindObjectOfType<DebugOutput>();
             }
 
+            mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+
             MyInit();
         }
+
+#if UNITY_EDITOR
+        [UnityEditor.Callbacks.DidReloadScripts]
+        private static void OnScriptsReloaded()
+        {
+            (Instance ?? GameObject.FindObjectOfType<GameManager>()).Reset();
+        }
+#endif
 
         public SolitaireGame _game;
         public SolitaireGame game {
             get {
                 if (_game == null)
                 {
-                    _game = new SolitaireGame();
-                    _game.NewGame();
+                    Reset();
                 }
                 return _game;
             }
+        }
+
+        private void Reset()
+        {
+            _game = new SolitaireGame();
+            _game.NewGame();
         }
 
 #nullable enable
@@ -73,11 +93,63 @@ namespace PoweredOn.Managers
         // Start is called before the first frame update
         void Start()
         {
-            if(DebugOutput.Instance == null)
+            Screen.autorotateToPortrait = true;
+            Screen.autorotateToPortraitUpsideDown = false;
+            Screen.autorotateToLandscapeLeft = true;
+            Screen.autorotateToLandscapeRight = true;
+            Screen.orientation = ScreenOrientation.AutoRotation;
+            if (DebugOutput.Instance == null)
             {
                 Debug.LogWarning("GameManager [Start] DebugOutput.Instance is still null.");
             }
             MyInit();
+        }
+
+        public void EnableNrealMode()
+        {
+            SetNrealMode(true);
+        }
+
+        public void DisableNrealMode()
+        {
+            SetNrealMode(false);
+        }
+
+        public void ToggleNrealMode()
+        {
+            SetNrealMode(!nrealModeEnabled);
+        }
+
+        public void SetNrealMode(bool value)
+        {
+            nrealModeEnabled = value;
+            var finds = Resources.FindObjectsOfTypeAll<NRVirtualDisplayer>();
+            if (finds.Count() > 0)
+            {
+                var nrVirtDisplay = finds.First();
+                nrVirtDisplay.gameObject.SetActive(value);
+            }
+
+            var finds2 = Resources.FindObjectsOfTypeAll<NRHMDPoseTracker>();
+            if (finds2.Count() > 0)
+            {
+                var nrCamera = finds2.First();
+                nrCamera.gameObject.SetActive(value);
+            }
+
+            var finds3 = Resources.FindObjectsOfTypeAll<NRInput>();
+            if (finds3.Count() > 0)
+            {
+                var nrCamera = finds3.First();
+                nrCamera.gameObject.SetActive(value);
+            }
+
+            mainCamera.gameObject.SetActive(!value);
+
+            var mainCanvasCanvas = GameObject.Find("MainCanvas").GetComponent<Canvas>();
+            nrealCamera = GameObject.Find("CameraParent/NRCameraRig/CenterCamera")?.GetComponent<Camera>();
+            mainCanvasCanvas.worldCamera = nrealModeEnabled ? nrealCamera : mainCamera;
+            Debug.Log("main canvas world camera is now " + mainCanvasCanvas.worldCamera.gameObject.name);
         }
 
         public void MyInit()
@@ -144,93 +216,6 @@ namespace PoweredOn.Managers
         {
             game.StopAutoPlay();
         }
-        
-        
-        
-
-        
-
-        
-
-        
-        
-        /*[BurstCompile]
-        public struct SetCardGoalIDToPlayfieldSpotJob : IJob
-        {
-            public Card card;
-            public PlayfieldSpot spot;
-            public bool faceUp;
-            public NativeArray<float3> stockCards;
-            public NativeArray<float3> wasteCards;
-            public NativeArray<NativeArray<float3>> foundationCards;
-            public NativeArray<NativeArray<float3>> tableauCards;
-            public NativeArray<float3> foundationPositions;
-            public NativeArray<float3> tableauPositions;
-
-            public void Execute()
-            {
-                var cardTX = card.gameObject.transform;
-                var goalID = new float3(0, 0, 0);
-                var index = spot.index;
-                var area = spot.area;
-
-                if (area == PlayfieldArea.Stock)
-                {
-                    faceUp = false; // always face down when adding to stock
-                    stockCards.Add(card.GetSuitRank());
-                    goalID = stock.transform.position;
-                    goalID = math.transform(cardTX.worldToLocalMatrix, goalID);
-                    goalID.z += stockCards.Length * -CARD_THICKNESS;
-                }
-                else if (area == PlayfieldArea.Waste)
-                {
-                    wasteCards.Add(card.GetSuitRank());
-                    goalID = waste.transform.position;
-                    goalID = math.transform(cardTX.worldToLocalMatrix, goalID);
-                    goalID.y = wasteCards.Length * CARD_THICKNESS;
-                }
-                else if (area == PlayfieldArea.Foundation)
-                {
-                    foundationCards[index].Add(card.GetSuitRank());
-                    goalID = foundationPositions[index];
-                    goalID = math.transform(cardTX.worldToLocalMatrix, goalID);
-                    goalID.z = foundationCards[index].Length * CARD_THICKNESS;
-                }
-                else if (area == PlayfieldArea.Tableau)
-                {
-                    tableauCards[index].Add(card.GetSuitRank());
-                    goalID = tableauPositions[index];
-                    goalID = math.transform(cardTX.worldToLocalMatrix, goalID);
-                    goalID.z = (tableauCards[index].Length + 1) * -CARD_THICKNESS;
-                    goalID.y = (tableauCards[index].Length + 1) * -0.05f;
-                }
-
-                // z-axis rotation is temporary until i fix the orientation of the mesh in blender
-                var rotation = faceUp ? CARD_DEFAULT_ROTATION : new quaternion(0, 0, math.sin(math.PI / 4), math.cos(math.PI / 4));
-
-                card.SetGoalIdentity(goalID, rotation);
-                card.SetPlayfieldSpot(spot);
-                card.SetIsFaceUp(faceUp);
-            }
-        }*/
-
-        
-
-        // for this type of animation, we don't set goalID directly
-        // we set an Animation and each time we sample the animation, we get a new goalID
-        /*public void StartAnimateCardsInfinity()
-        {
-            int i = 0;
-            foreach (Card card in game.deck.cards)
-            {
-                AnimationInfinity cardAnim = new AnimationInfinity(card.gameObject);
-                cardAnim.delayStart = i * 0.1f;
-                cardAnim.delaySetAt = Time.realtimeSinceStartup;
-                cardAnim.scaleAnimation = 1.0f;
-                card.SetAnimation(cardAnim);
-                i++;
-            }
-        }*/
 
         IEnumerator AnimateCards()
         {
@@ -242,24 +227,51 @@ namespace PoweredOn.Managers
             NativeArray<Vector3> startScales = new NativeArray<Vector3>(game.deck.cards.Count, Allocator.Persistent);
             NativeArray<Vector3> goalScales = new NativeArray<Vector3>(game.deck.cards.Count, Allocator.Persistent);
             NativeArray<bool> delayTimings = new NativeArray<bool>(game.deck.cards.Count, Allocator.Persistent);
+            NativeArray<float> lerpFactors = new NativeArray<float>(game.deck.cards.Count, Allocator.Persistent);
+
+            // in seconds
+            float duration = 1f; // TODO: make speed/duration controllable at a global and per-goal basis (quick,quick,slow)
+
+            Animations.EasingFunction.Ease ease = Animations.EasingFunction.Ease.EaseInOutCubic;
+            Function easeFunc = Animations.EasingFunction.GetEasingFunction(ease);
+            
             while (true)
             {
                 
                 float nowTime = Time.realtimeSinceStartup;
+                // TODO: make it so we can skip over cards who have flagged that they met their goals to save on animation cycles ("paused/frozen/sleeping")
                 for (int i = 0; i < game.deck.cards.Count; i++)
                 {
-                    GoalIdentity goalID = game.deck.cards[i].GetGoalIdentity();
-                    GameObject cardGameObj = game.deck.cards[i].gameObject;
+                    SolitaireCard card = game.deck.cards[i];
+                    GoalIdentity goalID = card.GetGoalIdentity();
+                    GameObject cardGameObj = card.gameObject;
                     if(cardGameObj == null)
                     {
                         Debug.LogWarning("cant animate card, gameObject is null");
                         continue;
                     }
                     Transform cardTX = cardGameObj.transform;
-                    
-                    startPositions[i] = cardTX.localPosition;
-                    startRotations[i] = cardTX.localRotation;
-                    startScales[i] = cardTX.localScale;
+
+                    // NEW: lerping between a cached "start" position that is cached any time a new GoalID is set
+                    // rather than always lerping from the "current" position, which leads to only being able to support "ease-out" easing
+                    startPositions[i] = card.prevPosition; // cardTX.localPosition;
+                    startRotations[i] = card.prevRotation; // cardTX.localRotation;
+                    startScales[i] = card.prevScale; // cardTX.localScale;
+
+                    // TODO: support custom easing functions / curves per-card
+                    float deltaT = Time.time - card.goalSetTimestamp;
+                    float t; // = (float)(deltaT) / duration;
+                    if(deltaT < goalID.delayStart)
+                    {
+                        t = 0;
+                    }
+                    else
+                    {
+                        // offset to keep duration consistent
+                        deltaT = Time.time - (card.goalSetTimestamp + goalID.delayStart);
+                        t = (float)(deltaT) / duration;
+                    }
+                    lerpFactors[i] = Mathf.Clamp(easeFunc(0, 1, t), 0, 1);
 
                     goalPositions[i] = goalID.position;
                     goalRotations[i] = goalID.rotation;
@@ -289,7 +301,8 @@ namespace PoweredOn.Managers
                     goalScales = goalScales,
                     lerpSpeed = lerpSpeed,
                     deltaTime = Time.deltaTime,
-                    delayTimings = delayTimings
+                    delayTimings = delayTimings,
+                    lerpFactors = lerpFactors
                 };
                 JobHandle handle = job.Schedule(startPositions.Length, game.deck.cards.Count);
 
@@ -308,7 +321,7 @@ namespace PoweredOn.Managers
                     if (cardGO != null)
                     {
                         Transform cardTx = cardGO.transform;
-                        cardTx.localPosition = job.startPositions[i];
+                        cardTx.position = job.startPositions[i];
                         cardTx.localRotation = job.startRotations[i];
                         cardTx.localScale = job.startScales[i];
                     }
@@ -357,6 +370,7 @@ namespace PoweredOn.Managers
             public NativeArray<Vector3> goalScales;
             public float lerpSpeed;
             public float deltaTime;
+            public NativeArray<float> lerpFactors;
             public NativeArray<bool> delayTimings;
 
             public void Execute(int i)
@@ -364,9 +378,31 @@ namespace PoweredOn.Managers
                 /*if (delayTimings[i]){
                     return;
                 }*/
-                startPositions[i] = Vector3.Lerp(startPositions[i], goalPositions[i], deltaTime * lerpSpeed);
-                startRotations[i] = Quaternion.Lerp(startRotations[i], goalRotations[i], deltaTime * lerpSpeed);
-                startScales[i] = Vector3.Lerp(startScales[i], goalScales[i], deltaTime * lerpSpeed);
+
+                // write results back to "startPositions"
+                // startPositions[i] = Vector3.Lerp(startPositions[i], goalPositions[i], deltaTime * lerpSpeed);
+                startPositions[i] = new Vector3(
+                    startPositions[i].x + lerpFactors[i] * (goalPositions[i].x - startPositions[i].x),
+                    startPositions[i].y + lerpFactors[i] * (goalPositions[i].y - startPositions[i].y),
+                    startPositions[i].z + lerpFactors[i] * (goalPositions[i].z - startPositions[i].z)
+                );
+
+
+                /*startRotations[i] = Quaternion.Lerp(startRotations[i], goalRotations[i], deltaTime * lerpSpeed);*/
+                startRotations[i] = new Quaternion(
+                    startRotations[i].x + lerpFactors[i] * (goalRotations[i].x - startRotations[i].x),
+                    startRotations[i].y + lerpFactors[i] * (goalRotations[i].y - startRotations[i].y),
+                    startRotations[i].z + lerpFactors[i] * (goalRotations[i].z - startRotations[i].z),
+                    startRotations[i].w + lerpFactors[i] * (goalRotations[i].w - startRotations[i].w)
+                );
+
+
+                /*startScales[i] = Vector3.Lerp(startScales[i], goalScales[i], deltaTime * lerpSpeed);*/
+                startScales[i] = new Vector3(
+                    startScales[i].x + lerpFactors[i] * (goalScales[i].x - startScales[i].x),
+                    startScales[i].y + lerpFactors[i] * (goalScales[i].y - startScales[i].y),
+                    startScales[i].z + lerpFactors[i] * (goalScales[i].z - startScales[i].z)
+                );
             }
         }
 
@@ -414,17 +450,25 @@ namespace PoweredOn.Managers
         // Animation Coroutine which animates cards from their current positions to a sorted deck stacked
         // cards are .0002 m thick, so the stack should account for offsetting them on the local y axis according to their "depth" in the deck      
 
-
+        float lastFired = 0;
 
         // Update is called once per frame
         void Update()
         {
 #if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.F1))
+            if (Keyboard.current.f1Key.wasPressedThisFrame)
             {
                 UnityEditor.EditorWindow.focusedWindow.maximized = !UnityEditor.EditorWindow.focusedWindow.maximized;
             }
 #endif
+
+            // Every 1s if autoplay is enabled, play a new move
+            if(Time.time - lastFired > 1.0f)
+            {
+                lastFired = Time.time;
+                game.TryAutoPlay();
+            }
+
             /*if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;

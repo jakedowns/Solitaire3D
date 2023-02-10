@@ -55,6 +55,11 @@ public class GameManagerGui : Editor
             myScript.UIRandomize();
         }
 
+        if (GUILayout.Button("ToggleNrealMode"))
+        {
+            myScript.ToggleNrealMode();
+        }
+
     }
 }
 #endif

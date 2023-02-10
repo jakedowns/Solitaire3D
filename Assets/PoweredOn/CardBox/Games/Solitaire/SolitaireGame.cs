@@ -18,6 +18,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
         private SolitaireDeck _deck;
 
         bool _isDealing = false;
+
+        DebugOutput iDebug
+        {
+            get
+            {
+                return DebugOutput.Instance ?? GameObject.FindObjectOfType<DebugOutput>();
+            }
+        }
+        
         public bool IsDealing { get { return _isDealing; } }
 
         public bool IsRecyclingWasteToStock { get; internal set; }
@@ -96,7 +105,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // OR: they could be moved to SolitaireDealer.cs
         public const float TAB_SPACING = 0.1f;
         const float RANDOM_AMPLITUDE = 1f;
-        public const float CARD_THICKNESS = 0.002f;
+        public const float CARD_THICKNESS = 0.001f;
         public const float TAB_VERT_OFFSET = 0.02f;
 
         // z-axis rotation is temporary until i fix the orientation of the mesh in blender
@@ -279,7 +288,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 /*}
                 catch (Exception e)
                 {
-                    DebugOutput.Instance?.LogError(e.ToString());
+                    iDebug.LogError(e.ToString());
                 }*/
             }
 
@@ -318,7 +327,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
                     MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.1f * dealtOrder.Count);
 
-                    DebugOutput.Instance?.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
+                    iDebug.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
                     Debug.LogWarning($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
                 }
             }
@@ -345,11 +354,30 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 SuitRank cardSuitRank = stockCardPile[sc];
                 SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
-                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false); /* always face down when adding to stock */
+                float delay = 0.1f * (stockCardPile.Count - sc);
+                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, sc), false, delay); /* always face down when adding to stock */
             }
 
             // flag as done
             _isDealing = false;
+        }
+
+        public void TryAutoPlay()
+        {
+            if (autoplaying)
+            {
+                // find next best move
+                SolitaireMoveList nextBestMoves = SolitaireMoveSuggestor.SuggestMoves(this);
+                if(nextBestMoves.Count == 0)
+                {
+                    Debug.LogWarning("[AutoPlay] Stopping. No Moves Suggested.");
+                    StopAutoPlay();
+                }
+                else
+                {
+                    Debug.LogWarning($"[AutoPlay] Playing best move out of {nextBestMoves.Count}: {nextBestMoves.First()}");
+                }
+            }
         }
 
         public void SetCardGoalsToRandomPositions()
@@ -402,15 +430,19 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
-        // when the user single-click: autoplace:s on a card, we auto-move it to the next best spot
+        // when the user single-click's on a card, we auto-move it to the next best spot
         public PlayfieldSpot GetNextValidPlayfieldSpotForSuitRank(SuitRank suitrank)
         {
+            if (!autoPlaceEnabled)
+            {
+                return PlayfieldSpot.INVALID;
+            }
 
             // check the top card of the foundation first
-            DebugOutput.Instance?.LogWarning("[GetNextValidPlayfieldSpotForSuitRank] Checking foundation card list for rank: " + suitrank.rank + " suit int: " + (int)suitrank.suit + " " + foundationCardPileGroup.Count);
+            iDebug.LogWarning("[GetNextValidPlayfieldSpotForSuitRank] Checking foundation card list for rank: " + suitrank.rank + " suit int: " + (int)suitrank.suit + " cardGroupCount:" + foundationCardPileGroup.Count);
             FoundationCardPile foundationPile = foundationCardPileGroup[(int)suitrank.suit];
             SuitRank topCardSR;
-            DebugOutput.Instance?.LogWarning("[GetNextValidPlayfieldSpotForSuitRank] Foundation List: " + foundationPile.Count);
+            iDebug.LogWarning("[GetNextValidPlayfieldSpotForSuitRank] Foundation List: " + foundationPile.Count);
 
             // TODO: .IsEmpty
             if (foundationPile.Count == 0)
@@ -423,7 +455,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 // TODO: .GetTopCard
                 topCardSR = foundationPile.Last();
-                DebugOutput.Instance?.LogWarning($"[GetNextValidPlayfieldSpotForSuitRank] checking if top card in foundation list is one rank less than the card we are trying to place {(int)topCardSR.rank} {(int)suitrank.rank}");
+                iDebug.LogWarning($"[GetNextValidPlayfieldSpotForSuitRank] checking if top card in foundation list is one rank less than the card we are trying to place {(int)topCardSR.rank} {(int)suitrank.rank}");
                 if ((int)topCardSR.rank + 1 == (int)suitrank.rank)
                 {
                     // if the top card in the foundation list is one less than this card's rank, that's our first choice spot
@@ -456,7 +488,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
-            DebugOutput.Instance?.LogWarning($"no suggested playfield spot found for {suitrank}");
+            iDebug.LogWarning($"no suggested playfield spot found for {suitrank}");
 
             return PlayfieldSpot.INVALID;
         }
@@ -469,10 +501,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
 
         // this method is being refactored...
-        public void MoveCardToNewSpot(ref SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f)
+        public void MoveCardToNewSpot(ref SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f, int substackIndex = 0)
         {
             //if(runningInTestMode) Debug.Log($"MoveCardToNewSpot {card.GetGameObjectName()} from {card.playfieldSpot} to {spot} faceup:{faceUp} delay:{delay}");
-            moveLog.Add(new SolitaireMove(card, card.previousPlayfieldSpot, spot));
+            moveLog.Add(new SolitaireMove(card, card.previousPlayfieldSpot, spot, substackIndex));
 
             if (card.playfieldSpot.area != PlayfieldArea.INVALID)
             {
@@ -484,7 +516,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 catch (Exception e)
                 {
                     Debug.LogError(e);
-                    DebugOutput.Instance?.LogError(e.ToString());
+                    iDebug.LogError(e.ToString());
                 }
             }
 
@@ -510,7 +542,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // like stockCardPile.GetGoalIDAsCard(card) // returns the proper goal for the card based on it's position in the pile
                     if (goalID != null && stockCardPile.gameObject != null)
                     {
-                        Vector3 offset = new(0, 0, (-0.2f) + (stockCardPile.Count * -CARD_THICKNESS));
+                        Vector3 offset = new(0, 0, (-0.1f) + (stockCardPile.Count * -CARD_THICKNESS));
                         goalID = new GoalIdentity(card.gameObject, stockCardPile.gameObject, offset);
                     }
                     break;
@@ -523,7 +555,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         /*gPos = wasteCardPile.gameObject.transform.TransformPoint(Vector3.forward * (wasteCardPile.Count * -CARD_THICKNESS));
                         goalID.position = gPos;*/
 
-                        Vector3 offset = new(0, 0, -0.2f + (wasteCardPile.Count * -CARD_THICKNESS));
+                        Vector3 offset = new(0, 0, -0.1f + (wasteCardPile.Count * -CARD_THICKNESS));
                         goalID = new GoalIdentity(card.gameObject, wasteCardPile.gameObject, offset);
 
                     }
@@ -533,12 +565,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case PlayfieldArea.FOUNDATION:
                     foundationCardPileGroup[spot.index].Add(card.GetSuitRank());
                     var baseGO = foundationCardPileGroup[spot.index].gameObject;
+                    Debug.LogWarning($"moving to foundation pile: {spot.index} {baseGO.name} {foundationCardPileGroup[spot.index].gameObjectType}");
                     if (goalID != null && baseGO != null)
                     {
                         goalID = new GoalIdentity(card.gameObject, baseGO, new Vector3(
                             0,
                             0,
-                            -0.2f + (foundationCardPileGroup[spot.index].Count * -CARD_THICKNESS)
+                            -0.1f + (foundationCardPileGroup[spot.index].Count * -CARD_THICKNESS)
                         ));
                     }
                     break;
@@ -555,7 +588,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         goalID = new GoalIdentity(card.gameObject, tableauCardPileGroup[spot.index].gameObject, new Vector3(
                             0,
                             (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET,
-                            -0.2f + (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS
+                            -0.1f + (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS
                         ));
                     }
                     break;
@@ -564,7 +597,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case PlayfieldArea.HAND:
                     faceUp = true; // always face up when adding to hand
                     handCardPile.Add(card.GetSuitRank());
-                    DebugOutput.Instance?.Log("added card to hand " + handCardPile.Count);
+                    iDebug.Log("added card to hand " + handCardPile.Count);
                     //var hand = GetGameObjectByType(SolitaireGameObject.Hand_Base);
                     if (goalID != null && card.gameObject != null && handCardPile.gameObject != null)
                     {
@@ -602,7 +635,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 #nullable enable
             if (card.playfieldSpot.area == PlayfieldArea.INVALID)
             {
-                DebugOutput.Instance?.Log("card has no playfield spot. skipping list removal attempt");
+                iDebug.Log("card has no playfield spot. skipping list removal attempt");
                 return;
             }
             
@@ -635,7 +668,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             if (pile == null)
             {
-                DebugOutput.Instance?.LogWarning($"no matching pile found for playfield spot {pfspot}");
+                iDebug.LogWarning($"no matching pile found for playfield spot {pfspot}");
                 return;
             }
 
@@ -651,7 +684,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     {
                         // note, this isn't ALWAYS an error
                         // example, when passing waste cards back to stock
-                        DebugOutput.Instance?.LogWarning($"warn: trying to remove NON-TOP card from Stock or Waste pile.indexof(card):{index} topIndex:{topIndex}");
+                        iDebug.LogWarning($"warn: trying to remove NON-TOP card from Stock or Waste pile.indexof(card):{index} topIndex:{topIndex}");
                     }
                 }
 
@@ -662,18 +695,18 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 {
                     if (pfspot.subindex != index)
                     {
-                        DebugOutput.Instance?.LogWarning($"card {card} | subindex does not match pile.indexof(card){index} spot.subindex:{pfspot.subindex}");
+                        iDebug.LogWarning($"card {card} | subindex does not match pile.indexof(card){index} spot.subindex:{pfspot.subindex}");
                     }
                 }
 
                 if (index > -1)
                 {
-                    DebugOutput.Instance?.LogWarning($"removing card from {pilename} {dbugstring}");
+                    iDebug.LogWarning($"removing card from {pilename} {dbugstring}");
                     pile.RemoveAt(index);
                 }
                 else
                 {
-                    DebugOutput.Instance?.LogWarning($"unable to find card in {pilename} {dbugstring}");
+                    iDebug.LogWarning($"unable to find card in {pilename} {dbugstring}");
                 }
             }
         }
@@ -682,14 +715,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             if(handCardPile.Count > 0)
             {
-                DebugOutput.Instance?.LogError("hand card pile is not empty, refusing to pick up cards...");
+                iDebug.LogError("hand card pile is not empty, refusing to pick up cards...");
                 return;
             }
             
-            DebugOutput.Instance?.LogWarning("picking up cards: " + cards.Count);
+            iDebug.LogWarning("picking up cards: " + cards.Count);
             foreach (SuitRank id in cards)
             {
-                DebugOutput.Instance?.Log(id.ToString());
+                iDebug.Log(id.ToString());
             }
             
             int i = 0;
@@ -710,7 +743,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             if (card.playfieldSpot.area == PlayfieldArea.INVALID)
             {
-                DebugOutput.Instance?.LogError("[CollectSubStack] got card with invalid spot");
+                iDebug.LogError("[CollectSubStack] got card with invalid spot");
                 return PlayingCardIDList.EMPTY;
             }
             else
@@ -722,15 +755,22 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                 int cardIndex = pile.IndexOf(card.GetSuitRank());
                 Debug.Log($"card index: {cardIndex}");
-                if (cardIndex == pile.Count - 1)
+                if(cardIndex == -1)
                 {
-                    return cardGroup; // top card? picking up single card
+                    Debug.LogError($"card not found in pile {card} | tabPile: {spot.index}");
                 }
-                
-                // else, multi-card: get the rest of the cards (if any) at a higher index in the list
-                for (int i = cardIndex; i < pile.Count; i++)
+                else
                 {
-                    cardGroup.Add(pile[i]);
+                    if (cardIndex == pile.Count - 1)
+                    {
+                        return cardGroup; // top card? picking up single card
+                    }
+                
+                    // else, multi-card: get the rest of the cards (if any) at a higher index in the list
+                    for (int i = cardIndex; i < pile.Count; i++)
+                    {
+                        cardGroup.Add(pile[i]);
+                    }
                 }
 
                 string msg = "picked up cards: ";
@@ -758,19 +798,19 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // TODO Change to FindObjectOfType
             var stock = GameObject.Find("PlayPlane/PlayPlaneOffset/Stock");
             if (stock == null)
-                DebugOutput.Instance?.LogError("stock not found");
+                iDebug.LogError("stock not found");
             else
                 gameObjectReferences[SolitaireGameObject.Stock_Base] = stock;
 
             var waste = GameObject.Find("PlayPlane/PlayPlaneOffset/Waste");
             if (waste == null)
-                DebugOutput.Instance?.LogError("waste not found");
+                iDebug.LogError("waste not found");
             else
                 gameObjectReferences[SolitaireGameObject.Waste_Base] = waste;
 
             var hand = GameObject.Find("Hand");
             if (hand == null)
-                DebugOutput.Instance?.LogError("hand not found");
+                iDebug.LogError("hand not found");
             else
                 gameObjectReferences[SolitaireGameObject.Hand_Base] = hand;
 
@@ -778,7 +818,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             if (deckOfCards == null)
             {
                 Debug.LogError("DeckOfCards game object not found?!");
-                DebugOutput.Instance?.LogError("deckOfCards not found");
+                iDebug.LogError("deckOfCards not found");
             }
             else
             {
@@ -817,7 +857,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 GameObject foundation = GameObject.Find(goName);
                 if (foundation == null)
                 {
-                    DebugOutput.Instance?.LogError("foundation not found " + goName);
+                    iDebug.LogError("foundation not found " + goName);
                     continue;
                 }
                 else
@@ -855,7 +895,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 // TODO Change to FindObjectOfType
                 GameObject tab = GameObject.Find("PlayPlane/PlayPlaneOffset/Tableau/t" + i.ToString());
-                //DebugOutput.Instance?.Log("tab? " + (tab is null));
+                //iDebug.Log("tab? " + (tab is null));
 
                 string enumName = $"Tableau{i+1}_Base";
                 SolitaireGameObject.TryParse(enumName, out SolitaireGameObject solitaireGameObject);
@@ -870,14 +910,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
                             tab.transform.localPosition.y,
                             tab.transform.localPosition.z
                         );
-                        //DebugOutput.Instance?.LogWarning("tabOrigin " + tabOrigin);
+                        //iDebug.LogWarning("tabOrigin " + tabOrigin);
                     }
                     else
                     {
                         // make sure the tableaus are evenly spaced apart
                         Vector3 newPos = new Vector3(tabOrigin.x, tabOrigin.y, tabOrigin.z);
                         newPos.x = TAB_SPACING * i;
-                        //DebugOutput.Instance?.LogWarning($"tabPos: {i} {newPos}");
+                        //iDebug.LogWarning($"tabPos: {i} {newPos}");
                         tab.transform.localPosition = newPos; // tab.transform.InverseTransformPoint(newPos);
                     }
                 }
@@ -934,7 +974,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // TODO: use rotate()
             card.SetGoalIdentity(new GoalIdentity(
                 cardGO,
-                cardTX.localPosition + Vector3.zero,
+                cardTX.position, //+ Vector3.zero,
                 cardTX.localRotation * Quaternion.Euler(0.0f, 180.0f, 0.0f),
                 cardTX.localScale + Vector3.zero
             ));
@@ -944,7 +984,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void TryPickupCardInSpot(PlayfieldSpot spot, SolitaireCard card)
         {
 
-            DebugOutput.Instance?.LogWarning($"try pickup card in spot {spot}");
+            iDebug.LogWarning($"try pickup card in spot {spot}");
 
             // pick up the card
             switch (spot.area)
@@ -990,7 +1030,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // Do a waste -> stock recycle maneuver if need be
                     if (stockCardPile.Count == 0)
                     {
-                        DebugOutput.Instance?.LogError("error picking up stock card, stock pile is empty");
+                        iDebug.LogError("error picking up stock card, stock pile is empty");
 
                         if(wasteCardPile.Count > 0)
                         {
@@ -999,7 +1039,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         }
                         else
                         {
-                            DebugOutput.Instance?.LogWarning("no cards in stock or waste? :G");
+                            iDebug.LogWarning("no cards in stock or waste? :G");
                         }
                         return;
                     }
@@ -1017,7 +1057,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // enforce only being able to pick up the topmost card:
                     if (foundationCardPileGroup[spot.index].Count == 0)
                     {
-                        DebugOutput.Instance?.LogError("error picking up foundation card, foundation pile is empty");
+                        iDebug.LogError("error picking up foundation card, foundation pile is empty");
                         return;
                     }
                     card = foundationCardPileGroup[spot.index].GetTopCard();
@@ -1027,7 +1067,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // enforce only being able to pick up the topmost card:
                     if (wasteCardPile.Count == 0)
                     {
-                        DebugOutput.Instance?.LogError("error picking up waste card, waste pile is empty");
+                        iDebug.LogError("error picking up waste card, waste pile is empty");
 
                         // Do a stock to waste op here?
                         return;
@@ -1045,7 +1085,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             if (handCardPile.Count < 1)
             {
-                DebugOutput.Instance?.LogWarning("no cards in hand.");
+                iDebug.LogWarning("no cards in hand.");
                 return;
             }
 
@@ -1058,7 +1098,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 GetGameState(),
                 move
             );
-            DebugOutput.Instance?.LogWarning($"IsValidMove? {cardInHand.GetGameObjectName()} to {spot}: valid: {isValid}");
+            iDebug.LogWarning($"IsValidMove? {cardInHand.GetGameObjectName()} to {spot}: valid: {isValid}");
 
             if (isValid)
             {
@@ -1066,20 +1106,21 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 // move it valid, execute it
                 bool faceUp = true;
 
+                int substackIndex = 0;
+                SolitaireCard first_card = deck.GetCardBySuitRank(handCardPile.First());
                 foreach (SuitRank id in handCardPile)
                 {
                     SolitaireCard card = deck.GetCardBySuitRank(id);
                     // they will be removed from handCards list as they're added to the new destination spot
-                    MoveCardToNewSpot(ref card, spot, faceUp);
+                    MoveCardToNewSpot(ref card, spot, faceUp, 0.1f * substackIndex, substackIndex);
+                    substackIndex++;
                 }
-
-                // note: this check is done with the first card in the hand, which should be the "lowest (deepest z-wise)" (highest rank) in a substack
-                CheckFlipOverTopCardInTableauCardJustLeft(cardInHand);
+                CheckFlipOverTopCardInTableauCardJustLeft(first_card);
             }
             else
             {
                 // move is invalid...
-                DebugOutput.Instance?.LogWarning("Invalid move, try again.");
+                iDebug.LogWarning("Invalid move, try again.");
             }
         }
         public void CheckFlipOverTopCardInTableauCardJustLeft(SolitaireCard card)
@@ -1087,6 +1128,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // refer back to the tableau we just came from and see if we need to auto-flip over a card
             if (card.previousPlayfieldSpot.area == PlayfieldArea.TABLEAU)
             {
+                Debug.Log("CheckFlipOverTopCardInTableauCardJustLeft");
                 TableauCardPile tPile = tableauCardPileGroup[card.previousPlayfieldSpot.index];
                 if (tPile.Count > 0)
                 {
@@ -1097,13 +1139,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     else
                     {
-                        DebugOutput.Instance?.LogWarning("tableau we left already had a face-up card as its top card?");
+                        iDebug.LogWarning("tableau we left already had a face-up card as its top card?");
                     }
                 }
                 else
                 {
-                    DebugOutput.Instance?.LogWarning("tableau we left is empty");
+                    iDebug.LogWarning("tableau we left is empty");
                 }
+            }
+            else
+            {
+                Debug.Log("CheckFlipOverTopCardInTableauCardJustLeft: nothing to do. card prevSpot was not Tableau");
             }
         }
 
@@ -1141,8 +1187,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void OnSingleClickCard(SolitaireCard card)
         {
             Debug.Log($"SolitaireGame@OnSingleClickCard {card}");
-            DebugOutput.Instance?.LogWarning($"on single click card {card}");
-
 
             if (card.playfieldSpot.area == PlayfieldArea.STOCK)
             {
@@ -1153,13 +1197,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             if (card.playfieldSpot.area == PlayfieldArea.INVALID || card.playfieldSpot.area == PlayfieldArea.DECK)
             {
-                DebugOutput.Instance?.LogError("invalid or deck card clicked, ignoring");
+                Debug.LogError("invalid or deck card clicked, ignoring");
                 return;
             }
 
             if (card.playfieldSpot.area == PlayfieldArea.HAND)
             {
-                DebugOutput.Instance?.LogError("single-clicked card in hand.. could try to autoplace, but lets just ignore for now");
+                Debug.LogError("single-clicked card in hand.. could try to autoplace, but lets just ignore for now");
                 // TODO; if you implement auto-place, make sure you place the 0th card in the hand, and let any other cards be placed down on top of the ideal spot
                 // really clicking card in hand shouldn't be a thing right now tho.
                 // maybe flinging it :D
@@ -1168,48 +1212,49 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // otherwise it's in Waste, Foundation, or Tableau, and we should try to auto-place it
 
+            // make sure it's face up
+            bool isTopCard = IsTopCardInPlayfieldSpot(card); // see if it's the top card in it's current playfield spot
+            Debug.Log($"isTopCard? {isTopCard} isFaceUp? {card.IsFaceUp}");
+            if (!card.IsFaceUp && card.playfieldSpot.area == PlayfieldArea.TABLEAU)
+            {
+                Debug.LogWarning("cannot move a face down card in a tableau, we can only flip it over, and it should've already flipped over");
+                if (isTopCard)
+                {
+                    FlipCardFaceUp(card);
+                    return;
+                }
+                else
+                {
+                    Debug.LogWarning("oh, it wasn't even the top card, yeah no, you can't act on this card. ignoring...");
+                    return;
+                }
+            }
+
             // auto-place
             PlayfieldSpot next_spot = GetNextValidPlayfieldSpotForSuitRank(card.GetSuitRank());
-            DebugOutput.Instance?.LogWarning($"single-click: autoplace: {card.GetSuitRank()} -> {next_spot}");
+            Debug.LogWarning($"single-click: autoplace: {card.GetSuitRank()} -> {next_spot}");
             if (next_spot.area == PlayfieldArea.INVALID)
             {
-                DebugOutput.Instance?.LogWarning("no valid spot found for card, ignoring");
+                iDebug.LogWarning("no valid spot found for card, ignoring");
                 return;
             }
             else
             {
-                bool isTopCard = IsTopCardInPlayfieldSpot(card, next_spot);
-
                 if (card.IsFaceUp)
                 {
-                    CheckFlipOverTopCardInTableauCardJustLeft(card); // do this before we start moving things so card.previousPlayfieldSpot is untouched
-                    // alternatively, we could copy it out here, and then perform the flip check with the cloned value after MoveCardToNewSpot
-                    PlayingCardIDList subStackCards = CollectSubStack(card);
+                    PlayingCardIDList subStackCards = card.playfieldSpot.area == PlayfieldArea.TABLEAU ? CollectSubStack(card) : new(1) { card.GetSuitRank() };
                     foreach (SuitRank suitRank in subStackCards)
                     {
                         SolitaireCard hand_card = deck.GetCardBySuitRank(suitRank);
                         MoveCardToNewSpot(ref hand_card, next_spot, true);/* true = faceUp */
                     }
-                    
-                }
-                else
-                {
-                    DebugOutput.Instance?.LogWarning("cannot move a face down card in a tableau, we can only flip it over, and it should've already flipped over");
-                    if (isTopCard)
-                    {
-                        FlipCardFaceUp(card);
-                    }
-                    else
-                    {
-                        DebugOutput.Instance?.LogWarning("oh, it wasn't even the top card, yeah no, you can't act on this card. ignoring...");
-                        return;
-                    }
+                    CheckFlipOverTopCardInTableauCardJustLeft(deck.GetCardBySuitRank(card.GetSuitRank()));
                 }
             }
         }
         public void OnLongPressCard(SolitaireCard card)
         {
-            DebugOutput.Instance?.Log("OnLongPressCard handCards Count " + card + " | handCardsCount:" + handCardPile.Count);
+            iDebug.Log("OnLongPressCard handCards Count " + card + " | handCardsCount:" + handCardPile.Count);
             if (handCardPile.Count < 1)
             {
                 TryPickupCardInSpot(card.playfieldSpot, card);
@@ -1226,7 +1271,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // if no cards left in stock, return
             if (stockCardPile.Count < 1)
             {
-                DebugOutput.Instance?.LogWarning("StockToWaste: No cards in Stock pile");
+                iDebug.LogWarning("StockToWaste: No cards in Stock pile");
                 //call WasteToStock(); here???
                 return;
             }
@@ -1249,7 +1294,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // if no cards left in waste, return
             if (wasteCardPile.Count < 1)
             {
-                DebugOutput.Instance?.LogWarning("WasteToStock: No cards in Waste pile");
+                iDebug.LogWarning("WasteToStock: No cards in Waste pile");
                 return;
             }
             // return all wasteCards to the stockCards list (in reverse order)
@@ -1272,23 +1317,26 @@ namespace PoweredOn.CardBox.Games.Solitaire
             IsRecyclingWasteToStock = false;
         }
 
-        public bool IsTopCardInPlayfieldSpot(SolitaireCard card, PlayfieldSpot next_spot)
+        public bool IsTopCardInPlayfieldSpot(SolitaireCard card)
         {
-            switch (next_spot.area)
+            switch (card.playfieldSpot.area)
             {
                 case PlayfieldArea.TABLEAU:
-                    if (tableauCardPileGroup[next_spot.index].Count > 0)
+                    if (tableauCardPileGroup[card.playfieldSpot.index].Count > 0)
                     {
-                        var topCard = tableauCardPileGroup[next_spot.index].GetTopCard();
+                        var topCard = tableauCardPileGroup[card.playfieldSpot.index].GetTopCard();
+                        Debug.Log($"IsTopCardInPlayfieldSpot {card.playfieldSpot} | topCard: {topCard}");
                         if (topCard == card)
                             return true;
+                        else
+                            Debug.LogWarning("is not top card!");
                     }
                     break;
 
                 case PlayfieldArea.FOUNDATION:
-                    if (foundationCardPileGroup[next_spot.index].Count > 0)
+                    if (foundationCardPileGroup[card.playfieldSpot.index].Count > 0)
                     {
-                        SolitaireCard topCard = GetTopCardForFoundation(next_spot.index); //GetDeckCardPile().GetTopCard();
+                        SolitaireCard topCard = GetTopCardForFoundation(card.playfieldSpot.index);
                         if (topCard == card)
                             return true;
                     }
@@ -1310,12 +1358,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             if (!card.IsFaceUp)
             {
-                DebugOutput.Instance?.Log("Ignoring double-click on face-down card");
+                iDebug.Log("Ignoring double-click on face-down card");
                 return;
             }
             else
             {
-                DebugOutput.Instance?.Log("Ignoring double-click on face-up card. did you expect autoplace?");
+                iDebug.Log("Ignoring double-click on face-up card. did you expect autoplace?");
             }
 
         }

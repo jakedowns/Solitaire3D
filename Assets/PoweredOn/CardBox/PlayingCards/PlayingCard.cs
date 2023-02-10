@@ -12,7 +12,7 @@ using UnityEngine;
 namespace PoweredOn.CardBox.PlayingCards
 {
 
-    public class PlayingCard: Card
+    public class PlayingCard : Card
     {
         // suit
         protected Suit suit;
@@ -27,6 +27,12 @@ namespace PoweredOn.CardBox.PlayingCards
         private SuitRank suitRank;
 
         protected GameObject selfGameObject;
+
+        public Vector3 prevPosition { get; internal set; }
+        public Quaternion prevRotation { get; internal set; }
+        public Vector3 prevScale { get; internal set; }
+
+        public float goalSetTimestamp { get; internal set; }
 
         //public CardAnimation animation;
 
@@ -116,8 +122,22 @@ namespace PoweredOn.CardBox.PlayingCards
 
         public void SetGoalIdentity(GoalIdentity goalIdentity)
         {
+            CacheIDWhenGoalSet();
             //Debug.LogWarning($"new goal identity {this} {goalIdentity}");
             this.goalIdentity = goalIdentity;
+        }
+
+        void CacheIDWhenGoalSet()
+        {
+            if(this.gameObject == null)
+            {
+                return; 
+            }
+            // track the values that we're leaving so that GameManager can lerp from Start<->End, not just Current<->End
+            prevPosition = this.gameObject.transform.position;
+            prevRotation = this.gameObject.transform.localRotation;
+            prevScale = this.gameObject.transform.localScale;
+            goalSetTimestamp = Time.time;
         }
 
         /*public void SetAnimation(CardAnimation cardAnimation)
@@ -140,6 +160,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         public void SetPlayfieldSpot(PlayfieldSpot spot)
         {
+            Debug.Log($"card set playfield spot: {this} {spot}");
             this.playfieldSpot = spot;
         }
 

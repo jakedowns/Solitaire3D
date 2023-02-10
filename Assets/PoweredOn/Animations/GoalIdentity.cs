@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace PoweredOn.CardBox.Animations
 {
@@ -18,6 +19,7 @@ namespace PoweredOn.CardBox.Animations
         private Vector3 _offset;
 
         private bool useCustomRotation = false;
+        private bool useCustomScale = true;
 
         private GameObject _gameObject;
         public GameObject gameObject
@@ -45,6 +47,11 @@ namespace PoweredOn.CardBox.Animations
             useCustomRotation = value;
         }
 
+        public void SetUseCustomScale(bool value)
+        {
+            useCustomScale = value;
+        }
+
 #nullable enable
         public GameObject? goalObject;
         
@@ -53,12 +60,15 @@ namespace PoweredOn.CardBox.Animations
             get
             {
                 if (goalObject != null)
-                    return goalObject.transform.position + this._offset;
-                return this._position + this._offset;
+                    // world -> local
+                    return goalObject.transform.position + _offset;
+                    //return gameObject.transform.InverseTransformPoint(goalObject.transform.position + this._offset);
+                
+                return _position + _offset;
             }
             set
             {
-                this._position = value;
+                _position = value;
             }
         }
 
@@ -67,7 +77,12 @@ namespace PoweredOn.CardBox.Animations
             get
             {
                 if (goalObject != null && !useCustomRotation)
-                    return goalObject.transform.rotation;
+                {
+                    return goalObject.transform.localRotation;
+
+                    // world -> local
+                    // return Quaternion.Inverse(gameObject.transform.rotation) * goalObject.transform.rotation;
+                }
                 return this._rotation;
             }
             set
@@ -80,7 +95,7 @@ namespace PoweredOn.CardBox.Animations
         {
             get
             {
-                if (goalObject != null)
+                if (goalObject != null && !useCustomScale)
                     return goalObject.transform.localScale;
                 return this._scale;
             }
@@ -90,10 +105,10 @@ namespace PoweredOn.CardBox.Animations
             }
         }
 
-        public void SetGoalPositionFromWorldPosition(Vector3 worldPosition)
+        /*public void SetGoalPositionFromWorldPosition(Vector3 worldPosition)
         {
             this._position = gameObject.transform.InverseTransformPoint(worldPosition);
-        }
+        }*/
 
         public GoalIdentity(GameObject gameObject, GameObject goalObject)
         {

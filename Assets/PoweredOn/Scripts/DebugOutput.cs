@@ -75,6 +75,11 @@ namespace PoweredOn
             }
         }
 
+        public void ToggleLogVisibility()
+        {
+            gameObject.SetActive(!gameObject.activeSelf);
+        }
+
         public void ClearLog()
         {
             logMessages.Clear();
@@ -88,7 +93,7 @@ namespace PoweredOn
 
         public void LogWarning(string message)
         {
-            //Debug.LogWarning(message);
+            Debug.LogWarning(message);
 
             AddToGuiLogOutput(message);
         }

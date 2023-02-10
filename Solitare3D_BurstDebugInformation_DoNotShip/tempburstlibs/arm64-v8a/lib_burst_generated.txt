@@ -120,11 +120,14 @@ Library: lib_burst_generated
 --compilation-defines=ENABLE_TERRAIN
 --compilation-defines=ENABLE_TILEMAP
 --compilation-defines=ENABLE_TIMELINE
+--compilation-defines=ENABLE_INPUT_SYSTEM
 --compilation-defines=ENABLE_LEGACY_INPUT_MANAGER
 --compilation-defines=TEXTCORE_FONT_ENGINE_1_5_OR_NEWER
 --compilation-defines=TIMELINE_FRAMEACCURATE
 --compilation-defines=CSHARP_7_OR_LATER
 --compilation-defines=CSHARP_7_3_OR_NEWER
+--compilation-defines=PACKAGE_INPUT_SYSTEM_EXISTS
+--compilation-defines=PACKAGE_INPUT_SYSTEM_1_2_0_OR_NEWER_EXISTS
 --compilation-defines=MODULE_AI_EXISTS
 --compilation-defines=MODULE_ANIMATION_EXISTS
 --compilation-defines=MODULE_PHYSICS_EXISTS
@@ -132,6 +135,12 @@ Library: lib_burst_generated
 --compilation-defines=MODULE_PARTICLE_SYSTEM_EXISTS
 --compilation-defines=ENABLE_VR_MODULE
 --compilation-defines=ENABLE_XR_MODULE
+--compilation-defines=ENABLE_INPUT_SYSTEM_PACKAGE
+--compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_VR
+--compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_XR
+--compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_PHYSICS
+--compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_PHYSICS2D
+--compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_UI
 --compilation-defines=PACKAGE_PHYSICS
 --compilation-defines=PACKAGE_PHYSICS2D
 --compilation-defines=PACKAGE_TILEMAP
@@ -144,30 +153,31 @@ Library: lib_burst_generated
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Internal.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.VisualScripting.Flow.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.RenderPipelines.Core.Runtime.dll
---root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.VisualScripting.Core.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Mathematics.dll
---root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Assembly-CSharp.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.InputSystem.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.VisualScripting.Core.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Burst.dll
---root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\UnityEngine.UI.dll
---root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Environments.Internal.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Telemetry.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Configuration.dll
---root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.InternalAPIEngineBridge.003.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\UnityEngine.UI.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.VisualScripting.State.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.TextMeshPro.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Assembly-CSharp.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.VectorGraphics.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Analytics.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Environments.Internal.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Networking.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Scheduler.dll
---root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.VectorGraphics.dll
---root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Registration.dll
---root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Analytics.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Threading.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.InternalAPIEngineBridge.003.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Device.dll
+--root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Registration.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.Services.Core.Environments.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll
 --root-assembly=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\Unity.RenderPipelines.Core.ShaderLibrary.dll
 --assembly-folder=K:\Code\Solitaire3D\Temp\StagingArea\Data\Managed\
 --pdb-search-paths=Temp/ManagedSymbols/
---method=Unity.Jobs.IJobParallelForExtensions+ParallelForJobStruct`1[[PoweredOn.Managers.DeckManager+CardLerpJob, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(PoweredOn.Managers.DeckManager+CardLerpJob&, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--8367ce70846a5488861b86984e242c6d
 --method=Unity.Burst.BurstCompiler+BurstCompilerHelper, Unity.Burst, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::IsBurstEnabled()--8c2be93e18276203cbd918daa2748a10
+--method=Unity.Jobs.IJobParallelForExtensions+ParallelForJobStruct`1[[PoweredOn.Managers.GameManager+CardLerpJob, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(PoweredOn.Managers.GameManager+CardLerpJob&, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--8108dc2639d8355bbee6951be40197d8
 
