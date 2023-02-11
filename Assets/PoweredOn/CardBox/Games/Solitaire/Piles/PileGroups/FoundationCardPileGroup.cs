@@ -96,6 +96,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return pile.CanReceiveCard(card);
         }
 
+        internal List<SuitRank> GetCardIDs()
+        {
+            var cards = new List<SuitRank> ();
+            foreach (var pile in this.piles)
+            {
+                cards.AddRange(pile.GetCardIDs());
+            }
+            return cards;
+        }
+
         public new FoundationCardPile this[int index]
         {
             get => this.piles[index];

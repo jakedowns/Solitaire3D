@@ -39,7 +39,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
         public bool CanReceiveCard(SolitaireCard card)
         {
-            UnityEngine.Debug.LogWarning($"[Debugging FoundationCardPile.CanReceiveCard] cardList.Count {cardList.Count} (pile index) {pile_index} | Card: {card}");
+            //UnityEngine.Debug.LogWarning($"[Debugging FoundationCardPile.CanReceiveCard] cardList.Count {cardList.Count} (pile index) {pile_index} | Card: {card}");
             if (Count == 0)
             {
                 if (card.GetRank() == Rank.ACE)
@@ -61,6 +61,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public PlayfieldSpot GetPlayfieldSpot()
         {
            return new PlayfieldSpot(PlayfieldArea.FOUNDATION, pile_index);
+        }
+
+        internal IEnumerable<SuitRank> GetCardIDs()
+        {
+            var cards = new List<SuitRank>();
+            foreach (var cardID in cardList)
+            {
+                cards.Add(cardID);
+            }
+            return cards;
         }
     }
 }

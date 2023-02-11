@@ -94,7 +94,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         public SuitRank Last()
         {
-            Debug.LogWarning("Last: "+this.cardList);
+            //Debug.LogWarning("Last: "+this.cardList);
             return this.cardList.DefaultIfEmpty(SuitRank.NONE).LastOrDefault();
         }
 

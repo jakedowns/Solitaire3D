@@ -109,4 +109,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
         Hand_Pile,
         Deck_Pile
     }
+
+    public enum SolitairePileType
+    {
+        Foundation,
+        Tableau,
+        Stock,
+        Waste,
+        Hand,
+        Deck
+    }
 }

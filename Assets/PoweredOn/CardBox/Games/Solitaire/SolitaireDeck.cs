@@ -411,7 +411,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // loop through our cards, and give them a new GoalIdentity based on our calculations
             foreach (SolitaireCard card in cards)
             {
-                DebugOutput.Instance?.LogWarning("todo: re-enable gameobject code path in mono classes");
 
                 card.SetIsFaceUp(false);
 

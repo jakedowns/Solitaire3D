@@ -1,8 +1,12 @@
-﻿using System;
+﻿using PoweredOn.CardBox.PlayingCards;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
+using Unity.VisualScripting.Dependencies.NCalc;
+using UnityEngine.Assertions;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -10,32 +14,73 @@ namespace PoweredOn.CardBox.Games.Solitaire
     {
         public static SolitaireMoveList SuggestMoves(SolitaireGame game)
         {
-            SolitaireMoveList moves = new SolitaireMoveList();
+            SolitaireGameState gameState = game.GetGameState();
+            SolitaireMoveList movesToRank = new SolitaireMoveList();
 
-            // 1. any moves that move a card from the waste|tableau to a foundation
-            moves = GetMovesToFoundation(game);
-            if (moves.moves.Count > 0)
-                return moves;
+            // 1. get moves and then rank them by type
+            
+            // 1.1 check spots in this order: waste, tableau, or return STOCK_TO_WASTE
+            var TableauPileGroup = game.GetTableauCardPileGroup();
+            SolitaireCardPile[] cardPiles = new SolitaireCardPile[] {
+                game.GetWasteCardPile(),
+                TableauPileGroup[0],
+                TableauPileGroup[1],
+                TableauPileGroup[2],
+                TableauPileGroup[3],
+                TableauPileGroup[4],
+                TableauPileGroup[5],
+                TableauPileGroup[6]
+            };
+            foreach (var pile in cardPiles)
+            {
+                if (pile.Count > 0)
+                {
+                    // note: instead of just checking the top card for each tableau pile, we check all face up cards
+                    PlayingCardIDList cardIDsToCheck = new PlayingCardIDList(1) { pile.Last() };
+                    if (pile.GetType() == typeof(TableauCardPile))
+                    {
+                        cardIDsToCheck = pile.GetFaceUpCards();
+                    }
+                    foreach(SuitRank cardID in cardIDsToCheck)
+                    {
+                        SolitaireMoveList movesForCard = SuggestMovesForCard(game.GetGameState(), Managers.GameManager.Instance.game.deck.GetCardBySuitRank(cardID));
+                        if (movesForCard.Count > 0)
+                        {
+                            foreach (var move in movesForCard)
+                            { 
+                                movesToRank.Add(move);
+                            }
+                        }
+                    }
+                }
+            }
 
-            // 2. any moves that move a card from the waste|tableau to a tableau
-            moves = GetMovesToTableau(game);
-            if (moves.moves.Count > 0)
-                return moves;
+            if (gameState.StockPile.Count > 0)
+            {
+                SolitaireMoveList moves = new SolitaireMoveList();
+                var TopStockCard = gameState.StockPile.GetTopCard();
+                // Stock -> Waste
+                movesToRank.Add(new SolitaireMove(TopStockCard, TopStockCard.playfieldSpot, new PlayfieldSpot(PlayfieldArea.WASTE, gameState.WastePile.Count)));
+            }
 
-            // 3. any moves that move a card from the stock to the waste (if the stock is empty, recycle the waste)
-            moves = GetMovesFromStockToWaste(game);
-            if (moves.moves.Count > 0)
-                return moves;
+            //UnityEngine.Debug.Log("Suggested Moves before Ranking: " + movesToRank.Count);
+            
+            SolitaireMoveList rankedMoves = movesToRank.SortByMoveRank();
+            Assert.IsTrue(movesToRank.Count == rankedMoves.Count);
+            //UnityEngine.Debug.Log("Suggested Moves After Ranking: " + rankedMoves.Count);
 
-            // 4. any moves that recycle the waste to the stock
-            moves = GetMovesFromWasteToStock(game);
-            if (moves.moves.Count > 0)
-                return moves;
+            
 
-            // default: no moves left (rare)
-            return moves; // empty
+            // Waste -> Stock
+            if (gameState.WastePile.Count > 0 && gameState.StockPile.Count == 0)
+            {
+                rankedMoves.Add(SolitaireMove.WASTE_TO_STOCK);   
+            }
+
+            return rankedMoves;
         }
 
+        /*
         private static SolitaireMoveList GetMovesFromStockToWaste(SolitaireGame game)
         {
             SolitaireMoveList moves = new SolitaireMoveList();
@@ -56,15 +101,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         private static SolitaireMoveList GetMovesToFoundation(SolitaireGame game)
         {
-            SolitaireMoveList moves = new SolitaireMoveList();
-            return moves;
+            SolitaireMoveList moveList = new SolitaireMoveList();
+            return moveList;
         }
+        */
 
         // ### Card Specific Variants
 
         public static SolitaireMoveList SuggestMovesForCard(SolitaireGameState gameState, SolitaireCard card)
         {
-            SolitaireMoveList moves = new SolitaireMoveList();
+            SolitaireMoveList moves;
 
             moves = GetMovesToFoundationForCard(gameState, card);
             if (moves.Count > 0)

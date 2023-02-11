@@ -25,7 +25,19 @@ namespace PoweredOn.Managers
     [ExecuteInEditMode]
     public class GameManager : MonoBehaviour
     {
-        public static GameManager Instance { get; private set; }
+        private static GameManager _instance;
+        public static GameManager Instance { 
+            get {
+                if (_instance == null)
+                {
+                    _instance = GameObject.FindObjectOfType<GameManager>();
+                }
+                return _instance;
+            }
+            private set {
+                _instance = value;
+            } 
+        }
 
         public MonoSolitaireDeck monoDeck;
         bool nrealModeEnabled = false;
@@ -112,11 +124,8 @@ namespace PoweredOn.Managers
         void Start()
         {
             // really this only here until I can get Canvas UI buttons responding again.
-#if !UNITY_EDITOR
-            if(!Application.IsPlaying() || EditorApplication?.isPlayingOrWillChangePlaymode){
-                EnableNrealMode();
-            }
-#endif
+            EnableNrealMode();
+            
             Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
             Screen.autorotateToLandscapeLeft = true;
@@ -142,6 +151,11 @@ namespace PoweredOn.Managers
         public void ToggleNrealMode()
         {
             SetNrealMode(!nrealModeEnabled);
+        }
+
+        public void ToggleAutoPlay()
+        {
+            game.ToggleAutoPlay();
         }
 
         public void SetNrealMode(bool value)
@@ -506,7 +520,10 @@ namespace PoweredOn.Managers
             if(Time.time - lastFired > 1.0f)
             {
                 lastFired = Time.time;
-                game.TryAutoPlay();
+                if (game.autoplaying)
+                {
+                    game.AutoPlayNextMove();
+                }
             }
 
             /*if (Input.GetMouseButtonDown(0))

@@ -8,6 +8,7 @@ using PoweredOn.CardBox.PlayingCards;
 using UnityEngine;
 using Unity.VisualScripting;
 using UnityEngine.Assertions;
+using UnityEngine.SocialPlatforms.Impl;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -118,7 +119,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         WasteCardPile wasteCardPile = WasteCardPile.EMPTY;
         HandCardPile handCardPile = HandCardPile.EMPTY;
 
-        private bool autoplaying = false;
+        public bool autoplaying { get; private set; } = false;
 
         bool autoPlaceEnabled = true;
 
@@ -128,7 +129,28 @@ namespace PoweredOn.CardBox.Games.Solitaire
         //public DebugOutput m_DebugOutput;
 
         int m_Moves = 0;
+        int score = 0;
         public SolitaireGame(){}
+
+        /* this is the state where auto-complete should become available to the user */
+        public bool IsInFinalStage
+        {
+            get { return stockCardPile.Count == 0 && wasteCardPile.Count == 0 && tableauCardPileGroup.GetFaceDownCards().Count == 0; }
+            set { }
+        }
+
+        // TODO: IsOutOfUnattemptedValidMoves
+        public bool IsOutOfUnattemptedValidMoves
+        {
+            get { return false; }
+        }
+
+        /* this is true when all cards have been moved to foundations */
+        public bool IsComplete
+        {
+            get { return foundationCardPileGroup.GetCardIDs().Count == 52; }
+            set { }
+        }
 
         public PlayingCardIDList GetDealtOrder()
         {
@@ -196,6 +218,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return wasteCardPile.Clone();
         }
 
+        public void ToggleLog()
+        {
+            DebugOutput.Instance.ToggleLogVisibility();
+        }
+
         public void NewGame()
         {
             // reset game object references
@@ -205,6 +232,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // reset move count / log
             m_Moves = 0;
+            score = 0;
             moveLog = new SolitaireMoveList();
 
             // BuildStock
@@ -228,20 +256,26 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void AutoPlayNextMove()
         {
-            SolitaireMoveList moves = GetNextBestMoves();
-        }
-
-        public SolitaireMoveList GetNextBestMoves()
-        {
-            SolitaireMoveList moves = new SolitaireMoveList();
-
-            return moves;
-        }
-
-        public SolitaireMoveList GetMovesToFoundation()
-        {
-            SolitaireMoveList moves = new SolitaireMoveList();
-            return moves;
+            SolitaireMoveList moves = SolitaireMoveSuggestor.SuggestMoves(this);
+            Debug.LogWarning("[Autoplay] Suggested moves: " + moves.Count);
+            Debug.Log(moves);
+            if (moves.Count > 0)
+            {
+                SolitaireMove move = moves[0];
+                if (move.IsValid())
+                {
+                    move.Execute();
+                }
+                else
+                {
+                    Debug.LogError("[Autoplay] Suggestor suggested invalid move");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[Autoplay] Stopping... no moves left");
+                StopAutoPlay();
+            }
         }
 
         public void StartAutoPlay()
@@ -257,6 +291,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // TODO: put this in a dealer class
         public void Deal()
         {
+            bool KEEP_ACES_AT_TOP_OF_STOCK = true;
+
             NewGame();
 
             // first, we want to collect all the cards into a stack
@@ -294,6 +330,26 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 {
                     iDebug.LogError(e.ToString());
                 }*/
+            }
+
+            List<SuitRank> aceIdList = new List<SuitRank>
+            {
+                new SuitRank(Suit.CLUBS, Rank.ACE),
+                new SuitRank(Suit.DIAMONDS, Rank.ACE),
+                new SuitRank(Suit.HEARTS, Rank.ACE),
+                new SuitRank(Suit.SPADES, Rank.ACE)
+            };
+
+            if (KEEP_ACES_AT_TOP_OF_STOCK)
+            {
+                // move aces to bottom of stock pile during dealing
+                // ace id list
+                foreach (var aceid in aceIdList)
+                {
+                    // swap position in stock card list so that aces are on bottom (so they don't get dealt)
+                    stockCardPile.RemoveAt(stockCardPile.IndexOf(aceid)); // remove from current position
+                    stockCardPile.Add(aceid); // move to end of list
+                }
             }
 
             Debug.LogWarning("---------------");
@@ -365,6 +421,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             float deal_delay = 0.1f * dealtOrder.Count;
 
+            if (KEEP_ACES_AT_TOP_OF_STOCK)
+            {
+                // pull aces to top of stock
+            }
+
             // Loop over ALL stock cards and set goal
             for (int sc2 = stockCardPile.Count-1; sc2 >= 0; sc2--)
             {
@@ -379,24 +440,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // flag as done
             _isDealing = false;
-        }
-
-        public void TryAutoPlay()
-        {
-            if (autoplaying)
-            {
-                // find next best move
-                SolitaireMoveList nextBestMoves = SolitaireMoveSuggestor.SuggestMoves(this);
-                if(nextBestMoves.Count == 0)
-                {
-                    Debug.LogWarning("[AutoPlay] Stopping. No Moves Suggested.");
-                    StopAutoPlay();
-                }
-                else
-                {
-                    Debug.LogWarning($"[AutoPlay] Playing best move out of {nextBestMoves.Count}: {nextBestMoves.First()}");
-                }
-            }
         }
 
         public void SetCardGoalsToRandomPositions()
@@ -469,7 +512,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 // if the foundation list is empty, that's our first choice spot
                 // if the rank is Rank.ace (0), return the foundation pile for the suit
                 if (suitrank.rank == Rank.ACE) { 
-                    return new PlayfieldSpot(PlayfieldArea.FOUNDATION, (int)suitrank.rank, 0); 
+                    return new PlayfieldSpot(PlayfieldArea.FOUNDATION, (int)suitrank.suit, 0); 
                 }
             }
             else
@@ -730,7 +773,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                 if (index > -1)
                 {
-                    iDebug.LogWarning($"removing card from {pilename} {dbugstring}");
+                    //iDebug.LogWarning($"removing card from {pilename} {dbugstring}");
                     pile.RemoveAt(index);
                 }
                 else
@@ -774,6 +817,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 iDebug.LogError("[CollectSubStack] got card with invalid spot");
                 return PlayingCardIDList.EMPTY;
+            }
+            else if(card.playfieldSpot.area != PlayfieldArea.TABLEAU)
+            {
+                return new PlayingCardIDList(1) { card.GetSuitRank() };
             }
             else
             {
@@ -859,7 +906,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
 
 
-        // TODO: make them suit agnostic until first Ace is placed
+        // TODO: make them suit agnostic until first Ace is placed?
         public void BuildFoundations()
         {
             foundationCardPileGroup = new FoundationCardPileGroup();
@@ -901,7 +948,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     // make sure the foundations are spaced evenly apart
                     Vector3 newPos = new Vector3(foundationOrigin.x, foundationOrigin.y, foundationOrigin.z);
-                    newPos.x = i * (TAB_SPACING * 0.5f);
+                    newPos.x = i * (TAB_SPACING * 0.75f);
                     foundation.transform.localPosition = newPos;
                 }
                 i++;
@@ -955,6 +1002,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public string GetDebugText()
         {
             string textBlock = "Debug Output";
+
+            textBlock += $"\n score: {score}";
+
+            textBlock += $"\n IsInFinalStage: {IsInFinalStage}";
+
+            textBlock += $"\n IsComplete: {IsComplete}";
+
+            // TODO: IsOutOfUnattemptedValidMoves
 
             textBlock += $"\n Move count {m_Moves}";
 
@@ -1135,7 +1190,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 bool faceUp = true;
 
                 int substackIndex = 0;
-                SolitaireCard first_card = deck.GetCardBySuitRank(handCardPile.First());
+                //SolitaireCard first_card = deck.GetCardBySuitRank(handCardPile.First());
                 foreach (SuitRank id in handCardPile)
                 {
                     SolitaireCard card = deck.GetCardBySuitRank(id);
@@ -1143,7 +1198,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     MoveCardToNewSpot(ref card, spot, faceUp, 0.1f * substackIndex, substackIndex);
                     substackIndex++;
                 }
-                CheckFlipOverTopCardInTableauCardJustLeft(first_card);
+                CheckTableauForCardsToFlip();
             }
             else
             {
@@ -1151,13 +1206,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 iDebug.LogWarning("Invalid move, try again.");
             }
         }
-        public void CheckFlipOverTopCardInTableauCardJustLeft(SolitaireCard card)
+        public void CheckTableauForCardsToFlip()
         {
-            // refer back to the tableau we just came from and see if we need to auto-flip over a card
-            if (card.previousPlayfieldSpot.area == PlayfieldArea.TABLEAU)
+            Debug.Log($"CheckTableauForCardsToFlip");
+
+            foreach(TableauCardPile tPile in tableauCardPileGroup)
             {
-                Debug.Log("CheckFlipOverTopCardInTableauCardJustLeft");
-                TableauCardPile tPile = tableauCardPileGroup[card.previousPlayfieldSpot.index];
                 if (tPile.Count > 0)
                 {
                     SolitaireCard topMostCard = tPile.GetTopCard();
@@ -1165,19 +1219,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     {
                         FlipCardFaceUp(topMostCard);
                     }
-                    else
-                    {
-                        iDebug.LogWarning("tableau we left already had a face-up card as its top card?");
-                    }
                 }
-                else
-                {
-                    iDebug.LogWarning("tableau we left is empty");
-                }
-            }
-            else
-            {
-                Debug.Log("CheckFlipOverTopCardInTableauCardJustLeft: nothing to do. card prevSpot was not Tableau");
             }
         }
 
@@ -1276,7 +1318,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         SolitaireCard hand_card = deck.GetCardBySuitRank(suitRank);
                         MoveCardToNewSpot(ref hand_card, next_spot, true);/* true = faceUp */
                     }
-                    CheckFlipOverTopCardInTableauCardJustLeft(deck.GetCardBySuitRank(card.GetSuitRank()));
+                    CheckTableauForCardsToFlip();
                 }
             }
         }
@@ -1394,6 +1436,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 iDebug.Log("Ignoring double-click on face-up card. did you expect autoplace?");
             }
 
+        }
+
+        public void ToggleAutoPlay()
+        {
+            autoplaying = !autoplaying;
         }
     }
 }

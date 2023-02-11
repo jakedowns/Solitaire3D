@@ -36,10 +36,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public bool CanReceiveCard(SolitaireCard card)
         {
             // TODO: if undoing or redoing move; return true
-            GameManager gmi = GameManager.Instance ?? GameObject.FindObjectOfType<GameManager>();
 
 
-            if (Count > 0 && !gmi.game.IsPickingUpSubstack)
+            if (Count > 0 && !GameManager.Instance.game.IsPickingUpSubstack)
             {
                 // block if we already have a card in our hand and we're not picking up a substack
                 return false;

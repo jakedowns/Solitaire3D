@@ -73,13 +73,13 @@ public class TouchInputMode : MonoBehaviour
     MonoSolitaireCard monoCard;
     MonoSolitaireCardPileBase pileBase;
     SolitaireCard card;
-    GameManager gameManager
+    /*GameManager gameManager
     {
         get
         {
-            return PoweredOn.Managers.GameManager.Instance ?? FindObjectOfType<GameManager>();
+            return GameManager.Instance ?? FindObjectOfType<GameManager>();
         }
-    }
+    }*/
 
     void TestDidHit(Vector2 touchPosition, bool longTouch = false)
     {
@@ -98,18 +98,18 @@ public class TouchInputMode : MonoBehaviour
                     //Debug.Log($"soliCard: {card}");
                     if (longTouch)
                     {
-                        gameManager.game.OnLongPressCard(card);
+                        GameManager.Instance.game.OnLongPressCard(card);
                     }
                     else
                     {
-                        gameManager.OnSingleClickCard(card);
+                        GameManager.Instance.OnSingleClickCard(card);
 
                     }
                 }
                 else if(touchedObject.tag == "PileBase")
                 {
                     pileBase = touchedObject.GetComponent<MonoSolitaireCardPileBase>();
-                    gameManager.game.OnSingleClickCardPileBase(pileBase);
+                    GameManager.Instance.game.OnSingleClickCardPileBase(pileBase);
                 }
                 //Debug.Log("Touched " + touchedObject.name);
                 //Debug.Log("touchedObject.tag " + touchedObject.tag);

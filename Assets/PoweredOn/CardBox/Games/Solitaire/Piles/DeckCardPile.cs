@@ -40,7 +40,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 {
                     throw new Exception($"{this.GetType().Name} class does not have a proper gameObjectType defined");
                 }
-                return gmi.game.GetGameObjectByType(gameObjectType);
+                return GameManager.Instance.game.GetGameObjectByType(gameObjectType);
             }
         }
 

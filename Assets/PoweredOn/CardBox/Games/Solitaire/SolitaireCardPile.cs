@@ -15,13 +15,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
     {
         public virtual SolitaireGameObject gameObjectType { get; set; } = SolitaireGameObject.None;
 
-        protected GameManager gmi
+        /*protected GameManager gmi
         {
             get
             {
                 return GameManager.Instance ?? GameObject.FindObjectOfType<GameManager>();
             }
-        }
+        }*/
         public void Add(SolitaireCard card)
         {
             this.cardList.Add(card.GetSuitRank());
@@ -29,11 +29,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public new SolitaireCard GetTopCard()
         {
-            if (gmi == null)
+            if (GameManager.Instance == null)
             {
                 Debug.LogWarning("game manager instance is NULL?!");
             }
-            return gmi.game.deck.GetCardBySuitRank(this.Last());
+            return GameManager.Instance.game.deck.GetCardBySuitRank(this.Last());
         }
 
         public new SuitRank First()
@@ -42,7 +42,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
         public new SolitaireCard FirstCard()
         {
-            return gmi.game.deck.GetCardBySuitRank(this.First());
+            return GameManager.Instance.game.deck.GetCardBySuitRank(this.First());
         }
 
         public new GameObject gameObject
@@ -53,7 +53,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 {
                     throw new Exception($"{this.GetType().Name} class does not have a proper gameObjectType defined");
                 }
-                return gmi.game.GetGameObjectByType(gameObjectType);
+                return GameManager.Instance.game.GetGameObjectByType(gameObjectType);
             }
         }
 
@@ -87,6 +87,20 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public SuitRank LastOrDefault()
         {
             return this.cardList.LastOrDefault();
+        }
+
+        internal PlayingCardIDList GetFaceUpCards()
+        {
+            PlayingCardIDList faceUpCardIDs = new();
+            foreach(var cardID in cardList)
+            {
+                var card = GameManager.Instance.game.deck.GetCardBySuitRank(cardID);
+                if (card.IsFaceUp)
+                {
+                    faceUpCardIDs.Add(cardID);
+                }
+            }
+            return faceUpCardIDs;
         }
     }
 }

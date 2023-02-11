@@ -8,7 +8,6 @@ using PoweredOn.Managers;
 [CustomEditor(typeof(GameManager))]
 public class GameManagerGui : Editor
 {
-    private bool autoplaying = false;
     public override void OnInspectorGUI()
     {
         GameManager myScript = (GameManager)target;
@@ -23,22 +22,12 @@ public class GameManagerGui : Editor
             myScript.AutoPlayNextMove();
         }
 
-        if (!autoplaying)
-        {   
-            if (GUILayout.Button("Auto Play"))
-            {
-                myScript.StartAutoPlay();
-            }
-        }
-        else
+        if (GUILayout.Button("Toggle Auto Play"))
         {
-            if (GUILayout.Button("Stop Auto Play"))
-            {
-                myScript.StopAutoPlay();
-            }
+            myScript.game.ToggleAutoPlay();
         }
 
-        if(GUILayout.Button("Fan Deck"))
+        if (GUILayout.Button("Fan Deck"))
         {
             myScript.FanCardsOut();
         }
@@ -58,6 +47,11 @@ public class GameManagerGui : Editor
         if (GUILayout.Button("ToggleNrealMode"))
         {
             myScript.ToggleNrealMode();
+        }
+
+        if (GUILayout.Button("Toggle Log"))
+        {
+            myScript.game.ToggleLog();
         }
 
     }

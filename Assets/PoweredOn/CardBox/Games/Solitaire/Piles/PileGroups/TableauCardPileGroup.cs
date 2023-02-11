@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
+using PoweredOn.Managers;
 using Unity.VisualScripting;
 
 namespace PoweredOn.CardBox.Games.Solitaire
@@ -86,6 +87,23 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 i++;
             }
             return outstring;
+        }
+
+        internal List<SuitRank> GetFaceDownCards()
+        {
+            var faceDownCards = new List<SuitRank>();
+            foreach (var pile in piles)
+            {
+                foreach (var cardID in pile)
+                {
+                    var card = GameManager.Instance.game.deck.GetCardBySuitRank(cardID);
+                    if(card.IsFaceUp == false)
+                    {
+                        faceDownCards.Add(cardID);
+                    }
+                }
+            }
+            return faceDownCards;
         }
     }
 }

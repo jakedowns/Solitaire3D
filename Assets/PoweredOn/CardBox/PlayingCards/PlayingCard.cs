@@ -90,7 +90,7 @@ namespace PoweredOn.CardBox.PlayingCards
             {
                 if (this.selfGameObject == null)
                 {
-                    DebugOutput.Instance?.LogWarning($"PlayingCard {this} has no GameObject Set");
+                    DebugOutput.Instance?.LogWarning($"PlayingCard has no GameObject Set {this}");
                 }
                 return this.selfGameObject;
             }

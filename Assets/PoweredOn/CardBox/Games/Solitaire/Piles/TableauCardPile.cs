@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
+using PoweredOn.Managers;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -46,8 +47,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         internal bool CanReceiveCard(SolitaireCard card)
         {
-            Debug.LogWarning("[Debugging TableauCardPile.CanReceiveCard] cardList.Count = (pile index)" + pile_index + " " + cardList.Count);
-            Debug.LogWarning($"{card}");
+            //Debug.LogWarning("[Debugging TableauCardPile.CanReceiveCard] cardList.Count = (pile index)" + pile_index + " " + cardList.Count);
+            //Debug.LogWarning($"{card}");
             if (Count == 0)
             {
                 if (card.GetRank() == Rank.KING)
@@ -76,7 +77,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 {
                     throw new Exception($"{this.GetType().Name} class does not have a proper gameObjectType defined");
                 }
-                return gmi.game.GetGameObjectByType(gameObjectType);
+                return GameManager.Instance.game.GetGameObjectByType(gameObjectType);
             }
         }
         public PlayfieldSpot GetPlayfieldSpot()

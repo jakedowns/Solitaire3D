@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
+using PoweredOn.Managers;
 using UnityEngine;
 
 namespace PoweredOn.CardBox.Games.Solitaire
@@ -68,7 +69,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 {
                     throw new Exception($"{this.GetType().Name} class does not have a proper gameObjectType defined");
                 }
-                return gmi.game.GetGameObjectByType(gameObjectType);
+                return GameManager.Instance.game.GetGameObjectByType(gameObjectType);
             }
         }
     }
