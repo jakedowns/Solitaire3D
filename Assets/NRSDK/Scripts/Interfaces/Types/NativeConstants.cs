@@ -90,11 +90,11 @@ namespace NRKernal
         public const int NRSESSIONBEHAVIOUR_ORDER = -100;
         public const int NRVIRTUALDISPLAY_ORDER = -200;
         public const int NRRENDER_ORDER = -300;
-        public const int NRKERNALUPDATER_ORDER = -1000;
+        public const int NRKERNALUPDATER_ORDER = -1100;
         #endregion
 
         #region settings
-        public const int RECORD_FPS_DEFAULT = 24;
+        public const int RECORD_FPS_DEFAULT = 30;
         public const int RECORD_VIDEO_BITRATE_DEFAULT = 10240000;
         public const int RECORD_AUDIO_BITRATE_DEFAULT = 128000;
         public const int RECORD_AUDIO_SAMPLERATE_DEFAULT = 16000;

@@ -55,7 +55,7 @@ namespace NRKernal
 
         void UpdateHeadPosByInput()
         {
-            var trackMode = NRSessionManager.Instance?.NRHMDPoseTracker?.TrackingMode;
+            var trackMode = NRSessionManager.Instance.NRHMDPoseTracker.TrackingMode;
             if (trackMode == NRHMDPoseTracker.TrackingType.Tracking0Dof)
                 return;
 
