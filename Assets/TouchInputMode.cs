@@ -73,18 +73,15 @@ public class TouchInputMode : MonoBehaviour
     MonoSolitaireCard monoCard;
     MonoSolitaireCardPileBase pileBase;
     SolitaireCard card;
-    /*GameManager gameManager
-    {
-        get
-        {
-            return GameManager.Instance ?? FindObjectOfType<GameManager>();
-        }
-    }*/
 
     void TestDidHit(Vector2 touchPosition, bool longTouch = false)
     {
         //Debug.Log($"touchPosition {touchPosition}");
         ray = mainCamera.ScreenPointToRay(touchPosition);
+
+        // visualize the raycast
+        Debug.DrawRay(ray.origin, ray.direction * 1000, Color.red, 60f);
+
         if(Physics.Raycast(ray, out hitData, 1000))
         {
             if (hitData.collider != null)

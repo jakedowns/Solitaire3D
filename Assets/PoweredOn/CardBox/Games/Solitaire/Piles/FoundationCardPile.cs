@@ -60,7 +60,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         
         public PlayfieldSpot GetPlayfieldSpot()
         {
-           return new PlayfieldSpot(PlayfieldArea.FOUNDATION, pile_index);
+           return new PlayfieldSpot(PlayfieldArea.FOUNDATION, pile_index, Count);
         }
 
         internal IEnumerable<SuitRank> GetCardIDs()

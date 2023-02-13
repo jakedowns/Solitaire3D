@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using PoweredOn.CardBox.Animations;
 using PoweredOn.CardBox.PlayingCards;
 using UnityEngine;
-using Unity.VisualScripting;
+//using Unity.VisualScripting;
 using UnityEngine.Assertions;
 using UnityEngine.SocialPlatforms.Impl;
 
@@ -19,6 +19,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         private SolitaireDeck _deck;
 
         bool _isDealing = false;
+        public bool MovingStockToWaste { get; internal set; } = false;
 
         DebugOutput iDebug
         {
@@ -289,7 +290,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
         
         // TODO: put this in a dealer class
-        public void Deal()
+        public async void Deal()
         {
             bool KEEP_ACES_AT_TOP_OF_STOCK = true;
 
@@ -298,10 +299,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // first, we want to collect all the cards into a stack
             deck.CollectCardsToDeck();
 
-            //await Task.Delay(1000);
+            await Task.Delay(1000);
 
             // let's shuffle the card order 3 times (todo: artifically delay and animate this)
-            deck.Shuffle(3);
+            deck.Shuffle(10);
 
             // Flag for Move Validator
             _isDealing = true;
@@ -389,8 +390,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
                     MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.1f * dealtOrder.Count);
 
-                    iDebug.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
-                    Debug.LogWarning($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
+                    //iDebug.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
+                    //Debug.LogWarning($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
 
                     // assert the playfield spot updated
                     Assert.IsTrue(card.playfieldSpot.area == PlayfieldArea.TABLEAU);
@@ -429,7 +430,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // Loop over ALL stock cards and set goal
             for (int sc2 = stockCardPile.Count-1; sc2 >= 0; sc2--)
             {
-                Debug.LogWarning("SC2: " + stockCardPile.Count + " " + sc2); //
+                //Debug.LogWarning("SC2: " + stockCardPile.Count + " " + sc2); //
                 SolitaireCard card = deck.GetCardBySuitRank(stockCardPile[sc2]);
                 float delay = deal_delay + (0.025f * (sc2));
 
@@ -492,6 +493,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
+        // TODO: merge this with SolitaireMoveSuggestor
         // when the user single-click's on a card, we auto-move it to the next best spot
         public PlayfieldSpot GetNextValidPlayfieldSpotForSuitRank(SuitRank suitrank)
         {
@@ -506,50 +508,19 @@ namespace PoweredOn.CardBox.Games.Solitaire
             SuitRank topCardSR;
             iDebug.LogWarning($"[GetNextValidPlayfieldSpotForSuitRank] Foundation List[{(int)suitrank.suit}].Count: " + foundationPile.Count);
 
-            // TODO: .IsEmpty
-            if (foundationPile.Count == 0)
-            {
-                // if the foundation list is empty, that's our first choice spot
-                // if the rank is Rank.ace (0), return the foundation pile for the suit
-                if (suitrank.rank == Rank.ACE) { 
-                    return new PlayfieldSpot(PlayfieldArea.FOUNDATION, (int)suitrank.suit, 0); 
-                }
-            }
-            else
-            {
-                // TODO: .GetTopCard
-                topCardSR = foundationPile.Last();
-                iDebug.LogWarning($"[GetNextValidPlayfieldSpotForSuitRank] checking if top card in foundation list is one rank less than the card we are trying to place {(int)topCardSR.rank} {(int)suitrank.rank}");
-                if ((int)topCardSR.rank + 1 == (int)suitrank.rank)
-                {
-                    // if the top card in the foundation list is one less than this card's rank, that's our first choice spot
-                    return new PlayfieldSpot(PlayfieldArea.FOUNDATION, (int)suitrank.suit, foundationPile.Count);
-                }
+
+            // if we can move to the foundation, that's our next spot
+            SolitaireCard card = deck.GetCardBySuitRank(suitrank);
+            SolitaireMoveList moveList = SolitaireMoveSuggestor.GetMovesToFoundationForCard(GetGameState(), card);
+            if(moveList.Count > 0){
+                return moveList[0].ToSpot;
             }
 
-            // next, loop through the tableau piles from left to right and see if there's a valid spot for this card to go to
-            for (int i = 0; i < 7; i++)
-            {
-                if (tableauCardPileGroup[i].Count == 0)
-                {
-                    // if the rank is Rank.king (12), see if we have an open tableau spot and put it there
-                    if (suitrank.rank == Rank.KING)
-                    {
-                        // empty tableau found for you, my king!
-                        return new PlayfieldSpot(PlayfieldArea.TABLEAU, i, 0);
-                    }
-                }
-                else
-                {
-                    topCardSR = tableauCardPileGroup[i].Last();
-                    if (
-                       (int)topCardSR.rank - 1 == (int)suitrank.rank
-                       && SolitaireDeck.SuitColorsAreOpposite(topCardSR.suit, suitrank.suit)
-                    )
-                    {
-                        return new PlayfieldSpot(PlayfieldArea.TABLEAU, i, tableauCardPileGroup[i].Count);
-                    }
-                }
+            // if we can move to another tableau spot, that's our move
+            SolitaireMoveList tabMoves = SolitaireMoveSuggestor.GetMovesToTableauForCard(GetGameState(), card);
+            if(tabMoves.Count > 0){
+                // TODO: sort by best move
+                return tabMoves[0].ToSpot;
             }
 
             iDebug.LogWarning($"no suggested playfield spot found for {suitrank}");
@@ -564,7 +535,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return new SolitaireGameState(this);
         }
 
-        // this method is being refactored...
+        // todo: substackIndex is redundant, we could just read spot.index spot.substackIndex
+
         public void MoveCardToNewSpot(ref SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f, int substackIndex = 0)
         {
             //if(runningInTestMode) Debug.Log($"MoveCardToNewSpot {card.GetGameObjectName()} from {card.playfieldSpot} to {spot} faceup:{faceUp} delay:{delay}");
@@ -681,7 +653,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     deck.AddCardToDeck(card.GetSuitRank());
                     if (goalID != null && card.gameObject != null && deck.DeckCardPile.gameObject != null)
                     {
-                        goalID = new GoalIdentity(card.gameObject, deck.DeckCardPile.gameObject);
+                        GameObject offsetGameObject = GetGameObjectByType(SolitaireDeck.offsetGameObjectType);
+                        UnityEngine.Debug.LogWarning($"offsetGameObject: {offsetGameObject.transform.position}");
+                        goalID = new GoalIdentity(card.gameObject, offsetGameObject, new Vector3(0.0f, 0.0f, (CARD_THICKNESS * (52 - spot.index))));
                     }
                     break;
             }
@@ -752,7 +726,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 int topIndex = pile.Count - 1;
                 if (pfspot.area == PlayfieldArea.STOCK || pfspot.area == PlayfieldArea.WASTE)
                 {
-                    if (index != topIndex)
+                    if (
+                        !deck.IsCollectingCardsToDeck 
+                        && !MovingStockToWaste
+                        && !IsDealing // move this into deck.IsDealing? (tho it's not the deck dealing itself, it's the dealer)
+                        && index != topIndex 
+                    )
                     {
                         // note, this isn't ALWAYS an error
                         // example, when passing waste cards back to stock
@@ -899,6 +878,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
             else
             {
                 gameObjectReferences[SolitaireGameObject.Deck_Base] = deckOfCards;
+            }
+
+            var deckOfCardsOffset = GameObject.Find("DeckOfCardsAnchor");
+            if (deckOfCardsOffset == null)
+            {
+                Debug.LogError("DeckOfCardsAnchor game object not found?!");
+                iDebug.LogError("deckOfCards not found");
+            }
+            else
+            {
+                gameObjectReferences[SolitaireGameObject.Deck_Offset] = deckOfCardsOffset;
             }
 
             Debug.LogWarning("gameObjectReferences count after update:" + gameObjectReferences.Count);
@@ -1312,7 +1302,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 if (card.IsFaceUp)
                 {
-                    PlayingCardIDList subStackCards = card.playfieldSpot.area == PlayfieldArea.TABLEAU ? CollectSubStack(card) : new(1) { card.GetSuitRank() };
+                    PlayingCardIDList subStackCards 
+                        =   card.playfieldSpot.area == PlayfieldArea.TABLEAU 
+                            && next_spot.area == PlayfieldArea.TABLEAU
+                                ? CollectSubStack(card) 
+                                : new(1) { card.GetSuitRank() 
+                            };
                     foreach (SuitRank suitRank in subStackCards)
                     {
                         SolitaireCard hand_card = deck.GetCardBySuitRank(suitRank);
@@ -1345,15 +1340,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 //call WasteToStock(); here???
                 return;
             }
-            // take top card (0th) from stockCards list, remove it, and append it to the Waste pile
-            // TODO: support 3 at a time mode
-            SuitRank cardSuitRank = stockCardPile[0];
 
-            // this now happens inside SetCardGoal
-            //stockCardPile.RemoveAt(0);
+            MovingStockToWaste = true;
+            
+            // TODO: support 3 at a time mode
+            SuitRank cardSuitRank = stockCardPile.Last();
 
             SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
             MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
+
+            MovingStockToWaste = false;
         }
 
         public void WasteToStock()
@@ -1387,6 +1383,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             IsRecyclingWasteToStock = false;
         }
 
+        // TODO: move to SolitaireCard class
+        // TODO: compare suitrank instead of SolitaireCard references directly
         public bool IsTopCardInPlayfieldSpot(SolitaireCard card)
         {
             switch (card.playfieldSpot.area)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using PoweredOn.CardBox.PlayingCards;
 using PoweredOn.Managers;
-using Unity.VisualScripting;
+//using Unity.VisualScripting;
 using UnityEngine;
 
 namespace PoweredOn.CardBox.Games.Solitaire
@@ -80,9 +80,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 return GameManager.Instance.game.GetGameObjectByType(gameObjectType);
             }
         }
+
         public PlayfieldSpot GetPlayfieldSpot()
         {
-            return new PlayfieldSpot(PlayfieldArea.TABLEAU, pile_index);
+            return new PlayfieldSpot(PlayfieldArea.TABLEAU, pile_index, Count);
         }
     }
 }

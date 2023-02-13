@@ -24,6 +24,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
          **/
         public new const SolitaireGameObject gameObjectType = SolitaireGameObject.Deck_Base;
 
+        public const SolitaireGameObject offsetGameObjectType = SolitaireGameObject.Deck_Offset;
+
         private SolitaireGame game;
 
         private bool _isShuffling = false;
@@ -396,63 +398,21 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             _isCollectingCardsToDeck = true;
             
-            string typeName = Enum.GetName(typeof(SolitaireGameObject), SolitaireDeck.gameObjectType);
-            Debug.LogWarning($"deck collect cards to deck {typeName}");
-            // get the deck world position
-            GameObject go = this.game.GetGameObjectByType(SolitaireGameObject.Deck_Base);
+            // get the deck's "offset" world position
+            GameObject go = this.game.GetGameObjectByType(SolitaireDeck.offsetGameObjectType);
             if(go == null)
             {
                 Debug.LogWarning("Solitaire Deck has no game object?");
                 _isCollectingCardsToDeck = false;
                 return;
             }
-            Vector3 deckPosition = go.transform.position + Vector3.zero;
 
-            // loop through our cards, and give them a new GoalIdentity based on our calculations
-            foreach (SolitaireCard card in cards)
+            // Set all card's "goal identity" to deck's "offset" empties' world position
+            foreach (SuitRank cardID in DEFAULT_DECK_ORDER)
             {
-
-                card.SetIsFaceUp(false);
-
-                // get the deck order of the current card
-                int deckOrder = card.GetDeckOrder();
-
-                Transform cardTransform = card.gameObject?.transform ?? null;
-
-                Vector3 worldToLocal = Vector3.zero;
-                if (cardTransform != null)
-                {
-                    cardTransform.position = Vector3.zero;
-                    cardTransform.rotation = Quaternion.identity;
-                    // calculate the goal position of the current card
-                    // what effect does applying this transform BEFORE the offset have, vs the opposite.
-
-                    cardTransform.InverseTransformPoint(deckPosition);
-
-                    worldToLocal += new Vector3(0, 0, SolitaireGame.CARD_THICKNESS * deckOrder);
-
-                    GoalIdentity goalID = new GoalIdentity(
-                        card.gameObject,
-                        worldToLocal,
-                        cardTransform.localRotation,
-                        cardTransform.localScale + Vector3.zero);
-
-                    // set the goal position of the current card
-                    card.SetGoalIdentity(goalID);
-                }
-                else
-                {
-                    card.SetGoalIdentity(new GoalIdentity(
-                        card.gameObject,
-                        Vector3.zero,
-                        Quaternion.identity,
-                        Vector3.one
-                    ));
-                }
-
-
-                
-
+                SolitaireCard card =  GetCardBySuitRank(cardID);
+                float delay = DEFAULT_DECK_ORDER.IndexOf(cardID) * .01f;
+                GameManager.Instance.game.MoveCardToNewSpot(ref card, PlayfieldSpot.DECK, false, delay); // always face-down in deck
             }
 
             _isCollectingCardsToDeck = false;

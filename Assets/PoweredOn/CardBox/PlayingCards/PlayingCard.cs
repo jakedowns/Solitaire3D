@@ -160,7 +160,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         public void SetPlayfieldSpot(PlayfieldSpot spot)
         {
-            Debug.Log($"card set playfield spot: {this} {spot}");
+            //Debug.Log($"card set playfield spot: {this} {spot}");
             this.playfieldSpot = spot;
         }
 
@@ -171,7 +171,7 @@ namespace PoweredOn.CardBox.PlayingCards
 
         override public string ToString()
         {
-            return $"{this.rank} of {this.suit} \n:IsFaceUp:{this.IsFaceUp} \n: spot:[{this.playfieldSpot}] \n: prevSpot:[{this.previousPlayfieldSpot}])";
+            return $"{this.rank} of {this.suit} | { (this.IsFaceUp ? "faceUp" : "faceDown") } @ [{this.playfieldSpot}] | prevFrom:[{this.previousPlayfieldSpot}])";
         }
     }
 }

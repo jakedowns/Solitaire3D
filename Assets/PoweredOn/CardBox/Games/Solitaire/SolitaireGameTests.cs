@@ -8,10 +8,10 @@ using UnityEngine.Assertions;
 using PoweredOn.CardBox.PlayingCards;
 using PoweredOn.CardBox.Cards;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
+//using static UnityEngine.Rendering.DebugUI;
 using System.Collections;
 using UnityEngine.XR;
-using Unity.VisualScripting;
+//using Unity.VisualScripting;
 using PoweredOn.Managers;
 
 namespace PoweredOn.CardBox.Games.Solitaire

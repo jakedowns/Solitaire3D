@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Dependencies.NCalc;
+//using Unity.VisualScripting;
+//using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine.Assertions;
 
 namespace PoweredOn.CardBox.Games.Solitaire
@@ -123,9 +123,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return moves;
         }
 
-        private static SolitaireMoveList GetMovesToFoundationForCard(SolitaireGameState gameState, SolitaireCard card)
+        public static SolitaireMoveList GetMovesToFoundationForCard(SolitaireGameState gameState, SolitaireCard card)
         {
             SolitaireMoveList moves = new SolitaireMoveList();
+
+            // if this card is not the top card, then we can't move it to the foundation
+            // TODO: move IsTopCardInPlayfieldSpot to SolitaireCard class
+            if(Managers.GameManager.Instance.game.IsTopCardInPlayfieldSpot(card) == false)
+                return moves;
+
             FoundationCardPile foundationCardPile = card.GetFoundationCardPile();
 
             if (foundationCardPile.CanReceiveCard(card))
@@ -136,7 +142,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return moves;
         }
 
-        private static SolitaireMoveList GetMovesToTableauForCard(SolitaireGameState gameState, SolitaireCard card)
+        public static SolitaireMoveList GetMovesToTableauForCard(SolitaireGameState gameState, SolitaireCard card)
         {
             SolitaireMoveList moves = new SolitaireMoveList();
 

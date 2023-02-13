@@ -44,22 +44,41 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public static PlayfieldSpot DECK
         {
-            get { return new PlayfieldSpot(PlayfieldArea.DECK, 0); }
+            // TODO: support multiple GameManager instances simultaneously?
+            // or use IsTesting to determine which GameManager or GameManagerTesting instance to return.
+
+            // note we return the top index of the pile, not always 0
+            // could be -1 by default to define unset
+            // be we'd just be doing the lookup elsewhere anyway 
+
+            get { 
+                int nextTopIndex = Managers.GameManager.Instance.game.GetDeckCardPile().Count;
+                return new PlayfieldSpot(PlayfieldArea.DECK, nextTopIndex); 
+            }
         }
 
         public static PlayfieldSpot STOCK
         {
-            get { return new PlayfieldSpot(PlayfieldArea.STOCK, 0); }
+            get { 
+                int nextTopIndex = Managers.GameManager.Instance.game.GetStockCardPile().Count;
+                return new PlayfieldSpot(PlayfieldArea.STOCK, nextTopIndex); 
+            }
         }
 
         public static PlayfieldSpot WASTE
         {
-            get { return new PlayfieldSpot(PlayfieldArea.WASTE, 0); }
+            get { 
+                int nextTopIndex = Managers.GameManager.Instance.game.GetWasteCardPile().Count;
+                return new PlayfieldSpot(PlayfieldArea.WASTE, nextTopIndex); 
+            }
         }
 
         public static PlayfieldSpot HAND
         {
-            get { return new PlayfieldSpot(PlayfieldArea.HAND, 0); }
+            get { 
+                int nextTopIndex = Managers.GameManager.Instance.game.GetHandCardPile().Count;
+                return new PlayfieldSpot(PlayfieldArea.HAND, nextTopIndex); 
+            }
         }
 
 

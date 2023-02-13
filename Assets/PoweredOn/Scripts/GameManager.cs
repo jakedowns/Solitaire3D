@@ -13,7 +13,7 @@ using PoweredOn.CardBox.Games.Solitaire;
 using PoweredOn.CardBox.Games;
 using NRKernal;
 using static PoweredOn.Animations.EasingFunction;
-using UnityEngine.InputSystem;
+//using UnityEngine.InputSystem;
 
 namespace PoweredOn.Managers
 {
@@ -89,7 +89,7 @@ namespace PoweredOn.Managers
         [UnityEditor.Callbacks.DidReloadScripts]
         private static void OnScriptsReloaded()
         {
-            (Instance ?? GameObject.FindObjectOfType<GameManager>()).Reset();
+            (Instance ?? GameObject.FindObjectOfType<GameManager>())?.Reset();
         }
 #endif
 
@@ -124,7 +124,9 @@ namespace PoweredOn.Managers
         void Start()
         {
             // really this only here until I can get Canvas UI buttons responding again.
+#if UNITY_ANDROID
             EnableNrealMode();
+#endif
             
             Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
@@ -510,7 +512,8 @@ namespace PoweredOn.Managers
         void Update()
         {
 #if UNITY_EDITOR
-            if (Keyboard.current.f1Key.wasPressedThisFrame)
+            //if (Keyboard.current.f1Key.wasPressedThisFrame)
+            if (Input.GetKeyDown(KeyCode.F1))
             {
                 UnityEditor.EditorWindow.focusedWindow.maximized = !UnityEditor.EditorWindow.focusedWindow.maximized;
             }

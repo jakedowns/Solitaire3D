@@ -30,6 +30,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         
         Hand_Base,
         Deck_Base,
+        Deck_Offset,
 
         // card types:
         Card_ace_of_clubs,
