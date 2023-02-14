@@ -72,16 +72,19 @@ namespace PoweredOn.CardBox.Games.Solitaire
             Debug.Log("[TEST] CanDealCards");
 
             var game = SolitaireGame.TestGame;
-            game.NewGame();
-            game.Deal();
 
             //Managers.GameManager gmi = Managers.GameManager.Instance ?? GameObject.FindObjectOfType<Managers.GameManager>();
 
             Debug.Log($"Test[CanDealCards] Using Game Manager id: {GameManager.Instance.gmi_id}");
             GameManager.Instance.SetGame(game);
 
+            game.NewGame();
+            game.Deal();
+
+            Debug.Log($"Test[CanDealCards] Game State {game.GetGameState()}");
+
             // assert deck.deckCardPile.Count == 0 (all cards have been dealt)
-            Assert.IsTrue(game.deck.DeckCardPile.Count == 0);
+            Assert.IsTrue(game.deck.DeckCardPile.Count == 0, $"assert all cards have been dealt out of deckcardpile. expect 0. got {game.deck.DeckCardPile.Count}");
 
             // 1 + 2 + 3 + 4 + 5 + 6 + 7 = 28 INITIAL_TABLEAU_COUNT_AFTER_DEAL
             // 52 - 28 = 24 INITIAL_STOCK_COUNT_AFTER_DEAL

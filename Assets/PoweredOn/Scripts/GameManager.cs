@@ -44,6 +44,7 @@ namespace PoweredOn.Managers
         Camera mainCamera;
         Camera nrealCamera;
         public float gmi_id;
+        GameObject menuGroup;
         
         private void Awake()
         {
@@ -65,6 +66,8 @@ namespace PoweredOn.Managers
                 // be the first one to initialize the singleton if need be
                 _ = GameObject.FindObjectOfType<DebugOutput>();
             }
+
+            menuGroup = GameObject.Find("MainCanvas/MenuGroup");
 
             Camera[] finds = Resources.FindObjectsOfTypeAll<Camera>();
             foreach (var _camera in finds)
@@ -124,7 +127,7 @@ namespace PoweredOn.Managers
         void Start()
         {
             // really this only here until I can get Canvas UI buttons responding again.
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
             EnableNrealMode();
 #endif
             
@@ -138,6 +141,11 @@ namespace PoweredOn.Managers
                 Debug.LogWarning("GameManager [Start] DebugOutput.Instance is still null.");
             }
             MyInit();
+        }
+
+        public void ToggleMenu()
+        {
+            menuGroup?.SetActive(!menuGroup.activeSelf);
         }
 
         public void EnableNrealMode()

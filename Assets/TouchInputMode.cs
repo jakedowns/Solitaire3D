@@ -10,9 +10,11 @@ public class TouchInputMode : MonoBehaviour
     float touchedAt = 0;
     bool didLongTouch = false;
     Vector2 lastTouchPosition;
+    GameObject cameraParent;
     // Start is called before the first frame update
     void Start()
     {
+        cameraParent = GameObject.Find("CameraParent");
         Camera[] findsCameras = Resources.FindObjectsOfTypeAll<Camera>();
         foreach (var _camera in findsCameras)
         {
@@ -42,15 +44,25 @@ public class TouchInputMode : MonoBehaviour
         /* MID-TOUCH */
         if (Input.GetMouseButton(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved))
         {
+            Vector2 touchPos = Input.GetMouseButton(0) ? (Vector2)Input.mousePosition : Input.GetTouch(0).position;
+            if (previousTouchPosition != null)
+            {
+                // update camera parent rotation based on touch movement along x and y axis
+                Quaternion updatedRotation = cameraParent.transform.rotation;
+
+                Vector2 delta = touchPos - (Vector2)previousTouchPosition;
+                updatedRotation *= Quaternion.Euler(delta.x, -delta.y, 0.0f);
+                cameraParent.transform.rotation = updatedRotation;
+            }
+
             if (isTouching && !didLongTouch && Time.time - touchedAt > longTouchDuration)
             {
                 didLongTouch = true;
-                Vector2 touchPos = Input.GetMouseButton(0) ? (Vector2)Input.mousePosition : Input.GetTouch(0).position;
+                
                 TestDidHit(touchPos, true);
             }
             else
             {
-                Vector2 touchPos = Input.GetMouseButton(0) ? (Vector2)Input.mousePosition : Input.GetTouch(0).position;
                 lastTouchPosition = touchPos;
             }
         }
@@ -65,6 +77,8 @@ public class TouchInputMode : MonoBehaviour
                 Vector2 touchPos = Input.GetMouseButtonUp(0) ? (Vector2)Input.mousePosition : lastTouchPosition;
                 TestDidHit(touchPos);
             }
+
+            previousTouchPosition = null;
         }
     }
 
@@ -73,6 +87,8 @@ public class TouchInputMode : MonoBehaviour
     MonoSolitaireCard monoCard;
     MonoSolitaireCardPileBase pileBase;
     SolitaireCard card;
+#nullable enable
+    Vector2? previousTouchPosition = null;
 
     void TestDidHit(Vector2 touchPosition, bool longTouch = false)
     {
@@ -121,5 +137,7 @@ public class TouchInputMode : MonoBehaviour
         {
             Debug.Log($"hit nothing");
         }
+
+        previousTouchPosition = touchPosition;
     }
 }
