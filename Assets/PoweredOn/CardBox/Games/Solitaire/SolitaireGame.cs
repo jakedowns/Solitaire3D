@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PoweredOn.CardBox.Animations;
+using PoweredOn.CardBox.Cards;
 using PoweredOn.CardBox.PlayingCards;
 using UnityEngine;
+using Unity.Jobs;
 //using Unity.VisualScripting;
 using UnityEngine.Assertions;
 using UnityEngine.SocialPlatforms.Impl;
+using PoweredOn.Managers;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -124,6 +128,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         bool autoPlaceEnabled = true;
 
+        public PoweredOn.Animations.Effects.RippleEffectManager fxManager;
+
         // card, from, to
         SolitaireMoveList moveLog;
 
@@ -226,6 +232,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void NewGame()
         {
+            fxManager = new PoweredOn.Animations.Effects.RippleEffectManager();
+
             // reset game object references
             UpdateGameObjectReferences();
 
@@ -566,13 +574,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
             GoalIdentity goalID = null;
             Transform cardTX;
             Vector3 gPos = Vector3.zero;
-            if (cardGO != null) { 
+            if (cardGO != null) {
                 goalID = new(cardGO, Vector3.zero, Quaternion.identity, Vector3.one);
                 cardTX = cardGO.transform;
             }
             else
             {
-                if(!IsRunningInTestMode) Debug.LogWarning($"CardGameObject is null {card}");
+                if (!IsRunningInTestMode) Debug.LogWarning($"CardGameObject is null {card}");
             }
 
             /* Depending on the destination spot, record various offsets to the desired card positions */
@@ -590,7 +598,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     break;
 
-                    
+
                 case PlayfieldArea.WASTE:
                     wasteCardPile.Add(card.GetSuitRank());
                     if (goalID != null && wasteCardPile.gameObject != null)
@@ -604,7 +612,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     break;
 
-                    
+
                 case PlayfieldArea.FOUNDATION:
                     foundationCardPileGroup[spot.index].Add(card.GetSuitRank());
                     var baseGO = foundationCardPileGroup[spot.index].gameObject;
@@ -619,7 +627,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     break;
 
-                    
+
                 case PlayfieldArea.TABLEAU:
                     tableauCardPileGroup[spot.index].Add(card.GetSuitRank());
                     if (goalID != null && tableauCardPileGroup[spot.index].gameObject != null)
@@ -636,7 +644,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     break;
 
-                    
+
                 case PlayfieldArea.HAND:
                     faceUp = true; // always face up when adding to hand
                     handCardPile.Add(card.GetSuitRank());
@@ -648,13 +656,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     break;
 
-                    
+
                 case PlayfieldArea.DECK:
                     deck.AddCardToDeck(card.GetSuitRank());
                     if (goalID != null && card.gameObject != null && deck.DeckCardPile.gameObject != null)
                     {
                         GameObject offsetGameObject = GetGameObjectByType(SolitaireDeck.offsetGameObjectType);
-                        UnityEngine.Debug.LogWarning($"offsetGameObject: {offsetGameObject.transform.position}");
+                        //Debug.LogWarning($"offsetGameObject: {offsetGameObject.transform.position}");
                         goalID = new GoalIdentity(card.gameObject, offsetGameObject, new Vector3(0.0f, 0.0f, (CARD_THICKNESS * (52 - spot.index))));
                     }
                     break;
@@ -663,7 +671,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // Define desired rotation
             // note: z-axis rotation is temporary until i fix the orientation of the mesh in blender
             Quaternion[] options = new Quaternion[2] { Quaternion.Euler(0, 0, 90), CARD_DEFAULT_ROTATION };
-            if(goalID != null)
+            if (goalID != null)
             {
                 goalID.rotation = (spot.area == PlayfieldArea.HAND) ? (faceUp ? options[0] : options[1]) : (faceUp ? options[1] : options[0]);
                 goalID.SetUseCustomRotation(true); // use our custom rotation instead of a goalObjects (if applicable) rotation
@@ -672,6 +680,19 @@ namespace PoweredOn.CardBox.Games.Solitaire
             card.SetGoalIdentity(goalID);
             card.SetPlayfieldSpot(spot);
             card.SetIsFaceUp(faceUp);
+            if (!IsDealing)
+            {
+                /*if (spot.area == PlayfieldArea.TABLEAU || spot.area == PlayfieldArea.FOUNDATION)
+                {*/
+                    GameManager.Instance.StartCoroutine(RippleOnLand(goalID));
+                //}
+            }
+        }
+
+        public IEnumerator RippleOnLand(GoalIdentity goalID)
+        {
+            yield return new WaitForSeconds(goalID.delayStart + 0.9f);
+            fxManager.NewRippleEffect(goalID.position);
         }
 
         public void RemoveCardFromCurrentPlayfieldSpot(SolitaireCard card)
@@ -1247,6 +1268,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void OnSingleClickCard(SolitaireCard card)
         {
             Debug.Log($"SolitaireGame@OnSingleClickCard {card}");
+
+            //fxManager.NewRippleEffect(card.gameObject.transform.position);
 
             if (card.playfieldSpot.area == PlayfieldArea.STOCK)
             {

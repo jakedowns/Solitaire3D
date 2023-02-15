@@ -13,6 +13,7 @@ using PoweredOn.CardBox.Games.Solitaire;
 using PoweredOn.CardBox.Games;
 using NRKernal;
 using static PoweredOn.Animations.EasingFunction;
+using PoweredOn.Animations.Effects;
 //using UnityEngine.InputSystem;
 
 namespace PoweredOn.Managers
@@ -129,8 +130,10 @@ namespace PoweredOn.Managers
             // really this only here until I can get Canvas UI buttons responding again.
 #if UNITY_ANDROID && !UNITY_EDITOR
             EnableNrealMode();
+#else
+            DisableNrealMode();
 #endif
-            
+
             Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
             Screen.autorotateToLandscapeLeft = true;
@@ -145,7 +148,14 @@ namespace PoweredOn.Managers
 
         public void ToggleMenu()
         {
-            menuGroup?.SetActive(!menuGroup.activeSelf);
+            if(menuGroup != null)
+            {
+                menuGroup.SetActive(!menuGroup.activeSelf);
+                if (menuGroup.activeSelf)
+                {
+                    menuGroup.transform.position = Vector3.zero;
+                }
+            }
         }
 
         public void EnableNrealMode()
@@ -192,12 +202,18 @@ namespace PoweredOn.Managers
                 nrCamera.gameObject.SetActive(value);
             }
 
+            Camera nrealCam = null;
+
             Camera[] findsCameras = Resources.FindObjectsOfTypeAll<Camera>();
             foreach (var _camera in findsCameras)
             {
                 if (_camera.gameObject.name == "MainCamera")
                 {
                     mainCamera = _camera;
+                }
+                else if(_camera.gameObject.name == "CenterCamera")
+                {
+                    nrealCam = _camera;
                 }
             }
 
@@ -211,9 +227,31 @@ namespace PoweredOn.Managers
             }
 
             var mainCanvasCanvas = GameObject.Find("MainCanvas").GetComponent<Canvas>();
-            nrealCamera = GameObject.Find("CameraParent/NRCameraRig/CenterCamera")?.GetComponent<Camera>();
-            mainCanvasCanvas.worldCamera = nrealModeEnabled ? nrealCamera : mainCamera;
-            Debug.Log("main canvas world camera is now " + mainCanvasCanvas.worldCamera.gameObject.name);
+            
+            if(nrealCam == null)
+            {
+                Debug.LogWarning("nreal cam not found");
+            }
+            else
+            {
+                NRHMDPoseTracker[] hmdPoseTrackers = Resources.FindObjectsOfTypeAll<NRHMDPoseTracker>();
+                if (hmdPoseTrackers.Count() > 0)
+                {
+                    nrealCam = hmdPoseTrackers[0].transform.Find("CenterCamera").GetComponent<Camera>();
+                }
+            }
+            
+            var targetWorldCam = nrealModeEnabled ? nrealCam : mainCamera;
+            if (targetWorldCam == null)
+            {
+                Debug.LogError("error finding " + (nrealModeEnabled ? "nreal cam" : "main cam"));
+            }
+            else
+            {
+                mainCanvasCanvas.worldCamera = targetWorldCam;
+                Debug.Log("main canvas world camera is now " + mainCanvasCanvas.worldCamera.gameObject.name);
+            }
+            
         }
 
         public void MyInit()
@@ -301,7 +339,16 @@ namespace PoweredOn.Managers
             
             while (true)
             {
-                
+                // TODO: encapsulate this pattern and apply it to Animations > Effects > RippleEffect
+                /*if (game.fxManager != null)
+                {
+                    game.fxManager.OnUpdate();
+                }
+                else
+                {
+                    Debug.LogWarning("no fxManager?");
+                }*/
+
                 float nowTime = Time.realtimeSinceStartup;
                 // TODO: make it so we can skip over cards who have flagged that they met their goals to save on animation cycles ("paused/frozen/sleeping")
                 for (int i = 0; i < game.deck.cards.Count; i++)
@@ -386,6 +433,7 @@ namespace PoweredOn.Managers
                     {
                         Transform cardTx = cardGO.transform;
                         cardTx.position = job.startPositions[i];
+                        cardTx.position = game.fxManager.ApplyEffectsToPoint(cardTx.position);
                         cardTx.localRotation = job.startRotations[i];
                         cardTx.localScale = job.startScales[i];
                     }
@@ -527,8 +575,17 @@ namespace PoweredOn.Managers
             }
 #endif
 
+            if (game.fxManager != null)
+            {
+                game.fxManager.OnUpdate();
+            }
+            else
+            {
+                Debug.LogWarning("no fxManager?");
+            }
+
             // Every 1s if autoplay is enabled, play a new move
-            if(Time.time - lastFired > 1.0f)
+            if (Time.time - lastFired > 1.0f)
             {
                 lastFired = Time.time;
                 if (game.autoplaying)

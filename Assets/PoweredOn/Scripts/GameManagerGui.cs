@@ -53,7 +53,6 @@ public class GameManagerGui : Editor
         {
             myScript.game.ToggleLog();
         }
-
     }
 }
 #endif

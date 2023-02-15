@@ -3,12 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using PoweredOn.Managers;
+using PoweredOn.Animations.Effects;
 
 namespace PoweredOn
 {
     public class DebugOutput : MonoBehaviour
     {
-        public static DebugOutput Instance { get; private set; }
+        [SerializeField]
+        public RippleOptions rippleOptions = new();
+
+        public float ripple_speed = 0.1f;
+        public int ripple_numRipples = 1; //3f;
+        public float ripple_amplitude = 0.5f;
+        public float ripple_frequency = 0.01f;
+        public float ripple_decay = 0.01f;
+        public float ripple_wavelength = 0.01f;
+        public float ripple_delayBetween = 0.2f;
+
+        private static DebugOutput _instance;
+        public static DebugOutput Instance { 
+            get {
+                return _instance ?? GameObject.FindObjectOfType<DebugOutput>();
+            } 
+            private set { _instance = value; }
+        }
 
         GameManager gameManagerInstance;
         private void Awake()
@@ -25,9 +43,9 @@ namespace PoweredOn
             }
 
             gameManagerInstance = GameManager.Instance;
-            if(gameManagerInstance == null){
+            /*if(gameManagerInstance == null){
                 gameManagerInstance = GameObject.FindObjectOfType<GameManager>();
-            }
+            }*/
         }
         private float timer = 0f;
 
