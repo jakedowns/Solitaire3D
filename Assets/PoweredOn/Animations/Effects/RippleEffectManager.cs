@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using PoweredOn.GPT.Helpers;
+
 namespace PoweredOn.Animations.Effects
 {
     public class Ripple
@@ -29,11 +31,11 @@ namespace PoweredOn.Animations.Effects
             this.index = index;
             this.parent = parent;
             radius = 0.0f;
-            amplitude = parent.options.amplitude - (index * (1.0f-parent.options.decay));
+            amplitude = parent.options.amplitude - (index * parent.options.decay);
             frequency = parent.options.frequency;
             aliveAt = Time.time;
             myDelay = (parent.options.delayBetween * index);
-            Debug.LogWarning($"new ripple {origin} {index} {myDelay}");
+            Debug.LogWarning($"new ripple o:{origin} i:{index} delay:{myDelay} amp:{amplitude} freq:{frequency}");
         }
 
         public void OnUpdate()
@@ -47,7 +49,7 @@ namespace PoweredOn.Animations.Effects
             // max lifespan
             //if(Time.time - aliveAt > parent.options.duration)
             // max size
-            if(radius > 1f || amplitude <= 0f)
+            if(radius > 2.0f)// || amplitude <= 0f)
             {
                 alive = false;
                 parent.PruneRipple(this.index);
@@ -69,14 +71,21 @@ namespace PoweredOn.Animations.Effects
             // update amplitude (z-height that changes sinosodially)
             value = amplitude * Mathf.Sin(2 * Mathf.PI * frequency * time);
 
-            //Debug.Log($"ripple {index} r:{radius} v:{value} a:{amplitude} f:{frequency} t:{time}");
+            // shift to -A <> A range
+            value = (value + amplitude) / (amplitude*2);
+
+            Debug.Log($"ripple {index} r:{radius} v:{value} a:{amplitude} f:{frequency} t:{time}");
 
             // decay the amplitude
             amplitude = Mathf.Clamp01(amplitude * parent.options.decay);
-            if (Mathf.Abs(amplitude) < 0.001)
+            if (Mathf.Abs(amplitude) < 0.0001)
             {
                 amplitude = 0;
             }
+
+            // draw a wire arc gizmo to visualize the ripple radius
+            DrawWireCircle.New(origin, radius, Color.red, false, 3f);
+
 
             time += Time.deltaTime;
         }
@@ -88,8 +97,8 @@ namespace PoweredOn.Animations.Effects
             // Check if the game object is within the ripple radius
             //Debug.LogWarning($"ApplyEffectsToPoint {point}, distance:{distance}");
             if (
-                (distance - POINT_MARGIN) > radius - parent.options.wavelength 
-                && (distance + POINT_MARGIN) < radius + parent.options.wavelength
+                (distance + POINT_MARGIN) > radius - parent.options.wavelength 
+                && (distance - POINT_MARGIN) < radius + parent.options.wavelength
             ){
                 // Calculate the weight for the current ripple
                 float weight = Mathf.Clamp01((radius + parent.options.wavelength - distance) / parent.options.wavelength);
@@ -201,6 +210,10 @@ namespace PoweredOn.Animations.Effects
 
         public Guid NewRippleEffect(Vector3 origin)
         {
+            // for now, clear existing
+            effectsList.Clear();
+            effectsMap.Clear();
+
             var newFX = new RippleEffect(origin,this);
             effectsList.Add(newFX);
             effectsMap[newFX.guid] = effectsList.Count - 1;

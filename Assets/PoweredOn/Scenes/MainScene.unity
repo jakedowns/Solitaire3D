@@ -9101,7 +9101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b31549b42b7f1544a6458763e0f0772, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gmi_id: -8.400576
+  gmi_id: -9.371893
 --- !u!114 &1186348706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10134,13 +10134,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 240cf6037cbfdee4287f09faed8420e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ripple_speed: 0.5
+  ripple_speed: 0.01
   ripple_numRipples: 1
-  ripple_amplitude: 3
-  ripple_frequency: 0.01
-  ripple_decay: 0.01
-  ripple_wavelength: 0.3
-  ripple_delayBetween: 0.5
+  ripple_amplitude: 0.01
+  ripple_frequency: 0.9
+  ripple_decay: 0.999
+  ripple_wavelength: 0.01
+  ripple_delayBetween: 0.1
 --- !u!1001 &1333387079
 PrefabInstance:
   m_ObjectHideFlags: 0
