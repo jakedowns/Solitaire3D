@@ -547,6 +547,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void MoveCardToNewSpot(ref SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f, int substackIndex = 0)
         {
+            if (!IsDealing && !deck.IsCollectingCardsToDeck && DebugOutput.Instance.ripple_on_click)
+            {
+                GameManager.Instance.StartCoroutine(RippleForGoalID(card.GetGoalIdentity(),0.0f));
+            }
             //if(runningInTestMode) Debug.Log($"MoveCardToNewSpot {card.GetGameObjectName()} from {card.playfieldSpot} to {spot} faceup:{faceUp} delay:{delay}");
             moveLog.Add(new SolitaireMove(card, card.previousPlayfieldSpot, spot, substackIndex));
 
@@ -680,18 +684,20 @@ namespace PoweredOn.CardBox.Games.Solitaire
             card.SetGoalIdentity(goalID);
             card.SetPlayfieldSpot(spot);
             card.SetIsFaceUp(faceUp);
-            if (!IsDealing)
+            if (!deck.IsCollectingCardsToDeck)
             {
                 /*if (spot.area == PlayfieldArea.TABLEAU || spot.area == PlayfieldArea.FOUNDATION)
                 {*/
-                    GameManager.Instance.StartCoroutine(RippleOnLand(goalID));
+                    GameManager.Instance.StartCoroutine(RippleForGoalID(goalID, goalID.delayStart + DebugOutput.Instance.ripple_delay_before_placement_ripple));
                 //}
             }
         }
 
-        public IEnumerator RippleOnLand(GoalIdentity goalID)
+        public IEnumerator RippleForGoalID(GoalIdentity goalID, float delay)
         {
-            yield return new WaitForSeconds(goalID.delayStart + 0.9f);
+            if (delay>0) { 
+                yield return new WaitForSeconds(delay);
+            }
             fxManager.NewRippleEffect(goalID.position);
         }
 
@@ -1268,8 +1274,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void OnSingleClickCard(SolitaireCard card)
         {
             Debug.Log($"SolitaireGame@OnSingleClickCard {card}");
-
-            //fxManager.NewRippleEffect(card.gameObject.transform.position);
 
             if (card.playfieldSpot.area == PlayfieldArea.STOCK)
             {

@@ -61,6 +61,7 @@ namespace PoweredOn.Animations.Effects
             // expands continually after delay
             if (myDelay > 0 && Time.time - aliveAt < myDelay)
             {
+                value = 0;
                 return;
             }
             myDelay = 0;
@@ -71,10 +72,19 @@ namespace PoweredOn.Animations.Effects
             // update amplitude (z-height that changes sinosodially)
             value = amplitude * Mathf.Sin(2 * Mathf.PI * frequency * time);
 
-            // shift to -A <> A range
-            value = (value + amplitude) / (amplitude*2);
+            // adjust the amplitude so that it is from -1 to 1 => -amplitude to +amplitude
+            value = value - (amplitude*0.5f);
 
-            Debug.Log($"ripple {index} r:{radius} v:{value} a:{amplitude} f:{frequency} t:{time}");
+            value = Mathf.Clamp(value, -parent.options.amplitude, parent.options.amplitude);
+
+            // draw a debug line representing the value
+            if (DebugOutput.Instance.ripple_draw_debug_gizmos)
+                Debug.DrawLine(origin, origin + new Vector3(0, value*DebugOutput.Instance.ripple_debug_factor, 0), Color.blue, DebugOutput.Instance.ripple_debug_duration);
+
+            if (DebugOutput.Instance.ripple_log)
+            {
+                Debug.Log($"ripple {index} r:{radius} v:{value} a:{amplitude} f:{frequency} t:{time}");
+            }
 
             // decay the amplitude
             amplitude = Mathf.Clamp01(amplitude * parent.options.decay);
@@ -84,7 +94,8 @@ namespace PoweredOn.Animations.Effects
             }
 
             // draw a wire arc gizmo to visualize the ripple radius
-            DrawWireCircle.New(origin, radius, Color.red, false, 3f);
+            if (DebugOutput.Instance.ripple_draw_debug_gizmos)
+                DrawWireCircle.New(origin, radius, Color.blue, false, DebugOutput.Instance.ripple_debug_duration);
 
 
             time += Time.deltaTime;
@@ -96,18 +107,19 @@ namespace PoweredOn.Animations.Effects
             float distance = Mathf.Abs(Vector2.Distance(point, origin));
             // Check if the game object is within the ripple radius
             //Debug.LogWarning($"ApplyEffectsToPoint {point}, distance:{distance}");
-            if (
+            /*if (
                 (distance + POINT_MARGIN) > radius - parent.options.wavelength 
                 && (distance - POINT_MARGIN) < radius + parent.options.wavelength
-            ){
+            ){*/
                 // Calculate the weight for the current ripple
                 float weight = Mathf.Clamp01((radius + parent.options.wavelength - distance) / parent.options.wavelength);
                 //Debug.LogWarning($"ApplyEffectsToPoint weight:{weight}, zBefore = {point.z}");
 
                 // Apply a Z offset to the game object based on the current ripple value and weight
                 point.z += value * weight;
+
                 //Debug.LogWarning($"ApplyEffectsToPoint zAfter:{point.z}");
-            }
+            /*}*/
             return point;
         }
     }
@@ -210,9 +222,11 @@ namespace PoweredOn.Animations.Effects
 
         public Guid NewRippleEffect(Vector3 origin)
         {
-            // for now, clear existing
-            effectsList.Clear();
-            effectsMap.Clear();
+            if (DebugOutput.Instance.ripple_clear_before)
+            {
+                effectsList.Clear();
+                effectsMap.Clear();
+            }
 
             var newFX = new RippleEffect(origin,this);
             effectsList.Add(newFX);

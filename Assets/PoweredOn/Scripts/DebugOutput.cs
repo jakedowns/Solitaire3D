@@ -19,6 +19,14 @@ namespace PoweredOn
         public float ripple_decay = 0.01f;
         public float ripple_wavelength = 0.01f;
         public float ripple_delayBetween = 0.2f;
+        public float ripple_debug_duration = 0.1f;
+        public float ripple_debug_factor = 1.0f;
+        public bool ripple_log = false;
+        public bool ripple_clear_before = false;
+        public bool ripple_on_click = true;
+        public bool ripple_on_land = true;
+        public float ripple_delay_before_placement_ripple = 0.7f;
+        public bool ripple_draw_debug_gizmos = false;
 
         private static DebugOutput _instance;
         public static DebugOutput Instance { 

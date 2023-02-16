@@ -13,7 +13,7 @@ namespace PoweredOn.GPT.Helpers
         {
             Vector3 normal = faceCamera ? (center - Camera.main.transform.position).normalized : Vector3.up;
             float angle = 360f;
-            int numSegments = Mathf.RoundToInt(radius * 20f);
+            int numSegments = 32;// Mathf.RoundToInt(radius * 20f);
             DrawWireArc(center, normal, Vector3.right * radius, angle, radius, numSegments, color, duration);
         }
         
