@@ -133,7 +133,8 @@ namespace PoweredOn.Managers
 // #else
 //             DisableNrealMode();
 // #endif
-            EnableNrealMode();
+            //EnableNrealMode();
+            DisableNrealMode();
 
             Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;

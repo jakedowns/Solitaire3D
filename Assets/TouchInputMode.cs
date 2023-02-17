@@ -48,18 +48,35 @@ public class TouchInputMode : MonoBehaviour
             if (previousTouchPosition != null)
             {
                 // update camera parent rotation based on touch movement along x and y axis
-                Quaternion updatedRotation = cameraParent.transform.rotation;
                 Vector2 delta = touchPos - (Vector2)previousTouchPosition;
 
                 /* 
                    Note: this next section of code takes the delta x and y of the touch movement,
                    and converts it into yaw and pitch rotation values that are applied to the camera parent to pan and tilt the camera.
-                   the values are reduced by a factor of 100 and 10 respectively to make the camera movement more subtle.
+                   the values are reduced by a factor make the camera movement more subtle.
                 */
-                float yaw = delta.x / 100f;
-                float pitch = delta.y / 10f;
-                updatedRotation *= Quaternion.Euler(-pitch, yaw, 0);
-                cameraParent.transform.rotation = updatedRotation;
+                float yaw = delta.x / 500f;
+                float pitch = delta.y / 500f;
+                //updatedRotation *= Quaternion.Euler(pitch, yaw, 0);
+
+                /* 
+                   Note: the previous code had an issue where it wasn't rotating around world UP for yaw, it was rotating around local UP.
+                   this next section of code fixes that by converting the camera parent's local up vector into world space, and using that as the axis of rotation.
+                */
+                // Quaternion updatedRotation = cameraParent.transform.rotation;
+                // Vector3 worldUp = cameraParent.transform.TransformDirection(Vector3.up);
+                // updatedRotation *= Quaternion.AngleAxis(yaw, worldUp);
+                // /* Now we do the same for pitch along world right */
+                // Vector3 worldRight = cameraParent.transform.TransformDirection(Vector3.right);
+                // updatedRotation *= Quaternion.AngleAxis(-pitch, worldRight);
+                // /* Finally, we apply the updated rotation to the camera parent */
+                // cameraParent.transform.rotation = updatedRotation;
+
+                /* actually, the above code is stillcausing issues, so we're going to try this instead: */
+                cameraParent.transform.RotateAround(cameraParent.transform.position, Vector3.up, yaw);
+                cameraParent.transform.RotateAround(cameraParent.transform.position, cameraParent.transform.right, -pitch);
+
+
             }
 
             if (isTouching && !didLongTouch && Time.time - touchedAt > longTouchDuration)
