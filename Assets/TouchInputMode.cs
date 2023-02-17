@@ -49,9 +49,16 @@ public class TouchInputMode : MonoBehaviour
             {
                 // update camera parent rotation based on touch movement along x and y axis
                 Quaternion updatedRotation = cameraParent.transform.rotation;
-
                 Vector2 delta = touchPos - (Vector2)previousTouchPosition;
-                updatedRotation *= Quaternion.Euler(delta.x, -delta.y, 0.0f);
+
+                /* 
+                   Note: this next section of code takes the delta x and y of the touch movement,
+                   and converts it into yaw and pitch rotation values that are applied to the camera parent to pan and tilt the camera.
+                   the values are reduced by a factor of 100 and 10 respectively to make the camera movement more subtle.
+                */
+                float yaw = delta.x / 100f;
+                float pitch = delta.y / 10f;
+                updatedRotation *= Quaternion.Euler(-pitch, yaw, 0);
                 cameraParent.transform.rotation = updatedRotation;
             }
 

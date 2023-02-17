@@ -11,12 +11,23 @@ namespace PoweredOn.CardBox.Games.Solitaire
     {
         private SolitaireCard card;
 
+        private Rigidbody rigidBody;
+
         /// <summary> The mesh render. </summary>
         private MeshRenderer m_MeshRender;
 
         private float? lastClickTime = null;
 
         private double? pointerDownAt = null;
+
+        private ConfigurableJoint joint;
+        public float spring = 1000f;
+        public float damper = 10f;
+        private float distance = 0f;
+        public float winchSpeed = 0.1f;
+        public float maxDistance = 0.5f;
+        public float minDistance = 0.001f;
+        private GameObject myAnchorGameObject;
 
         public const float LONG_PRESS_DURATION = 0.5f;
 
@@ -34,6 +45,124 @@ namespace PoweredOn.CardBox.Games.Solitaire
         void Start()
         {
             
+        }
+
+        /**
+        * NewSpringJoint
+        * @param GameObject objA - the object that will be moved
+        * @param Vector3 targetPosition - the position that objA will be moved to
+        **/
+        void NewSpringJoint(GameObject objA, Vector3 targetPosition){
+            // create a new SpringJoint component
+            // remove any existing SpringJoint component
+            Destroy(objA.GetComponent<SpringJoint>());
+
+            SpringJoint springJoint = objA.AddComponent<SpringJoint>();
+            rigidBody = GetComponent<Rigidbody>();
+
+            // set the connected body and anchor position
+            //springJoint.connectedBody = rigidBody;
+            springJoint.anchor = Vector3.zero;
+            springJoint.autoConfigureConnectedAnchor = false;
+            springJoint.connectedAnchor = transform.InverseTransformPoint(targetPosition); //Vector3.zero;
+
+            // set up the spring and damper for the joint
+            springJoint.spring = spring;
+            springJoint.damper = damper;
+
+            // set the target position for the joint
+            //springJoint.targetPosition = targetPosition;
+        }
+
+
+        void NewConfigurableJoint(GameObject objA, GameObject objB){
+            // create a new ConfigurableJoint component
+            // remove any existing ConfigurableJoint component
+            Destroy(objA.GetComponent<ConfigurableJoint>());
+
+            joint = objA.AddComponent<ConfigurableJoint>();
+            rigidBody = GetComponent<Rigidbody>();
+
+            // set the connected body and anchor position
+            joint.connectedBody = objB.GetComponent<Rigidbody>();
+
+            // set up the spring and damper for the linear limit spring
+            SoftJointLimitSpring linearLimitSpring = new SoftJointLimitSpring();
+            linearLimitSpring.spring = spring;
+            linearLimitSpring.damper = damper;
+            joint.linearLimitSpring = linearLimitSpring;
+
+            // set up the spring and damper for the angular drive
+            JointDrive angularXDrive = new JointDrive();
+            angularXDrive.maximumForce = spring;
+            angularXDrive.positionSpring = damper;
+            joint.angularXDrive = angularXDrive;
+
+            JointDrive angularYZDrive = new JointDrive();
+            angularYZDrive.maximumForce = spring;
+            angularYZDrive.positionSpring = damper;
+            joint.angularYZDrive = angularYZDrive;
+
+            SoftJointLimitSpring angularXLimitSpring = new SoftJointLimitSpring();
+            angularXLimitSpring.spring = spring;
+            angularXLimitSpring.damper = damper;
+            joint.angularXLimitSpring = angularXLimitSpring;
+        }
+
+        /**
+         * 
+         * @param position world space, auto converted to local space
+         */
+        public void UpdateJointTargetPosition(Vector3 position)
+        {
+            // set the anchor position
+            if(joint == null){
+                return;
+            }
+
+            // calculate the target position based on the distance and winch speed
+            // float distance = Vector3.Distance(transform.position, position);
+            // distance = Mathf.Max(minDistance, distance - winchSpeed);
+            // distance = Mathf.Min(distance, maxDistance);
+
+            float distance = minDistance;
+
+            // set the target position of the joint's linear limit
+            joint.linearLimit = new SoftJointLimit { limit = distance };
+
+            // start coroutine to loop, reducing the limit until it reaches 0
+            //StartCoroutine(ReduceJointLimit(distance));
+        }
+
+        // loop to reduce the joint limit
+        IEnumerator ReduceJointLimit(float distance)
+        {
+            // while the limit is greater than the target position (give or take 0.001f)
+            while (joint.linearLimit.limit > distance + 0.001f)
+            {
+                // reduce the limit by the winch speed
+                joint.linearLimit = new SoftJointLimit { limit = joint.linearLimit.limit - winchSpeed };
+
+                // wait for the next fixedUpdate
+                yield return new WaitForFixedUpdate();
+            }
+        }
+
+        void OnMouseDown()
+        {
+            isClicked = true;
+        }
+
+        private bool isClicked = false;
+
+        void FixedUpdate()
+        {
+            // apply force when the object is clicked
+            if (isClicked)
+            {
+                rigidBody.AddForce(Vector3.forward * DebugOutput.Instance.click_impulse_force, ForceMode.Impulse);
+                isClicked = false;
+            }
         }
 
         public IEnumerator WaitForDoubleClickTimeout()
@@ -57,6 +186,28 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void SetCard(SolitaireCard card)
         {
             this.card = card;
+
+            if(Application.isEditor && !Application.isPlaying){
+                return;
+            }
+
+            // create an Anchor gameObject to represent my anchor, but make it a child of a different parent
+            // so that it doesn't move with the card
+            GameObject prefab = GameObject.Find("CardAnchorPoint");
+            myAnchorGameObject = Instantiate(prefab, GameObject.Find("CardAnchorPoints").transform);
+            myAnchorGameObject.name = "CardAnchorPoint_"+this.card.GetSuitRank();
+            Rigidbody myAnchorGameObjectRigidBody = myAnchorGameObject.AddComponent<Rigidbody>();
+            myAnchorGameObjectRigidBody.isKinematic = true;
+            // disable gravity
+            myAnchorGameObjectRigidBody.useGravity = false;
+
+            //NewConfigurableJoint(gameObject, myAnchorGameObject); // joint on dynamic rigidbody attached to kinematic rigidbody
+            // or the reverse
+            //NewConfigurableJoint(myAnchorGameObject, gameObject); // joint on kinematic rigidbody attached to dynamic rigidbody
+
+            NewSpringJoint(gameObject, myAnchorGameObject.transform.position);
+
+            UpdateJointTargetPosition(transform.position);
         }
 
         // get card

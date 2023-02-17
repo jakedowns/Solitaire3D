@@ -120,14 +120,14 @@ namespace PoweredOn.CardBox.PlayingCards
             return this.deckOrder;
         }
 
-        public void SetGoalIdentity(GoalIdentity goalIdentity)
+        public virtual void SetGoalIdentity(GoalIdentity goalIdentity)
         {
             CacheIDWhenGoalSet();
             //Debug.LogWarning($"new goal identity {this} {goalIdentity}");
             this.goalIdentity = goalIdentity;
         }
 
-        void CacheIDWhenGoalSet()
+        internal void CacheIDWhenGoalSet()
         {
             if(this.gameObject == null)
             {

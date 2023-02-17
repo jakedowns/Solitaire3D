@@ -41,7 +41,7 @@ namespace PoweredOn.Managers
         }
 
         public MonoSolitaireDeck monoDeck;
-        bool nrealModeEnabled = false;
+        public bool nrealModeEnabled = false;
         Camera mainCamera;
         Camera nrealCamera;
         public float gmi_id;
@@ -128,11 +128,12 @@ namespace PoweredOn.Managers
         void Start()
         {
             // really this only here until I can get Canvas UI buttons responding again.
-#if UNITY_ANDROID && !UNITY_EDITOR
+// #if UNITY_ANDROID && !UNITY_EDITOR
+//             EnableNrealMode();
+// #else
+//             DisableNrealMode();
+// #endif
             EnableNrealMode();
-#else
-            DisableNrealMode();
-#endif
 
             Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
@@ -176,6 +177,11 @@ namespace PoweredOn.Managers
         public void ToggleAutoPlay()
         {
             game.ToggleAutoPlay();
+        }
+
+        public void TogglePlayfield()
+        {
+            game.TogglePlayfield();
         }
 
         public void SetNrealMode(bool value)
@@ -296,6 +302,7 @@ namespace PoweredOn.Managers
 
         public void RefreshAnimationCoroutine()
         {
+            return; // testing physics engine instead
             if (m_animateCardsRoutine != null)
             {
                 StopCoroutine(m_animateCardsRoutine);

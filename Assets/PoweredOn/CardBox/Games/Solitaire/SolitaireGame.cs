@@ -18,6 +18,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class SolitaireGame
     {
+        GameObject playfield;
         // TODO: maybe Move to GameManager.Instance.Dealer.Deck
         // or GameManager.Instance.DeckManager.Deck
         private SolitaireDeck _deck;
@@ -866,6 +867,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
+        public void TogglePlayfield(){
+            playfield.SetActive(!playfield.activeSelf);
+        }
+
         public void UpdateGameObjectReferences()
         {
             Debug.LogWarning("[UpdatingGameObjectReferences] IsRunningInTestMode:"+IsRunningInTestMode);
@@ -876,6 +881,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 Debug.LogWarning("[Skipping updating references]");
                 return;
             }
+
+            playfield = GameObject.Find("PlayPlane");
             
             // TODO Change to FindObjectOfType
             var stock = GameObject.Find("PlayPlane/PlayPlaneOffset/Stock");

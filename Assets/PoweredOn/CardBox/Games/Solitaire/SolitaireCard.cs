@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PoweredOn.CardBox.PlayingCards;
+using PoweredOn.CardBox.Animations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -87,6 +88,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 return new SolitaireCard(Suit.NONE, Rank.NONE, -1);
             }
+        }
+
+        public override void SetGoalIdentity(GoalIdentity goalIdentity) {
+            
+            // CacheIDWhenGoalSet();
+            // //Debug.LogWarning($"new goal identity {this} {goalIdentity}");
+            // this.goalIdentity = goalIdentity;
+            base.SetGoalIdentity(goalIdentity);
+            this.monoCard.UpdateJointTargetPosition(goalIdentity.position);
         }
     }
 }

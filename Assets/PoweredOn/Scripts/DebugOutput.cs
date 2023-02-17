@@ -28,6 +28,8 @@ namespace PoweredOn
         public float ripple_delay_before_placement_ripple = 0.7f;
         public bool ripple_draw_debug_gizmos = false;
 
+        public float click_impulse_force = 0.5f;
+
         private static DebugOutput _instance;
         public static DebugOutput Instance { 
             get {
