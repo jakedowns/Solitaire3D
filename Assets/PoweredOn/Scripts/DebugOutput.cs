@@ -33,7 +33,7 @@ namespace PoweredOn
         private static DebugOutput _instance;
         public static DebugOutput Instance { 
             get {
-                return _instance ?? GameObject.FindObjectOfType<DebugOutput>();
+                return _instance ?? Resources.FindObjectsOfTypeAll<DebugOutput>()[0];
             } 
             private set { _instance = value; }
         }

@@ -57,22 +57,6 @@ public class TouchInputMode : MonoBehaviour
                 */
                 float yaw = delta.x / 500f;
                 float pitch = delta.y / 500f;
-                //updatedRotation *= Quaternion.Euler(pitch, yaw, 0);
-
-                /* 
-                   Note: the previous code had an issue where it wasn't rotating around world UP for yaw, it was rotating around local UP.
-                   this next section of code fixes that by converting the camera parent's local up vector into world space, and using that as the axis of rotation.
-                */
-                // Quaternion updatedRotation = cameraParent.transform.rotation;
-                // Vector3 worldUp = cameraParent.transform.TransformDirection(Vector3.up);
-                // updatedRotation *= Quaternion.AngleAxis(yaw, worldUp);
-                // /* Now we do the same for pitch along world right */
-                // Vector3 worldRight = cameraParent.transform.TransformDirection(Vector3.right);
-                // updatedRotation *= Quaternion.AngleAxis(-pitch, worldRight);
-                // /* Finally, we apply the updated rotation to the camera parent */
-                // cameraParent.transform.rotation = updatedRotation;
-
-                /* actually, the above code is stillcausing issues, so we're going to try this instead: */
                 cameraParent.transform.RotateAround(cameraParent.transform.position, Vector3.up, yaw);
                 cameraParent.transform.RotateAround(cameraParent.transform.position, cameraParent.transform.right, -pitch);
 

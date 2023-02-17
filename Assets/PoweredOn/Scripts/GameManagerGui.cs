@@ -53,6 +53,10 @@ public class GameManagerGui : Editor
         {
             myScript.game.ToggleLog();
         }
+
+        if (GUILayout.Button("Update All Joints")){
+            JointManager.Instance.UpdateAllJoints();
+        }
     }
 }
 #endif

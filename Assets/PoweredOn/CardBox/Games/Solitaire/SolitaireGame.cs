@@ -84,6 +84,20 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return _deck; // todo: return a clone?
         }
 
+        public void AddGameObjectReference(SolitaireGameObject gameObjectType, GameObject gameObject)
+        {
+            if (gameObjectReferences == null)
+            {
+                gameObjectReferences = new Dictionary<SolitaireGameObject, GameObject>();
+            }
+            if (gameObjectReferences.ContainsKey(gameObjectType))
+            {
+                Debug.LogWarning($"[AddGameObjectReference] {gameObjectType} already exists in gameObjectReferences");
+            }
+            gameObjectReferences[gameObjectType] = gameObject;
+            //Debug.LogWarning("gameObjectReferences count after update:" + gameObjectReferences.Count);
+        }
+
         public GameObject GetGameObjectByType(SolitaireGameObject gameObjectType)
         {
             if(gameObjectType == SolitaireGameObject.None)
@@ -562,6 +576,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 try
                 {
                     RemoveCardFromCurrentPlayfieldSpot(card);
+
+                    JointManager.Instance.RemoveJointsToCard(card); // remove upstream joints, keep downstream joints
                 }
                 catch (Exception e)
                 {
@@ -685,13 +701,18 @@ namespace PoweredOn.CardBox.Games.Solitaire
             card.SetGoalIdentity(goalID);
             card.SetPlayfieldSpot(spot);
             card.SetIsFaceUp(faceUp);
-            if (!deck.IsCollectingCardsToDeck)
-            {
-                /*if (spot.area == PlayfieldArea.TABLEAU || spot.area == PlayfieldArea.FOUNDATION)
-                {*/
-                    GameManager.Instance.StartCoroutine(RippleForGoalID(goalID, goalID.delayStart + DebugOutput.Instance.ripple_delay_before_placement_ripple));
-                //}
-            }
+            // our previous system was goal-id based
+            // our new system is attempting to use SpringJoint based goals
+            // todo: hybridize the two systems
+            JointManager.Instance.UpdateJointsForCard(card, delay);
+
+            // if (!deck.IsCollectingCardsToDeck)
+            // {
+            //     /*if (spot.area == PlayfieldArea.TABLEAU || spot.area == PlayfieldArea.FOUNDATION)
+            //     {*/
+            //         GameManager.Instance.StartCoroutine(RippleForGoalID(goalID, goalID.delayStart + DebugOutput.Instance.ripple_delay_before_placement_ripple));
+            //     //}
+            // }
         }
 
         public IEnumerator RippleForGoalID(GoalIdentity goalID, float delay)
@@ -1070,6 +1091,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
+            textBlock += "\n ---------------------";
+            textBlock += $"\n {JointManager.Instance.GetDebugText()}";
+
             return textBlock;
         }
 
@@ -1373,6 +1397,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 iDebug.LogWarning("StockToWaste: No cards in Stock pile");
                 //call WasteToStock(); here???
                 return;
+            }else{
+                Debug.LogWarning("StockToWaste");
             }
 
             MovingStockToWaste = true;

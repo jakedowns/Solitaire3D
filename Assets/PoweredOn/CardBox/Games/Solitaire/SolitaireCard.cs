@@ -14,10 +14,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
     {
 
         public MonoSolitaireCard monoCard;
+        public string gameObjectTypeName { get; private set; }
         public SolitaireCard(Suit suit, Rank rank, int deckOrder) : base(suit, rank, deckOrder)
         {
-            string gameObjectTypeName = "Card_" + suit.ToString().ToLower() + "_of_" + rank.ToString().ToLower();
-            this.gameObjectType = Enum.TryParse(gameObjectTypeName, out SolitaireGameObject gameObjectType) ? gameObjectType : SolitaireGameObject.None;
+            string gameObjectTypeName = "Card_" + rank.ToString().ToLower() + "_of_" + suit.ToString().ToLower();
+            if(Enum.TryParse(gameObjectTypeName, out SolitaireGameObject _gameObjectType)){
+                this.gameObjectType = _gameObjectType;
+            }else{
+                Debug.LogWarning($"SolitaireCard: gameObjectTypeName {gameObjectTypeName} not found in SolitaireGameObject enum");
+                this.gameObjectType = SolitaireGameObject.None;
+            }
         }
 
         // listen for message "OnMouseDown"
@@ -90,13 +96,30 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
-        public override void SetGoalIdentity(GoalIdentity goalIdentity) {
+        // public override void SetGoalIdentity(GoalIdentity goalIdentity) {
+        //     base.SetGoalIdentity(goalIdentity);
+        // }
+
+        public override void SetPlayfieldSpot(PlayfieldSpot spot)
+        {
+            //Debug.Log($"card set playfield spot: {this} {spot}");
+            base.SetPlayfieldSpot(spot);
+
+            if(spot.area == PlayfieldArea.TABLEAU){
+                this.monoCard.SetColor(Color.red);
+                
+            }else if(spot.area == PlayfieldArea.FOUNDATION){
+                this.monoCard.SetColor(Color.green);
             
-            // CacheIDWhenGoalSet();
-            // //Debug.LogWarning($"new goal identity {this} {goalIdentity}");
-            // this.goalIdentity = goalIdentity;
-            base.SetGoalIdentity(goalIdentity);
-            this.monoCard.UpdateJointTargetPosition(goalIdentity.position);
+            }else if(spot.area == PlayfieldArea.STOCK){
+                this.monoCard.SetColor(Color.blue);
+            
+            }else if(spot.area == PlayfieldArea.WASTE){
+                this.monoCard.SetColor(Color.yellow);
+            
+            }else if(spot.area == PlayfieldArea.DECK){
+                this.monoCard.SetColor(Color.magenta);
+            }
         }
     }
 }

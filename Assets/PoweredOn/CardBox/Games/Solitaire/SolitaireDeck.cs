@@ -193,8 +193,23 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     MonoSolitaireCard monoCard = child.GetComponent<MonoSolitaireCard>();
 
+                    // pass the game object reference to the SolitaireGame.gameObjectReference Dictionary
+                    this.game.AddGameObjectReference(newCard.gameObjectType, child.gameObject);
+
                     // call SetCard on the matching child's cardInteractive component
                     monoCard.SetCard(newCard);
+
+                    // remove an existing click impulse components
+                    ClickImpulse[] prevClickImpulses = child.GetComponents<ClickImpulse>();
+                    foreach (ClickImpulse prevClickImpulse in prevClickImpulses)
+                    {
+                        GameObject.DestroyImmediate(prevClickImpulse);
+                    }
+
+                    // add a click impulse component
+                    ClickImpulse clickImpulse = child.gameObject.AddComponent(typeof(ClickImpulse)) as ClickImpulse;
+                    // set click_impulse_force to .15
+                    clickImpulse.click_impulse_force = .15f;
 
                     // link the cardInteractive component to the card
                     // needs to be done AFTER attaching the cardInteractive component to the child

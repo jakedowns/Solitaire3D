@@ -158,7 +158,7 @@ namespace PoweredOn.CardBox.PlayingCards
             this.IsFaceUp = faceUp;
         }
 
-        public void SetPlayfieldSpot(PlayfieldSpot spot)
+        public virtual void SetPlayfieldSpot(PlayfieldSpot spot)
         {
             //Debug.Log($"card set playfield spot: {this} {spot}");
             this.playfieldSpot = spot;

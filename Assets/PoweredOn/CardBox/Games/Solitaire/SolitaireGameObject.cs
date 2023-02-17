@@ -30,7 +30,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         
         Hand_Base,
         Deck_Base,
-        Deck_Offset,
+        Deck_Offset, // separate anchor point for the deck that exists outside of the deck's subtree
 
         // card types:
         Card_ace_of_clubs,

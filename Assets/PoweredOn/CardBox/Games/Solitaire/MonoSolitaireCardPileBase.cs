@@ -27,13 +27,22 @@ namespace PoweredOn.CardBox.Games.Solitaire
         void Awake()
         {
             m_MeshRender = transform.GetComponent<MeshRenderer>();
+
+            // remove any and all existing spring joints that may be left over
+            // from a previous game
+            SpringJoint[] springJoints = GetComponents<SpringJoint>();
+            foreach (SpringJoint springJoint in springJoints)
+            {
+                DestroyImmediate(springJoint);
+            }
         }
 
         // Start is called before the first frame update
         void Start()
         {
             spot = new PlayfieldSpot(playfieldArea, index);
-            m_MeshRender.material.color = new Color(0.4f, 0.4f, 0.4f);
+            if(m_MeshRender != null)
+                m_MeshRender.material.color = new Color(0.1f, 0.1f, 0.1f);
         }
 
         // Update is called once per frame
@@ -49,12 +58,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            m_MeshRender.material.color = Color.green;
+            if(m_MeshRender != null)
+                m_MeshRender.material.color = new Color(0.2f, 0.2f, 0.2f);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            m_MeshRender.material.color = new Color(0.4f, 0.4f, 0.4f);
+            if(m_MeshRender != null)
+                m_MeshRender.material.color = new Color(0.1f, 0.1f, 0.1f);
         }
     }
 }

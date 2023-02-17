@@ -267,16 +267,11 @@ namespace PoweredOn.Managers
 
             game.NewGame();
 
-            // Now that the cards are instantiated, we want to update the goal position of the card GameObjects to match their deck order
-            //SetCardGoalsToDeckPositions();
-
-            // instead, just deal
-
-            //todo let's wait for user to click deck to deal cards
             game.Deal();
 
-            // Now that they have goal positions, we want to start a coroutine that animates them
-            // TODO: add a StopCoroutine we can call via the UI
+            DebugOutput.Instance.ToggleLogVisibility();
+            ToggleMenu();
+
             RefreshAnimationCoroutine();
         }
 

@@ -12,6 +12,7 @@ public class ClickImpulse : MonoBehaviour
 
     private bool isClicked = false;
     public float click_impulse_force = 3f;
+    private Vector3 click_impulse_point;
 
     private ControllerHandEnum m_CurrentDebugHand;
 
@@ -64,6 +65,20 @@ public class ClickImpulse : MonoBehaviour
     void OnMouseDown()
     {
         isClicked = true;
+        // record the point where the user clicked using a raycast from screenspace to worldspace
+        // note: we don't use m_raycaster or NRInput for this, but the built-in Unity raycast and mouse position
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition + new Vector3(0,0,0.001f));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            click_impulse_point = hit.point;
+        }
+
+        if(NRInput.GetAvailableControllersCount() > 0){
+            // if we ARE using nreal mode, DO use it's laser pointer to get the point where the user clicked
+            RaycastResult info = m_Raycaster.FirstRaycastResult();
+            click_impulse_point = info.worldPosition;
+        }
     }
 
     void FixedUpdate()
@@ -71,7 +86,11 @@ public class ClickImpulse : MonoBehaviour
         // apply force when the object is clicked
         if (isClicked)
         {
-            rigidBody.AddForce(Vector3.forward * click_impulse_force, ForceMode.Impulse);
+            //rigidBody.AddForce(Vector3.forward * click_impulse_force, ForceMode.Impulse);
+
+            // the previous code was applying the force at the center of the card, let's try new code that applies the force based on where the user clicked:
+            rigidBody.AddForceAtPosition(Vector3.forward * click_impulse_force, click_impulse_point, ForceMode.Impulse);
+
             isClicked = false;
         }
     }
