@@ -165,7 +165,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             var flags = SolitaireMoveStatusFlags.None;
 
             if (
-                move.Subject.playfieldSpot.area == PlayfieldArea.HAND
+                move.Subject != null
+                && move.Subject.playfieldSpot.area == PlayfieldArea.HAND
                 && move.Subject.previousPlayfieldSpot.area == move.ToSpot.area
             )
             {
@@ -186,7 +187,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         flags |= SolitaireMoveStatusFlags.FoundationCanReceiveCard;
                     break;
                 case PlayfieldArea.STOCK:
-                    if (gameState.StockPile.CanReceiveCard(move.Subject))
+                    // 
+                    if (gameState.IsRecyclingWasteToStock || (move.Subject != null && gameState.StockPile.CanReceiveCard(move.Subject)))
                         flags |= SolitaireMoveStatusFlags.StockCanReceiveCard;
                     break;
                 case PlayfieldArea.WASTE:

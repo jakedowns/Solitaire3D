@@ -303,11 +303,15 @@ namespace PoweredOn.Managers {
             GameObject prevObj = GameManager.Instance.game.GetGameObjectByType(prevTopGOT);
 
             // create the actual spring joint from the prev top card (or chain fallback base object) to the new top card
-            AddConfigurableJoint(prevObj, card.gameObject);
+            Vector3 goalPosition = GetGoalPositionForChainObject(chain, card.gameObjectType);
+            AddConfigurableJoint(prevObj, card.gameObject, goalPosition);
         }
 
-        public void AddConfigurableJoint(GameObject objA, GameObject objB)
+        public void AddConfigurableJoint(GameObject objA, GameObject objB, Vector3 goalPosition)
         {
+            if(objA.name != "Stock" && objB.name != "ace_of_spades"){
+                return;
+            }
             if(objA == null || objB == null){
                 Debug.LogError("AddConfigurableJoint: null object(s) passed in");
                 return;
@@ -318,22 +322,23 @@ namespace PoweredOn.Managers {
             }
 
             // remove any existing joints
-            var existingJoints = objA.GetComponents<ConfigurableJoint>();
+            var existingJoints = objB.GetComponents<ConfigurableJoint>();
             foreach (var j in existingJoints)
             {
                 DestroyImmediate(j);
             }
 
             // if objA doesn't have a Rigidbody, add one
-            if (objA.GetComponent<Rigidbody>() == null){
-                var rb = objA.AddComponent<Rigidbody>();
-                rb.useGravity = false;
-                rb.isKinematic = true;
-            }
+            // if (objA.GetComponent<Rigidbody>() == null){
+            //     var rb = objA.AddComponent<Rigidbody>();
+            //     rb.useGravity = false;
+            //     rb.isKinematic = true;
+            // }
 
-            var joint = objA.AddComponent<ConfigurableJoint>();
+            var joint = objB.AddComponent<ConfigurableJoint>();
 
             joint.anchor = Vector3.zero;
+            joint.connectedAnchor = goalPosition;
 
             // add SoftJointLimitSpring
             var spring = new SoftJointLimitSpring();
@@ -344,37 +349,14 @@ namespace PoweredOn.Managers {
 
             joint.linearLimitSpring = spring;
 
-            joint.xMotion = ConfigurableJointMotion.Locked;
-            joint.yMotion = ConfigurableJointMotion.Locked;
+            joint.xMotion = ConfigurableJointMotion.Limited;
+            joint.yMotion = ConfigurableJointMotion.Limited;
             joint.zMotion = ConfigurableJointMotion.Limited;
 
-            /*
+            
             joint.angularXMotion = ConfigurableJointMotion.Locked;
             joint.angularYMotion = ConfigurableJointMotion.Locked;
             joint.angularZMotion = ConfigurableJointMotion.Locked;
-            */
-
-            // xyz drives:
-            joint.xDrive = new JointDrive()
-            {
-                positionSpring = spring_spring,
-                positionDamper = spring_damper,
-                maximumForce = 1000f
-            };
-            
-            joint.yDrive = new JointDrive()
-            {
-                positionSpring = spring_spring,
-                positionDamper = spring_damper,
-                maximumForce = 1000f
-            };
-            
-            joint.zDrive = new JointDrive()
-            {
-                positionSpring = spring_spring,
-                positionDamper = spring_damper,
-                maximumForce = 1000f
-            };
 
             // set linear motion limits to match old spring min/max distances
             var linearLimit = new SoftJointLimit();
@@ -382,15 +364,19 @@ namespace PoweredOn.Managers {
             linearLimit.bounciness = 0f;
             joint.linearLimit = linearLimit;
 
-            joint.projectionDistance = 0.05f;
+            joint.enablePreprocessing = false;
 
             joint.enableCollision = false; // true;
             joint.autoConfigureConnectedAnchor = false; //true;
+            joint.configuredInWorldSpace = true;
+
+            joint.projectionMode = JointProjectionMode.PositionAndRotation;
+            joint.projectionDistance = 0.001f;
 
             // todo: conditional Y offset if this is a tableau card (fanned)
             joint.connectedAnchor = new Vector3(0, -0.05f, 0.01f);
 
-            joint.connectedBody = objB.GetComponent<Rigidbody>();
+            //joint.connectedBody = objB.GetComponent<Rigidbody>();
         }
 
         public void RemoveJointsToCard(SolitaireCard card)
@@ -439,7 +425,8 @@ namespace PoweredOn.Managers {
                             Debug.LogWarning("RemoveJointsToCard:patching chain");
 
                         // patch the chain
-                        AddConfigurableJoint(prevObj, nextObj);
+                        Vector3 goalPosition = GetGoalPositionForChainObject(chain, card.gameObjectType);
+                        AddConfigurableJoint(prevObj, nextObj, goalPosition);
                     }
                     
                     
@@ -540,8 +527,24 @@ namespace PoweredOn.Managers {
                 RemoveConfigurableJoints(prevObj);
                 
                 // add new joint
-                AddConfigurableJoint(prevObj, GameManager.Instance.game.GetGameObjectByType(chain[i]));
+                Vector3 goalPosition = GetGoalPositionForChainObject(chain, chain[i]);
+                AddConfigurableJoint(prevObj, GameManager.Instance.game.GetGameObjectByType(chain[i]), goalPosition);
             }
+        }
+
+        public Vector3 GetGoalPositionForChainObject(JointChain chain, SolitaireGameObject obj){
+            int index = chain.IndexOf(obj) - 1;
+            // only apply yOffset if we're dealing with a tableau chain
+            float yOffset = 0;
+            var baseObj = GameManager.Instance.game.GetGameObjectByType(chain[0]);
+            var tbase = baseObj.GetComponent<MonoSolitaireCardPileBase>();
+            if(tbase != null && tbase.playfieldArea == PlayfieldArea.TABLEAU){
+                yOffset = -0.3f * index;
+            }
+            
+            Vector3 goalPosition = GameManager.Instance.game.GetGameObjectByType(chain[0]).transform.position;
+            goalPosition += new Vector3(0, yOffset, -0.1f * index);
+            return goalPosition;
         }
     }
 }

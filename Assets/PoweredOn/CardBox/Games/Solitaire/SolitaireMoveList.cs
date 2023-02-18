@@ -36,6 +36,27 @@ namespace PoweredOn.CardBox.Games.Solitaire
             this.moves.Clear();
         }
 
+        // shuffle
+        public void Shuffle()
+        {
+            Random rng = new Random();
+            int n = this.moves.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                SolitaireMove value = this.moves[k];
+                this.moves[k] = this.moves[n];
+                this.moves[n] = value;
+            }
+        }
+
+        // reverse
+        public void Reverse()
+        {
+            this.moves.Reverse();
+        }
+
         public int Count { get { return this.moves.Count; } }
 
         

@@ -332,11 +332,33 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void AutoPlayNextMove()
         {
             SolitaireMoveList moves = SolitaireMoveSuggestor.SuggestMoves(this);
+            // shuffle the moves
+            // half the time, shuffle
+            if(UnityEngine.Random.Range(0, 2) == 1)
+            {
+                moves.Shuffle();
+            }else{
+                if(UnityEngine.Random.Range(0, 2) == 1)
+                    moves.Reverse();
+                }
+            }
             Debug.LogWarning("[Autoplay] Suggested moves: " + moves.Count);
             Debug.Log(moves);
+
+            if(this.IsInFinalStage || this.IsComplete){
+                Debug.LogWarning("[Autoplay] Stopping... game is complete");
+                StopAutoPlay();
+                return;
+            }
+
             if (moves.Count > 0)
             {
                 SolitaireMove move = moves[0];
+                if(move.FromSpot.area == PlayfieldArea.WASTE && move.ToSpot.area == PlayfieldArea.STOCK)
+                {
+                    this.IsRecyclingWasteToStock = true;
+                }
+
                 if (move.IsValid())
                 {
                     move.Execute();
@@ -344,6 +366,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 else
                 {
                     Debug.LogError("[Autoplay] Suggestor suggested invalid move");
+                }
+
+
+                if(move.FromSpot.area == PlayfieldArea.WASTE && move.ToSpot.area == PlayfieldArea.STOCK)
+                {
+                    this.IsRecyclingWasteToStock = false;
                 }
             }
             else
