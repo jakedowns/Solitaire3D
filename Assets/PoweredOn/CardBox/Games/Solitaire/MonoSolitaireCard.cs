@@ -57,6 +57,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             foreach(SpringJoint springJoint in GetComponents<SpringJoint>()){
                 DestroyImmediate(springJoint);
             }
+
+            foreach(ConfigurableJoint configurableJoint in GetComponents<ConfigurableJoint>()){
+                DestroyImmediate(configurableJoint);
+            }
         }
 
         public void SetColor(Color color){

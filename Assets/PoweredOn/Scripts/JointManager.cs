@@ -148,10 +148,23 @@ namespace PoweredOn.Managers {
                 if (pChain != null)
                 {
                     // get card that is one lower than the one we're removing
-                    var prevObjType = pChain[card.previousPlayfieldSpot.subindex - 1];
-                    var prevObj = GameManager.Instance.game.GetGameObjectByType(prevObjType);
-                    RemoveSpringJointsConnectedTo(prevObj, card.monoCard.gameObject.GetComponent<Rigidbody>());
-                    pChain.RemoveCard(card.gameObjectType);
+                    if(pChain.Count > 1){
+                        int prevIndex = card.previousPlayfieldSpot.subindex + 1; // keep it offset by one to account for the "base" entry in each chain
+                        if(prevIndex < 1){
+                            Debug.LogError("trying to remove a card link that can't exist");
+                            prevIndex = 1;
+                        }
+                        if(prevIndex > pChain.Count - 1){
+                            Debug.LogError("trying to remove a card link that can't exist");
+                            prevIndex = pChain.Count - 2;
+                        }
+                        var prevObjType = pChain[prevIndex];
+                        var prevObj = GameManager.Instance.game.GetGameObjectByType(prevObjType);
+                        RemoveConfigurableJointsConnectedTo(prevObj, card.monoCard.gameObject.GetComponent<Rigidbody>());
+                        pChain.RemoveCard(card.gameObjectType);
+                    }else{
+                        Debug.LogError($"RemoveCardFromChain: {card.gameObjectType} has no previous card in chain index {pileJointChains.IndexOf(pChain)}. {pChain.Count} cards in chain.");
+                    }
                 }
             }
 
@@ -215,9 +228,22 @@ namespace PoweredOn.Managers {
                 }
             }
 
-            if(prevTopGOT == SolitaireGameObject.Stock_Base){
-                Debug.LogWarning($"AddCardToChain_internal: prevTopGOT is Stock_Base. adding {card.gameObjectType} to chain");
+            if(prevTopGOT == card.gameObjectType){
+                Debug.LogWarning($"AddCardToChain_internal: prevTopGOT is same as card. cannot link a card to itself! {card.gameObjectType} count:{chain.Count} pjcI:{pileJointChains.IndexOf(chain)}");
+                if(chain.Count > 1){
+                    // get previous card (odd that we could even get into this state tho, no?)
+                    prevTopGOT = chain[chain.Count - 2];
+                }else{
+                    Debug.LogError($"AddCardToChain_internal: prevTopGOT is same as card. cannot link a card to itself! {card.gameObjectType} count:{chain.Count} pjcI:{pileJointChains.IndexOf(chain)}");
+                    return;
+                }
             }
+
+            
+
+            // if(prevTopGOT == SolitaireGameObject.Stock_Base){
+            //     Debug.LogWarning($"AddCardToChain_internal: prevTopGOT is Stock_Base. adding {card.gameObjectType} to chain");
+            // }
 
             // record the linkage in our chain list
             chain.AddCard(card.gameObjectType);
@@ -226,13 +252,17 @@ namespace PoweredOn.Managers {
             GameObject prevObj = GameManager.Instance.game.GetGameObjectByType(prevTopGOT);
 
             // create the actual spring joint from the prev top card (or chain fallback base object) to the new top card
-            AddSpringJoint(prevObj, card.gameObject);
+            AddConfigurableJoint(prevObj, card.gameObject);
         }
 
-        public void AddSpringJoint(GameObject objA, GameObject objB)
+        public void AddConfigurableJoint(GameObject objA, GameObject objB)
         {
             if(objA == null || objB == null){
-                Debug.LogError("AddSpringJoint: null object(s) passed in");
+                Debug.LogError("AddConfigurableJoint: null object(s) passed in");
+                return;
+            }
+            if(objA == objB){
+                Debug.LogError($"AddConfigurableJoint: objA and objB are the same object {objA.name}|{objB.name}");
                 return;
             }
 
@@ -243,17 +273,31 @@ namespace PoweredOn.Managers {
                 rb.isKinematic = true;
             }
 
-            var springJoint = objA.AddComponent<SpringJoint>();
-            
-            springJoint.spring = 10.0f;
-            springJoint.damper = 0.02f;
-            springJoint.minDistance = spring_min_distance; //0.001f;
-            springJoint.maxDistance = spring_max_distance; //0.005f;
-            springJoint.enableCollision = true;
-            springJoint.autoConfigureConnectedAnchor = false; //true;
-            springJoint.connectedAnchor = new Vector3(0, 0, -0.1f);
+            var joint = objA.AddComponent<ConfigurableJoint>();
 
-            springJoint.connectedBody = objB.GetComponent<Rigidbody>();
+            // add SoftJointLimitSpring
+            var spring = new SoftJointLimitSpring();
+            spring.spring = 10.0f;
+            spring.damper = 0.02f;
+            // spring.minDistance = spring_min_distance; //0.001f;
+            // spring.maxDistance = spring_max_distance; //0.005f;
+
+            joint.linearLimitSpring = spring;
+
+            joint.xMotion = ConfigurableJointMotion.Limited;
+            joint.yMotion = ConfigurableJointMotion.Limited;
+            joint.zMotion = ConfigurableJointMotion.Limited;
+
+            // set linear motion limits to match old spring min/max distances
+            var linearLimit = new SoftJointLimit();
+            linearLimit.limit = spring_max_distance;
+            joint.linearLimit = linearLimit;
+
+            joint.enableCollision = true;
+            joint.autoConfigureConnectedAnchor = false; //true;
+            joint.connectedAnchor = new Vector3(0, -0.05f, -0.01f);
+
+            joint.connectedBody = objB.GetComponent<Rigidbody>();
         }
 
         public void RemoveJointsToCard(SolitaireCard card)
@@ -265,7 +309,7 @@ namespace PoweredOn.Managers {
                     if(index > 0){
                         var prevObjType = chain[index - 1];
                         var prevObj = GameManager.Instance.game.GetGameObjectByType(prevObjType);
-                        RemoveSpringJointsConnectedTo(prevObj, rb);
+                        RemoveConfigurableJointsConnectedTo(prevObj, rb);
                     }
                     // remove the card from the chain
                     chain.RemoveCard(card.gameObjectType);
@@ -274,10 +318,10 @@ namespace PoweredOn.Managers {
             // todo: horizontal chains
         }
 
-        public void RemoveSpringJointsConnectedTo(GameObject objA, Rigidbody rb)
+        public void RemoveConfigurableJointsConnectedTo(GameObject objA, Rigidbody rb)
         {
             int rmCount = 0;
-            var springJoints = objA.GetComponents<SpringJoint>();
+            var springJoints = objA.GetComponents<ConfigurableJoint>();
             foreach (var springJoint in springJoints)
             {
                 if (springJoint.connectedBody == rb)
@@ -287,12 +331,12 @@ namespace PoweredOn.Managers {
                 }
             }
             if(rmCount > 0)
-                Debug.LogWarning($"RemoveSpringJointsConnectedTo: removed {rmCount} joints from {objA.name} to {rb.gameObject.name}");
+                Debug.LogWarning($"RemoveConfigurableJointsConnectedTo: removed {rmCount} joints from {objA.name} to {rb.gameObject.name}");
         }
 
-        public void RemoveSpringJoints(GameObject objA)
+        public void RemoveConfigurableJoints(GameObject objA)
         {
-            var springJoints = objA.GetComponents<SpringJoint>();
+            var springJoints = objA.GetComponents<ConfigurableJoint>();
             foreach (var springJoint in springJoints)
             {
                 DestroyImmediate(springJoint);
@@ -345,7 +389,7 @@ namespace PoweredOn.Managers {
             // loop through all cards in the chain, and update the spring joints
             if(chain.Count > 0){
                 // remove any existing joints from the base object
-                RemoveSpringJoints(GameManager.Instance.game.GetGameObjectByType(chain[0]));
+                RemoveConfigurableJoints(GameManager.Instance.game.GetGameObjectByType(chain[0]));
             }
             // start @ 1 to skip the base card
             for(var i = 1; i < chain.Count; i++){
@@ -359,10 +403,10 @@ namespace PoweredOn.Managers {
                 var prevObj = GameManager.Instance.game.GetGameObjectByType(prevGOT);
                 
                 // remove exisiting joints
-                RemoveSpringJoints(prevObj);
+                RemoveConfigurableJoints(prevObj);
                 
                 // add new joint
-                AddSpringJoint(prevObj, GameManager.Instance.game.GetGameObjectByType(chain[i]));
+                AddConfigurableJoint(prevObj, GameManager.Instance.game.GetGameObjectByType(chain[i]));
             }
         }
     }

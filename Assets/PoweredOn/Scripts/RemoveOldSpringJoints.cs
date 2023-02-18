@@ -16,10 +16,19 @@ public class RemoveOldSpringJoints : MonoBehaviour
             DestroyImmediate(springJoint);
         }
 
-        // remove rigidbody component too
-        Rigidbody rigidbody = GetComponent<Rigidbody>();
-        if (rigidbody != null)
-            DestroyImmediate(rigidbody);
+        foreach(ConfigurableJoint configurableJoint in GetComponents<ConfigurableJoint>()){
+            DestroyImmediate(configurableJoint);
+        }
+
+        // remove any EXTRA rigidbody components
+        Rigidbody[] rigidbodies = GetComponents<Rigidbody>();
+        if (rigidbodies.Length > 1)
+        {
+            for (int i = 1; i < rigidbodies.Length; i++)
+            {
+                DestroyImmediate(rigidbodies[i]);
+            }
+        }
     }
 
     // Update is called once per frame

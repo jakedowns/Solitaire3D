@@ -451,7 +451,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             // Loop over ALL stock cards and set goal
-            for (int sc2 = stockCardPile.Count-1; sc2 >= 0; sc2--)
+            //for (int sc2 = stockCardPile.Count-1; sc2 >= 0; sc2--)
+            for (int sc2 = 0; sc2 < stockCardPile.Count; sc2++)
             {
                 //Debug.LogWarning("SC2: " + stockCardPile.Count + " " + sc2); //
                 SolitaireCard card = deck.GetCardBySuitRank(stockCardPile[sc2]);
