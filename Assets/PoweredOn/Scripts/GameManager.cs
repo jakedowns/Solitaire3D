@@ -46,7 +46,10 @@ namespace PoweredOn.Managers
         Camera nrealCamera;
         public float gmi_id;
         GameObject menuGroup;
-        
+        public bool GoalAnimationSystemEnabled = false;
+        public Camera TargetWorldCam { get; private set; }
+
+
         private void Awake()
         {
             gmi_id = UnityEngine.Random.Range(-10.0f, 10.0f); // System.Guid.NewGuid();
@@ -68,7 +71,20 @@ namespace PoweredOn.Managers
                 _ = GameObject.FindObjectOfType<DebugOutput>();
             }
 
-            menuGroup = GameObject.Find("MainCanvas/MenuGroup");
+            // Find First in All (incl. Inactive)
+            GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            foreach(var obj in allObjects)
+            {
+                if ( obj.name == "MenuGroup" && obj.transform.parent.name == "MainCanvas")
+                {
+                    menuGroup = obj;
+                    break;
+                }
+            }
+            if(menuGroup == null)
+            {
+                Debug.LogWarning("MenuGroup not found");
+            }
 
             Camera[] finds = Resources.FindObjectsOfTypeAll<Camera>();
             foreach (var _camera in finds)
@@ -247,15 +263,15 @@ namespace PoweredOn.Managers
                     nrealCam = hmdPoseTrackers[0].transform.Find("CenterCamera").GetComponent<Camera>();
                 }
             }
-            
-            var targetWorldCam = nrealModeEnabled ? nrealCam : mainCamera;
-            if (targetWorldCam == null)
+
+            TargetWorldCam = nrealModeEnabled ? nrealCam : mainCamera;
+            if (TargetWorldCam == null)
             {
                 Debug.LogError("error finding " + (nrealModeEnabled ? "nreal cam" : "main cam"));
             }
             else
             {
-                mainCanvasCanvas.worldCamera = targetWorldCam;
+                mainCanvasCanvas.worldCamera = TargetWorldCam;
                 Debug.Log("main canvas world camera is now " + mainCanvasCanvas.worldCamera.gameObject.name);
             }
             
@@ -273,6 +289,31 @@ namespace PoweredOn.Managers
             ToggleMenu();
 
             RefreshAnimationCoroutine();
+        }
+
+        public void ToggleGoalAnimationSystem()
+        {
+            GoalAnimationSystemEnabled = !GoalAnimationSystemEnabled;
+            if (!GoalAnimationSystemEnabled)
+            {
+                JointManager.Instance.Enable();
+                StopAnimationCoroutine();
+            }
+            else
+            {
+                // clean up joints
+                JointManager.Instance.Disable();
+                RefreshAnimationCoroutine();
+            }
+        }
+
+        public void StopAnimationCoroutine()
+        {
+            if (m_animateCardsRoutine != null)
+            {
+                StopCoroutine(m_animateCardsRoutine);
+                m_animateCardsRoutine = null;
+            }
         }
 
         public void FanCardsOut()
@@ -298,11 +339,12 @@ namespace PoweredOn.Managers
 
         public void RefreshAnimationCoroutine()
         {
-            return; // testing physics engine instead
-            if (m_animateCardsRoutine != null)
+            //return; // testing physics engine instead
+            if (!GoalAnimationSystemEnabled)
             {
-                StopCoroutine(m_animateCardsRoutine);
+                return;
             }
+            StopAnimationCoroutine();
             m_animateCardsRoutine = AnimateCards();
             StartCoroutine(m_animateCardsRoutine);
         }

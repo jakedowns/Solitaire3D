@@ -76,5 +76,12 @@ namespace PoweredOn {
         public int Count {
             get { return gameObjects.Count; }
         }
+
+        public void DestroyAllJoints(){
+            foreach (SolitaireGameObject gameObjectType in gameObjects)
+            {
+                JointManager.DestroyJoint(GameManager.Instance.game.GetGameObjectByType(gameObjectType));
+            }
+        }
     }
 }

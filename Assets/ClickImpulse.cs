@@ -67,7 +67,7 @@ public class ClickImpulse : MonoBehaviour
         isClicked = true;
         // record the point where the user clicked using a raycast from screenspace to worldspace
         // note: we don't use m_raycaster or NRInput for this, but the built-in Unity raycast and mouse position
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition + new Vector3(0,0,0.001f));
+        Ray ray = PoweredOn.Managers.GameManager.Instance.TargetWorldCam.ScreenPointToRay(Input.mousePosition + new Vector3(0,0,0.001f));
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {

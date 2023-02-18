@@ -67,7 +67,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             
             SolitaireMoveList rankedMoves = movesToRank.SortByMoveRank();
             Assert.IsTrue(movesToRank.Count == rankedMoves.Count);
-            //UnityEngine.Debug.Log("Suggested Moves After Ranking: " + rankedMoves.Count);
+            UnityEngine.Debug.Log("Suggested Moves After Ranking: " + rankedMoves);
 
             
 

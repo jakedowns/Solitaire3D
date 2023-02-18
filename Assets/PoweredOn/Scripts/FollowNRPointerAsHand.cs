@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using NRKernal;
+using PoweredOn;
 
 public class FollowNRPointerAsHand : MonoBehaviour
 {
@@ -30,13 +31,25 @@ public class FollowNRPointerAsHand : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_PlayPlaneOffset = GameObject.Find("PlayPlaneOffset");
+        // search all game objects (this is slow, replace with Types)
+        GameObject[] allGameObjects = Resources.FindObjectsOfTypeAll<GameObject>(); //GameObjectHelpers.FindGameObjects("PlayPlaneOffset");
+        foreach(GameObject obj in allGameObjects)
+        {
+            if(obj.name == "PlayPlaneOffset")
+            {
+                m_PlayPlaneOffset = obj;
+            }
+            else if(obj.name == "PlayfieldButton")
+            {
+                m_PlayfieldButton = obj;
+            }
+        }
+         
         if(m_PlayPlaneOffset == null )
         {
             Debug.LogError("PlayPlaneOffset not found");
         }
         
-        m_PlayfieldButton = GameObject.Find("PlayfieldButton");
         if (m_PlayfieldButton == null)
         {
             Debug.LogError("PlayfieldButton not found");

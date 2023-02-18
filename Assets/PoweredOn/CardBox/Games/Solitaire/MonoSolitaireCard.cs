@@ -14,7 +14,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         private Rigidbody rigidBody;
 
         /// <summary> The mesh render. </summary>
-        private MeshRenderer m_MeshRender;
+        private MeshRenderer m_MeshRenderer;
 
         private float? lastClickTime = null;
 
@@ -39,7 +39,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         /// <summary> Awakes this object. </summary>
         void Awake()
         {
-            m_MeshRender = transform.GetComponent<MeshRenderer>();
+            m_MeshRenderer = transform.GetComponent<MeshRenderer>();
         }
 
         void Start()
@@ -64,7 +64,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
 
         public void SetColor(Color color){
-            m_MeshRender.material.color = color;
+            if(m_MeshRenderer!=null)
+                m_MeshRenderer.material.color = color;
         }
 
         /**
@@ -256,7 +257,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         /// <param name="eventData"> Current event data.</param>
         public new void OnPointerClick(PointerEventData eventData)
         {
-            //m_MeshRender.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+            //m_MeshRenderer.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 
             float now = Time.realtimeSinceStartup;
             /*
@@ -293,7 +294,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         /// <param name="eventData"> Current event data.</param>
         public new void OnPointerEnter(PointerEventData eventData)
         {
-            //m_MeshRender.material.color = Color.green;
+            //m_MeshRenderer.material.color = Color.green;
             this.card.UpdateGoalIDScale(Vector3.one * 1.1f);
         }
 
@@ -301,7 +302,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         /// <param name="eventData"> Current event data.</param>
         public new void OnPointerExit(PointerEventData eventData)
         {
-            //m_MeshRender.material.color = Color.white;
+            //m_MeshRenderer.material.color = Color.white;
             this.card.UpdateGoalIDScale(Vector3.one);
         }
     }

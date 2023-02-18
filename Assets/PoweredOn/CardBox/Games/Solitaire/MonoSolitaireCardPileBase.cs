@@ -53,6 +53,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            Debug.LogWarning("[MonoSolitaireCardPileBase]@OnPointerClick");
             GameManager.Instance.game.OnSingleClickCardPileBase(this);
         }
 

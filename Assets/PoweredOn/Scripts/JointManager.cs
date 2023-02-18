@@ -7,6 +7,7 @@ using PoweredOn.CardBox.Games.Solitaire;
 using PoweredOn.Managers;
 using PoweredOn;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace PoweredOn.Managers {
     
@@ -14,6 +15,8 @@ namespace PoweredOn.Managers {
     {
         public float spring_min_distance = 0.01f;
         public float spring_max_distance = 0.1f;
+        public float spring_spring = 100f;
+        public float spring_damper = 0.01f;
 
         public static List<JointChain> horizontalJointChains = new List<JointChain>();
 
@@ -46,27 +49,70 @@ namespace PoweredOn.Managers {
             } 
         }
 
+        public static void DestroyJoint(GameObject jointGameObject)
+        {
+            // remove all configurableJoints from object
+            foreach(var joint in jointGameObject.GetComponents<ConfigurableJoint>())
+            {
+                DestroyImmediate(joint);
+            }
+        }
+
         public JointManager(){
 
+            Enable();
+        }
+
+        public void Reset()
+        {
+            Disable();
+            Enable();
+        }
+
+        public void Disable()
+        {
+            // clean up all joints
+            foreach (var chain in pileJointChains)
+            {
+                chain.DestroyAllJoints();
+            }
+            foreach (var chain in horizontalJointChains)
+            {
+                chain.DestroyAllJoints();
+            }
+            pileJointChains = new List<JointChain>();
+            horizontalJointChains = new List<JointChain>();
+        }
+
+        public void Enable()
+        {
             // === per-pile "vertical" chains ===
 
             pileJointChains = new List<JointChain>();
 
             // chains for foundations 0-3
-            for(var i = 0; i < 4; i++){
-                if(Enum.TryParse<SolitaireGameObject>($"Foundation{i+1}_Base", out var foundationObject)){
+            for (var i = 0; i < 4; i++)
+            {
+                if (Enum.TryParse<SolitaireGameObject>($"Foundation{i + 1}_Base", out var foundationObject))
+                {
                     pileJointChains.Add(new JointChain(foundationObject));
-                }else{
-                    Debug.LogError($"Could not parse SolitaireGameObject for Foundation{i+1}_Base");
+                }
+                else
+                {
+                    Debug.LogError($"Could not parse SolitaireGameObject for Foundation{i + 1}_Base");
                 }
             }
 
             // chains for tableau 4-10
-            for(var i = 0; i < 7; i++){
-                if(Enum.TryParse<SolitaireGameObject>($"Tableau{i+1}_Base", out var tableauObject)){
+            for (var i = 0; i < 7; i++)
+            {
+                if (Enum.TryParse<SolitaireGameObject>($"Tableau{i + 1}_Base", out var tableauObject))
+                {
                     pileJointChains.Add(new JointChain(tableauObject));
-                }else{
-                    Debug.LogError($"Could not parse SolitaireGameObject for Tableau{i+1}_Base");
+                }
+                else
+                {
+                    Debug.LogError($"Could not parse SolitaireGameObject for Tableau{i + 1}_Base");
                 }
             }
 
@@ -77,30 +123,35 @@ namespace PoweredOn.Managers {
             pileJointChains.Add(new JointChain(SolitaireGameObject.Hand_Base)); // 14
 
             Debug.Log("[JointManager] pileJointChains: " + pileJointChains.Count + " chains");
-            
+
             // === horizontal chains ===
 
             horizontalJointChains = new List<JointChain>();
 
             // horizontal chain 0: for foundations <-> waste <-> stock
             horizontalJointChains.Add(new JointChain(){
-                SolitaireGameObject.Foundation1_Base, 
-                SolitaireGameObject.Foundation2_Base, 
-                SolitaireGameObject.Foundation3_Base, 
+                SolitaireGameObject.Foundation1_Base,
+                SolitaireGameObject.Foundation2_Base,
+                SolitaireGameObject.Foundation3_Base,
                 SolitaireGameObject.Foundation4_Base,
-                SolitaireGameObject.Waste_Base, 
+                SolitaireGameObject.Waste_Base,
                 SolitaireGameObject.Stock_Base
             });
 
             // 20 additional horizontal chains for each tableau "depth" level 
             // (placeholders, pre-mapped memory)
-            for(var i = 0; i < 20; i++){
+            for (var i = 0; i < 20; i++)
+            {
                 horizontalJointChains.Add(new JointChain(7));
             }
         }
 
         public void UpdateJointsForCard(SolitaireCard card, float delay = 0.0f)
         {
+            if (GameManager.Instance.GoalAnimationSystemEnabled)
+            {
+                return;
+            }
             StartCoroutine(UpdateJointsForCardCoroutine(card, delay));
         }
 
@@ -172,7 +223,7 @@ namespace PoweredOn.Managers {
 
         public void AddCardToChain(SolitaireCard card)
         {
-            Debug.LogWarning($"AddCardToChain {card.gameObjectType} to {card.playfieldSpot.area} {card.playfieldSpot.index} {card.playfieldSpot.subindex}");
+            //Debug.LogWarning($"AddCardToChain {card.gameObjectType} to {card.playfieldSpot.area} {card.playfieldSpot.index} {card.playfieldSpot.subindex}");
             if(card.playfieldSpot.area == PlayfieldArea.FOUNDATION){
                 var chain = pileJointChains[card.playfieldSpot.index];
                 var fallbackBase = $"Foundation{card.playfieldSpot.index + 1}_Base";
@@ -277,8 +328,8 @@ namespace PoweredOn.Managers {
 
             // add SoftJointLimitSpring
             var spring = new SoftJointLimitSpring();
-            spring.spring = 10.0f;
-            spring.damper = 0.02f;
+            spring.spring = spring_spring;
+            spring.damper = spring_damper;
             // spring.minDistance = spring_min_distance; //0.001f;
             // spring.maxDistance = spring_max_distance; //0.005f;
 
@@ -303,16 +354,57 @@ namespace PoweredOn.Managers {
         public void RemoveJointsToCard(SolitaireCard card)
         {
             var rb = card.gameObject.GetComponent<Rigidbody>();
+
+            // for each of the pile jointchains
             foreach(var chain in pileJointChains){
-                if(chain.Contains(card.gameObjectType)){
+                // if the chain contains this card
+                if (chain.Contains(card.gameObjectType)) {
+                    // find the object the points to this one
                     var index = chain.IndexOf(card.gameObjectType);
-                    if(index > 0){
-                        var prevObjType = chain[index - 1];
-                        var prevObj = GameManager.Instance.game.GetGameObjectByType(prevObjType);
-                        RemoveConfigurableJointsConnectedTo(prevObj, rb);
-                    }
+
+                    Assert.IsTrue(index != 0); // index should never be zero. there should always be a "baseObj" the lowest spot of a pile jointchain
+
+                    var prevObjType = chain[index - 1];
+                    GameObject prevObj = GameManager.Instance.game.GetGameObjectByType(prevObjType);
+                    RemoveConfigurableJointsConnectedTo(prevObj, rb);
+
                     // remove the card from the chain
                     chain.RemoveCard(card.gameObjectType);
+
+
+                    // >> if we're moving from DECK->STOCK or STOCK->TABLEAU // if we're Dealing,
+                    // >> we need to repair the chain by linking the prevObj to any object "downstream" from our position
+                    // find objects that THIS card points to
+                    var curObj = card.monoCard;
+                    var nextIndex = index + 1;
+                    if (nextIndex < 0 || nextIndex > chain.Count - 1)
+                    {
+                        //Debug.LogError("invalid nextIndex");
+                    }
+                    else
+                    {
+                        var nextObjType = chain[nextIndex];
+                        var nextObj = GameManager.Instance.game.GetGameObjectByType(nextObjType);
+
+                        // remove any joints on the current card being removed
+                        int rmCount = 0;
+                        foreach(ConfigurableJoint cfjoint in curObj.GetComponents<ConfigurableJoint>())
+                        {
+                            rmCount++;
+                            DestroyImmediate(cfjoint);
+                        }
+                        if (rmCount > 0)
+                            Debug.LogWarning("RemoveJointsToCard:patching chain");
+
+                        // patch the chain
+                        AddConfigurableJoint(prevObj, nextObj);
+                    }
+                    
+                    
+                    // >> if we're moving from tableau to tableau (with a substack) we should let the subchain remain in-tact,
+                    // but we need to make sure it gets moved to the Hand as a full unit? (maybe we just repair the link, same as above, and let the loop of MoveCardToNewSpot handle plucking the nextmost cards for the rest of the substack/subchain
+                    
+                    
                 }
             }
             // todo: horizontal chains

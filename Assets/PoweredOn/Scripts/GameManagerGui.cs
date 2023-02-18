@@ -57,6 +57,11 @@ public class GameManagerGui : Editor
         if (GUILayout.Button("Update All Joints")){
             JointManager.Instance.UpdateAllJoints();
         }
+
+        if (GUILayout.Button("Toggle Goal Animations"))
+        {
+            myScript.ToggleGoalAnimationSystem();
+        }
     }
 }
 #endif

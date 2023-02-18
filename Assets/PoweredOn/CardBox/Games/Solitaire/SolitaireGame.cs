@@ -271,6 +271,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             BuildFoundations();
             BuildTableaus();
             BuildDeck();
+
+            JointManager.Instance.Reset();
         }
 
         public void ToggleAutoPlace()
@@ -707,6 +709,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // todo: hybridize the two systems
             JointManager.Instance.UpdateJointsForCard(card, delay);
 
+            // initiate ripple effect
             // if (!deck.IsCollectingCardsToDeck)
             // {
             //     /*if (spot.area == PlayfieldArea.TABLEAU || spot.area == PlayfieldArea.FOUNDATION)
@@ -1274,6 +1277,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void OnSingleClickCardPileBase(MonoSolitaireCardPileBase pileBase)
         {
+            Debug.LogWarning("[SolitaireGame]@OnSingleClickCardPileBase");
             switch (pileBase.playfieldArea)
             {
                 case PlayfieldArea.STOCK:
@@ -1415,6 +1419,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void WasteToStock()
         {
+            Debug.Log("[WasteToStock]");
             // Flag Op Start (for move validation)
             IsRecyclingWasteToStock = true;
             
@@ -1428,7 +1433,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             int order_i = 0;
             int countAtStartOfOperation = wasteCardPile.Count;
             Assert.IsTrue(stockCardPile.Count == 0);
-            for (int i = wasteCardPile.Count - 1; i > -1; i--)
+            //for (int i = wasteCardPile.Count - 1; i > -1; i--)
+            for (int i = 0; i < wasteCardPile.Count; i++)
             {
                 PlayfieldSpot stockSpot = new PlayfieldSpot(PlayfieldArea.STOCK, order_i);
 
