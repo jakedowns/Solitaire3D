@@ -317,14 +317,23 @@ namespace PoweredOn.Managers {
                 return;
             }
 
+            // remove any existing joints
+            var existingJoints = objA.GetComponents<ConfigurableJoint>();
+            foreach (var j in existingJoints)
+            {
+                DestroyImmediate(j);
+            }
+
             // if objA doesn't have a Rigidbody, add one
-            if(objA.GetComponent<Rigidbody>() == null){
+            if (objA.GetComponent<Rigidbody>() == null){
                 var rb = objA.AddComponent<Rigidbody>();
                 rb.useGravity = false;
                 rb.isKinematic = true;
             }
 
             var joint = objA.AddComponent<ConfigurableJoint>();
+
+            joint.anchor = Vector3.zero;
 
             // add SoftJointLimitSpring
             var spring = new SoftJointLimitSpring();
@@ -335,18 +344,51 @@ namespace PoweredOn.Managers {
 
             joint.linearLimitSpring = spring;
 
-            joint.xMotion = ConfigurableJointMotion.Limited;
-            joint.yMotion = ConfigurableJointMotion.Limited;
+            joint.xMotion = ConfigurableJointMotion.Locked;
+            joint.yMotion = ConfigurableJointMotion.Locked;
             joint.zMotion = ConfigurableJointMotion.Limited;
+
+            /*
+            joint.angularXMotion = ConfigurableJointMotion.Locked;
+            joint.angularYMotion = ConfigurableJointMotion.Locked;
+            joint.angularZMotion = ConfigurableJointMotion.Locked;
+            */
+
+            // xyz drives:
+            joint.xDrive = new JointDrive()
+            {
+                positionSpring = spring_spring,
+                positionDamper = spring_damper,
+                maximumForce = 1000f
+            };
+            
+            joint.yDrive = new JointDrive()
+            {
+                positionSpring = spring_spring,
+                positionDamper = spring_damper,
+                maximumForce = 1000f
+            };
+            
+            joint.zDrive = new JointDrive()
+            {
+                positionSpring = spring_spring,
+                positionDamper = spring_damper,
+                maximumForce = 1000f
+            };
 
             // set linear motion limits to match old spring min/max distances
             var linearLimit = new SoftJointLimit();
             linearLimit.limit = spring_max_distance;
+            linearLimit.bounciness = 0f;
             joint.linearLimit = linearLimit;
 
-            joint.enableCollision = true;
+            joint.projectionDistance = 0.05f;
+
+            joint.enableCollision = false; // true;
             joint.autoConfigureConnectedAnchor = false; //true;
-            joint.connectedAnchor = new Vector3(0, -0.05f, -0.01f);
+
+            // todo: conditional Y offset if this is a tableau card (fanned)
+            joint.connectedAnchor = new Vector3(0, -0.05f, 0.01f);
 
             joint.connectedBody = objB.GetComponent<Rigidbody>();
         }

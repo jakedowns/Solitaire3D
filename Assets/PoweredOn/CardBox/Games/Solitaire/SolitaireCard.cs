@@ -105,21 +105,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             //Debug.Log($"card set playfield spot: {this} {spot}");
             base.SetPlayfieldSpot(spot);
 
-            if(spot.area == PlayfieldArea.TABLEAU){
-                this.monoCard.SetColor(Color.red);
-                
-            }else if(spot.area == PlayfieldArea.FOUNDATION){
-                this.monoCard.SetColor(Color.green);
-            
-            }else if(spot.area == PlayfieldArea.STOCK){
-                this.monoCard.SetColor(Color.blue);
-            
-            }else if(spot.area == PlayfieldArea.WASTE){
-                this.monoCard.SetColor(Color.yellow);
-            
-            }else if(spot.area == PlayfieldArea.DECK){
-                this.monoCard.SetColor(Color.magenta);
-            }
+            Managers.GameManager.Instance.game.RecolorCard(this);
         }
     }
 }

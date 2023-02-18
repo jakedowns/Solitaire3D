@@ -144,19 +144,20 @@ namespace PoweredOn.Managers
         void Start()
         {
             // really this only here until I can get Canvas UI buttons responding again.
-// #if UNITY_ANDROID && !UNITY_EDITOR
-//             EnableNrealMode();
-// #else
-//             DisableNrealMode();
-// #endif
+#if UNITY_ANDROID && !UNITY_EDITOR
+             EnableNrealMode();
+#else
+             DisableNrealMode();
+#endif
             //EnableNrealMode();
-            DisableNrealMode();
+            //DisableNrealMode();
 
-            Screen.autorotateToPortrait = true;
+            /*Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
             Screen.autorotateToLandscapeLeft = true;
             Screen.autorotateToLandscapeRight = true;
-            Screen.orientation = ScreenOrientation.AutoRotation;
+            Screen.orientation = ScreenOrientation.AutoRotation;*/
+            Screen.orientation = ScreenOrientation.Portrait;
             if (DebugOutput.Instance == null)
             {
                 Debug.LogWarning("GameManager [Start] DebugOutput.Instance is still null.");
@@ -174,6 +175,11 @@ namespace PoweredOn.Managers
                     menuGroup.transform.position = Vector3.zero;
                 }
             }
+        }
+
+        public void ToggleDebugColors()
+        {
+            game.ToggleDebugCardColors();
         }
 
         public void EnableNrealMode()

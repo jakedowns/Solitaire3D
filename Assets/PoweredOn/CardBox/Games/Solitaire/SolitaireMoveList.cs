@@ -87,7 +87,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
     {
         public int Compare(SolitaireMove x, SolitaireMove y)
         {
-            return -x.CompareTo(y);
+            return x.CompareTo(y);
         }
     }
 }

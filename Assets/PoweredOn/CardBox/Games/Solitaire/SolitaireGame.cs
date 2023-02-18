@@ -26,6 +26,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         bool _isDealing = false;
         public bool MovingStockToWaste { get; internal set; } = false;
 
+        public bool DebugCardColors { get; internal set; } = false;
+
         DebugOutput iDebug
         {
             get
@@ -243,6 +245,53 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void ToggleLog()
         {
             DebugOutput.Instance.ToggleLogVisibility();
+        }
+
+        public void ToggleDebugCardColors()
+        {
+            DebugCardColors = !DebugCardColors;
+            RecolorCards();
+        }
+        
+        public void RecolorCards()
+        {
+            foreach (var id in SolitaireDeck.DEFAULT_DECK_ORDER) {
+                RecolorCard(deck.GetCardBySuitRank(id));
+            }
+        }
+
+        public void RecolorCard(SolitaireCard card)
+        {
+            var spot = card.playfieldSpot;
+            if (!DebugCardColors)
+            {
+                card.monoCard.SetColor(Color.white);
+                return;
+            }
+            if (spot.area == PlayfieldArea.TABLEAU)
+            {
+                card.monoCard.SetColor(Color.red);
+
+            }
+            else if (spot.area == PlayfieldArea.FOUNDATION)
+            {
+                card.monoCard.SetColor(Color.green);
+
+            }
+            else if (spot.area == PlayfieldArea.STOCK)
+            {
+                card.monoCard.SetColor(Color.blue);
+
+            }
+            else if (spot.area == PlayfieldArea.WASTE)
+            {
+                card.monoCard.SetColor(Color.yellow);
+
+            }
+            else if (spot.area == PlayfieldArea.DECK)
+            {
+                card.monoCard.SetColor(Color.magenta);
+            }
         }
 
         public void NewGame()

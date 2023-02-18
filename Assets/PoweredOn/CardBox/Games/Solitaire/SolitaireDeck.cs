@@ -32,6 +32,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public bool IsShuffling { get { return this._isShuffling; } }
         
         private bool _isCollectingCardsToDeck = false;
+
+        /*public static List<SuitRank> Cards()
+        {
+            
+        }*/
         
         public bool IsCollectingCardsToDeck {  get { return this._isCollectingCardsToDeck;  } }
 

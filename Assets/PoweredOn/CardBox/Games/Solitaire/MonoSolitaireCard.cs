@@ -29,6 +29,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public float minDistance = 0.001f;
         private GameObject myAnchorGameObject;
 
+        public Color currentColor { get; private set; }
+
         public const float LONG_PRESS_DURATION = 0.5f;
 
 #nullable enable
@@ -64,6 +66,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
 
         public void SetColor(Color color){
+            currentColor = color;
             if(m_MeshRenderer!=null)
                 m_MeshRenderer.material.color = color;
         }

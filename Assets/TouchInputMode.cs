@@ -104,7 +104,7 @@ public class TouchInputMode : MonoBehaviour
         ray = mainCamera.ScreenPointToRay(touchPosition);
 
         // visualize the raycast
-        Debug.DrawRay(ray.origin, ray.direction * 1000, Color.red, 60f);
+        //Debug.DrawRay(ray.origin, ray.direction * 1000, Color.white, 3f);
 
         if(Physics.Raycast(ray, out hitData, 1000))
         {
