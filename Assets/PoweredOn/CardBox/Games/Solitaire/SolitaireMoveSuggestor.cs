@@ -77,6 +77,21 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 rankedMoves.Add(SolitaireMove.WASTE_TO_STOCK);   
             }
 
+            // TODO if the best move is a "to_foundation" move, always return that move
+            
+
+            // shuffle the moves
+            // half the time, shuffle
+            if(UnityEngine.Random.Range(0, 2) == 1)
+            {
+                rankedMoves.Shuffle();
+            }else{
+                if(UnityEngine.Random.Range(0, 2) == 1)
+                {                    
+                    rankedMoves.Reverse();
+                }
+            }
+
             return rankedMoves;
         }
 

@@ -332,20 +332,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void AutoPlayNextMove()
         {
             SolitaireMoveList moves = SolitaireMoveSuggestor.SuggestMoves(this);
-            // shuffle the moves
-            // half the time, shuffle
-            if(UnityEngine.Random.Range(0, 2) == 1)
-            {
-                moves.Shuffle();
-            }else{
-                if(UnityEngine.Random.Range(0, 2) == 1)
-                    moves.Reverse();
-                }
-            }
+            
             Debug.LogWarning("[Autoplay] Suggested moves: " + moves.Count);
             Debug.Log(moves);
 
-            if(this.IsInFinalStage || this.IsComplete){
+            // this.IsInFinalStage || 
+            if(this.IsComplete){
                 Debug.LogWarning("[Autoplay] Stopping... game is complete");
                 StopAutoPlay();
                 return;
@@ -1459,6 +1451,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         }
         public void OnLongPressCard(SolitaireCard card)
         {
+            return; // this is broken for now
             iDebug.Log("OnLongPressCard handCards Count " + card + " | handCardsCount:" + handCardPile.Count);
             if (handCardPile.Count < 1)
             {
