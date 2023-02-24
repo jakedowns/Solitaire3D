@@ -14,6 +14,7 @@ using PoweredOn.CardBox.Games;
 using NRKernal;
 using static PoweredOn.Animations.EasingFunction;
 using PoweredOn.Animations.Effects;
+using UnityEngine.Assertions;
 //using UnityEngine.InputSystem;
 
 namespace PoweredOn.Managers
@@ -23,7 +24,7 @@ namespace PoweredOn.Managers
         This singleton instance should be globally available so we don't have to pass around game references to subclassses
         
      */
-    [ExecuteInEditMode]
+    /*[ExecuteInEditMode]*/
     public class GameManager : MonoBehaviour
     {
         private static GameManager _instance;
@@ -31,7 +32,7 @@ namespace PoweredOn.Managers
             get {
                 if (_instance == null)
                 {
-                    _instance = GameObject.FindObjectOfType<GameManager>();
+                    Debug.LogWarning("Game Manager Instance Reference Is Null");
                 }
                 return _instance;
             }
@@ -46,12 +47,17 @@ namespace PoweredOn.Managers
         Camera nrealCamera;
         public float gmi_id;
         GameObject menuGroup;
-        public bool GoalAnimationSystemEnabled = false;
+        public bool GoalAnimationSystemEnabled { get; private set; } = true; // disable to use the "joint" system instead of the goal system
         public Camera TargetWorldCam { get; private set; }
 
 
         private void Awake()
         {
+            if(_instance == null)
+            {
+                _instance = GameObject.FindObjectOfType<GameManager>();
+            }
+            
             gmi_id = UnityEngine.Random.Range(-10.0f, 10.0f); // System.Guid.NewGuid();
             //Debug.LogWarning("GMI Awake: set id: "+ gmi_id);
             // If there is an instance, and it's not me, delete myself.
@@ -105,13 +111,13 @@ namespace PoweredOn.Managers
             this._game = game;
         }
 
-#if UNITY_EDITOR
+/*#if UNITY_EDITOR
         [UnityEditor.Callbacks.DidReloadScripts]
         private static void OnScriptsReloaded()
         {
             (Instance ?? GameObject.FindObjectOfType<GameManager>())?.Reset();
         }
-#endif
+#endif*/
 
         public SolitaireGame _game;
         public SolitaireGame game {
@@ -372,6 +378,8 @@ namespace PoweredOn.Managers
 
         IEnumerator AnimateCards()
         {
+            Assert.IsTrue(game.deck.cards.Count == 52);
+            
             // Initialize the arrays with the start and goal positions, rotations and scales of the cards
             NativeArray<Vector3> startPositions = new NativeArray<Vector3>(game.deck.cards.Count, Allocator.Persistent);
             NativeArray<Vector3> goalPositions = new NativeArray<Vector3>(game.deck.cards.Count, Allocator.Persistent);
@@ -391,11 +399,11 @@ namespace PoweredOn.Managers
             while (true)
             {
                 // TODO: encapsulate this pattern and apply it to Animations > Effects > RippleEffect
-                /*if (game.fxManager != null)
+                if (game.fxManager != null)
                 {
                     game.fxManager.OnUpdate();
                 }
-                else
+                /*else
                 {
                     Debug.LogWarning("no fxManager?");
                 }*/
@@ -484,7 +492,7 @@ namespace PoweredOn.Managers
                     {
                         Transform cardTx = cardGO.transform;
                         cardTx.position = job.startPositions[i];
-                        cardTx.position = game.fxManager.ApplyEffectsToPoint(cardTx.position);
+                        //cardTx.position = game.fxManager.ApplyEffectsToPoint(cardTx.position);
                         cardTx.localRotation = job.startRotations[i];
                         cardTx.localScale = job.startScales[i];
                     }
@@ -643,6 +651,8 @@ namespace PoweredOn.Managers
                 {
                     game.AutoPlayNextMove();
                 }
+
+                game.scoreKeeper.Tick();
             }
 
             /*if (Input.GetMouseButtonDown(0))

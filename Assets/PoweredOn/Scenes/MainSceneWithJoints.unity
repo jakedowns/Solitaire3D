@@ -217,10 +217,10 @@ PrefabInstance:
       addedObject: {fileID: 1102096}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bdaaabc23e09b264fbdb43cc173a0a35, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1102098}
+      addedObject: {fileID: 1102103}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bdaaabc23e09b264fbdb43cc173a0a35, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1102097}
+      addedObject: {fileID: 1102102}
   m_SourcePrefab: {fileID: 100100000, guid: bdaaabc23e09b264fbdb43cc173a0a35, type: 3}
 --- !u!4 &1102071 stripped
 Transform:
@@ -381,7 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1102097
+--- !u!114 &1102102
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -395,7 +395,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1102098
+--- !u!114 &1102103
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -412,8 +412,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 45:-1'
+  currentArea: STOCK
 --- !u!1 &10122870
 GameObject:
   m_ObjectHideFlags: 0
@@ -993,10 +993,10 @@ PrefabInstance:
       addedObject: {fileID: 68668458}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7da1859dc7e075f41aad5e46735efa4b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 68668460}
+      addedObject: {fileID: 68668465}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7da1859dc7e075f41aad5e46735efa4b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 68668459}
+      addedObject: {fileID: 68668464}
   m_SourcePrefab: {fileID: 100100000, guid: 7da1859dc7e075f41aad5e46735efa4b, type: 3}
 --- !u!4 &68668433 stripped
 Transform:
@@ -1157,7 +1157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &68668459
+--- !u!114 &68668464
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1171,7 +1171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &68668460
+--- !u!114 &68668465
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1188,8 +1188,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 6:5'
+  currentArea: TABLEAU
 --- !u!1 &89735473
 GameObject:
   m_ObjectHideFlags: 0
@@ -1488,10 +1488,10 @@ PrefabInstance:
       addedObject: {fileID: 93477421}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0979c19e977e7f24a87de4def4d0095a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 93477423}
+      addedObject: {fileID: 93477428}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0979c19e977e7f24a87de4def4d0095a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 93477422}
+      addedObject: {fileID: 93477427}
   m_SourcePrefab: {fileID: 100100000, guid: 0979c19e977e7f24a87de4def4d0095a, type: 3}
 --- !u!4 &93477396 stripped
 Transform:
@@ -1652,7 +1652,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &93477422
+--- !u!114 &93477427
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1666,7 +1666,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &93477423
+--- !u!114 &93477428
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1683,8 +1683,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 47:-1'
+  currentArea: STOCK
 --- !u!1 &97982189
 GameObject:
   m_ObjectHideFlags: 0
@@ -2042,10 +2042,10 @@ PrefabInstance:
       addedObject: {fileID: 128351032}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3f17a05e9ddc5464f961ecb64feb366a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 128351034}
+      addedObject: {fileID: 128351039}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3f17a05e9ddc5464f961ecb64feb366a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 128351033}
+      addedObject: {fileID: 128351038}
   m_SourcePrefab: {fileID: 100100000, guid: 3f17a05e9ddc5464f961ecb64feb366a, type: 3}
 --- !u!4 &128351007 stripped
 Transform:
@@ -2206,7 +2206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &128351033
+--- !u!114 &128351038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2220,7 +2220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &128351034
+--- !u!114 &128351039
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2237,8 +2237,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 33:-1'
+  currentArea: STOCK
 --- !u!1 &135865597
 GameObject:
   m_ObjectHideFlags: 0
@@ -2873,10 +2873,10 @@ PrefabInstance:
       addedObject: {fileID: 206521400}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f138a66ead2f28c49ab029ff18de8cea, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 206521402}
+      addedObject: {fileID: 206521407}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f138a66ead2f28c49ab029ff18de8cea, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 206521401}
+      addedObject: {fileID: 206521406}
   m_SourcePrefab: {fileID: 100100000, guid: f138a66ead2f28c49ab029ff18de8cea, type: 3}
 --- !u!4 &206521375 stripped
 Transform:
@@ -3037,7 +3037,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &206521401
+--- !u!114 &206521406
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3051,7 +3051,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &206521402
+--- !u!114 &206521407
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3068,8 +3068,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 4:4'
+  currentArea: TABLEAU
 --- !u!1001 &207572596
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3164,10 +3164,10 @@ PrefabInstance:
       addedObject: {fileID: 207572622}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: de2835e44d0dc244fb6ac1053ab42c82, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 207572624}
+      addedObject: {fileID: 207572629}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: de2835e44d0dc244fb6ac1053ab42c82, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 207572623}
+      addedObject: {fileID: 207572628}
   m_SourcePrefab: {fileID: 100100000, guid: de2835e44d0dc244fb6ac1053ab42c82, type: 3}
 --- !u!4 &207572597 stripped
 Transform:
@@ -3328,7 +3328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &207572623
+--- !u!114 &207572628
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3342,7 +3342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &207572624
+--- !u!114 &207572629
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3359,8 +3359,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 6:3'
+  currentArea: TABLEAU
 --- !u!1001 &217879942
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3455,10 +3455,10 @@ PrefabInstance:
       addedObject: {fileID: 217879968}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a956a2f516ae0354aad9038f76d51230, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 217879970}
+      addedObject: {fileID: 217879975}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a956a2f516ae0354aad9038f76d51230, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 217879969}
+      addedObject: {fileID: 217879974}
   m_SourcePrefab: {fileID: 100100000, guid: a956a2f516ae0354aad9038f76d51230, type: 3}
 --- !u!4 &217879943 stripped
 Transform:
@@ -3619,7 +3619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &217879969
+--- !u!114 &217879974
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3633,7 +3633,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &217879970
+--- !u!114 &217879975
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3650,8 +3650,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 1:-1'
+  currentArea: STOCK
 --- !u!1 &236581336
 GameObject:
   m_ObjectHideFlags: 0
@@ -3880,10 +3880,10 @@ PrefabInstance:
       addedObject: {fileID: 240773276}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ad56766450b369841b96547215e43261, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 240773278}
+      addedObject: {fileID: 240773283}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ad56766450b369841b96547215e43261, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 240773277}
+      addedObject: {fileID: 240773282}
   m_SourcePrefab: {fileID: 100100000, guid: ad56766450b369841b96547215e43261, type: 3}
 --- !u!4 &240773251 stripped
 Transform:
@@ -4044,7 +4044,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &240773277
+--- !u!114 &240773282
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4058,7 +4058,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &240773278
+--- !u!114 &240773283
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4075,8 +4075,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 5:4'
+  currentArea: TABLEAU
 --- !u!1 &270560975
 GameObject:
   m_ObjectHideFlags: 0
@@ -4425,10 +4425,10 @@ PrefabInstance:
       addedObject: {fileID: 289493768}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69ceab12e5978bf43b5e2163b88d863d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 289493770}
+      addedObject: {fileID: 289493775}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69ceab12e5978bf43b5e2163b88d863d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 289493769}
+      addedObject: {fileID: 289493774}
   m_SourcePrefab: {fileID: 100100000, guid: 69ceab12e5978bf43b5e2163b88d863d, type: 3}
 --- !u!4 &289493743 stripped
 Transform:
@@ -4589,7 +4589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &289493769
+--- !u!114 &289493774
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4603,7 +4603,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &289493770
+--- !u!114 &289493775
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4620,8 +4620,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 49:-1'
+  currentArea: STOCK
 --- !u!1 &308211387
 GameObject:
   m_ObjectHideFlags: 0
@@ -4792,10 +4792,10 @@ PrefabInstance:
       addedObject: {fileID: 312132584}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bdb6fdd622ce1e3468da1560db7fc0b2, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 312132586}
+      addedObject: {fileID: 312132591}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bdb6fdd622ce1e3468da1560db7fc0b2, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 312132585}
+      addedObject: {fileID: 312132590}
   m_SourcePrefab: {fileID: 100100000, guid: bdb6fdd622ce1e3468da1560db7fc0b2, type: 3}
 --- !u!4 &312132559 stripped
 Transform:
@@ -4956,7 +4956,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &312132585
+--- !u!114 &312132590
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4970,7 +4970,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &312132586
+--- !u!114 &312132591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4987,8 +4987,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 3:-1'
+  currentArea: STOCK
 --- !u!1 &312282204
 GameObject:
   m_ObjectHideFlags: 0
@@ -5831,10 +5831,10 @@ PrefabInstance:
       addedObject: {fileID: 377461940}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b2ceba12d95a2f04ebf1328614e07f55, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 377461942}
+      addedObject: {fileID: 377461947}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b2ceba12d95a2f04ebf1328614e07f55, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 377461941}
+      addedObject: {fileID: 377461946}
   m_SourcePrefab: {fileID: 100100000, guid: b2ceba12d95a2f04ebf1328614e07f55, type: 3}
 --- !u!4 &377461915 stripped
 Transform:
@@ -5995,7 +5995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &377461941
+--- !u!114 &377461946
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6009,7 +6009,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &377461942
+--- !u!114 &377461947
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6026,8 +6026,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 5:2'
+  currentArea: TABLEAU
 --- !u!1001 &390182253
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6122,10 +6122,10 @@ PrefabInstance:
       addedObject: {fileID: 390182278}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c70ffdc51c2af484281aadf280ab23bb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 390182280}
+      addedObject: {fileID: 390182284}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c70ffdc51c2af484281aadf280ab23bb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 390182279}
+      addedObject: {fileID: 390182283}
   m_SourcePrefab: {fileID: 100100000, guid: c70ffdc51c2af484281aadf280ab23bb, type: 3}
 --- !u!4 &390182254 stripped
 Transform:
@@ -6286,7 +6286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &390182279
+--- !u!114 &390182283
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6300,7 +6300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &390182280
+--- !u!114 &390182284
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6317,8 +6317,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 41:-1'
+  currentArea: STOCK
 --- !u!1 &395675412
 GameObject:
   m_ObjectHideFlags: 0
@@ -6670,10 +6670,10 @@ PrefabInstance:
       addedObject: {fileID: 399554409}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 21c92519d57d50b49b105ab07a5b5189, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 399554411}
+      addedObject: {fileID: 399554416}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 21c92519d57d50b49b105ab07a5b5189, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 399554410}
+      addedObject: {fileID: 399554415}
   m_SourcePrefab: {fileID: 100100000, guid: 21c92519d57d50b49b105ab07a5b5189, type: 3}
 --- !u!4 &399554385 stripped
 Transform:
@@ -6834,7 +6834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &399554410
+--- !u!114 &399554415
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6848,7 +6848,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &399554411
+--- !u!114 &399554416
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6865,8 +6865,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 3:2'
+  currentArea: TABLEAU
 --- !u!1 &399661644
 GameObject:
   m_ObjectHideFlags: 0
@@ -7841,10 +7841,10 @@ PrefabInstance:
       addedObject: {fileID: 454743392}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86cb6b68be8c1ab449f84e857bb6b2e8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 454743394}
+      addedObject: {fileID: 454743399}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86cb6b68be8c1ab449f84e857bb6b2e8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 454743393}
+      addedObject: {fileID: 454743398}
   m_SourcePrefab: {fileID: 100100000, guid: 86cb6b68be8c1ab449f84e857bb6b2e8, type: 3}
 --- !u!4 &454743367 stripped
 Transform:
@@ -8005,7 +8005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &454743393
+--- !u!114 &454743398
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8019,7 +8019,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &454743394
+--- !u!114 &454743399
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8036,8 +8036,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 7:-1'
+  currentArea: STOCK
 --- !u!1 &464162943
 GameObject:
   m_ObjectHideFlags: 0
@@ -8247,10 +8247,10 @@ PrefabInstance:
       addedObject: {fileID: 471440496}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2cde288056fcac745b1ceba33444f87e, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 471440498}
+      addedObject: {fileID: 471440503}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2cde288056fcac745b1ceba33444f87e, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 471440497}
+      addedObject: {fileID: 471440502}
   m_SourcePrefab: {fileID: 100100000, guid: 2cde288056fcac745b1ceba33444f87e, type: 3}
 --- !u!4 &471440471 stripped
 Transform:
@@ -8411,7 +8411,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &471440497
+--- !u!114 &471440502
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8425,7 +8425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &471440498
+--- !u!114 &471440503
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8442,8 +8442,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 11:-1'
+  currentArea: STOCK
 --- !u!1 &474727318
 GameObject:
   m_ObjectHideFlags: 0
@@ -9243,10 +9243,10 @@ PrefabInstance:
       addedObject: {fileID: 547152611}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e89982bdeffcea49b4fbc171105d63b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 547152613}
+      addedObject: {fileID: 547152617}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e89982bdeffcea49b4fbc171105d63b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 547152612}
+      addedObject: {fileID: 547152616}
   m_SourcePrefab: {fileID: 100100000, guid: 6e89982bdeffcea49b4fbc171105d63b, type: 3}
 --- !u!4 &547152587 stripped
 Transform:
@@ -9407,7 +9407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &547152612
+--- !u!114 &547152616
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9421,7 +9421,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &547152613
+--- !u!114 &547152617
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9438,8 +9438,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 4:3'
+  currentArea: TABLEAU
 --- !u!1 &557201043
 GameObject:
   m_ObjectHideFlags: 0
@@ -9680,10 +9680,10 @@ PrefabInstance:
       addedObject: {fileID: 575629058}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3c025352fbc674148a521d94022dc8b8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 575629060}
+      addedObject: {fileID: 575629064}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3c025352fbc674148a521d94022dc8b8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 575629059}
+      addedObject: {fileID: 575629063}
   m_SourcePrefab: {fileID: 100100000, guid: 3c025352fbc674148a521d94022dc8b8, type: 3}
 --- !u!4 &575629033 stripped
 Transform:
@@ -9844,7 +9844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &575629059
+--- !u!114 &575629063
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9858,7 +9858,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &575629060
+--- !u!114 &575629064
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9875,8 +9875,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 6:1'
+  currentArea: TABLEAU
 --- !u!1 &582835471
 GameObject:
   m_ObjectHideFlags: 0
@@ -10175,10 +10175,10 @@ PrefabInstance:
       addedObject: {fileID: 586699483}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f84aa91be79ec8742ab6da6b133181cb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 586699485}
+      addedObject: {fileID: 586699490}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f84aa91be79ec8742ab6da6b133181cb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 586699484}
+      addedObject: {fileID: 586699489}
   m_SourcePrefab: {fileID: 100100000, guid: f84aa91be79ec8742ab6da6b133181cb, type: 3}
 --- !u!4 &586699458 stripped
 Transform:
@@ -10339,7 +10339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &586699484
+--- !u!114 &586699489
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10353,7 +10353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &586699485
+--- !u!114 &586699490
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10370,8 +10370,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 23:-1'
+  currentArea: STOCK
 --- !u!1 &597944626
 GameObject:
   m_ObjectHideFlags: 0
@@ -10807,7 +10807,7 @@ SpringJoint:
   m_ConnectedBody: {fileID: 348872871}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0.5000001, z: 0}
-  m_AutoConfigureConnectedAnchor: 0
+  m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0.19150583, z: -1.9187695}
   serializedVersion: 2
   m_Spring: 10
@@ -11395,10 +11395,10 @@ PrefabInstance:
       addedObject: {fileID: 669382350}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 23ed93382bdb2b448a477ed10a99eec7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 669382352}
+      addedObject: {fileID: 669382357}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 23ed93382bdb2b448a477ed10a99eec7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 669382351}
+      addedObject: {fileID: 669382356}
   m_SourcePrefab: {fileID: 100100000, guid: 23ed93382bdb2b448a477ed10a99eec7, type: 3}
 --- !u!4 &669382325 stripped
 Transform:
@@ -11559,7 +11559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &669382351
+--- !u!114 &669382356
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11573,7 +11573,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &669382352
+--- !u!114 &669382357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11590,8 +11590,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 43:-1'
+  currentArea: STOCK
 --- !u!1 &689174008
 GameObject:
   m_ObjectHideFlags: 0
@@ -11820,10 +11820,10 @@ PrefabInstance:
       addedObject: {fileID: 700259641}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d19a0d91a69a9654dbf325c94a88a98b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 700259643}
+      addedObject: {fileID: 700259648}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d19a0d91a69a9654dbf325c94a88a98b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 700259642}
+      addedObject: {fileID: 700259647}
   m_SourcePrefab: {fileID: 100100000, guid: d19a0d91a69a9654dbf325c94a88a98b, type: 3}
 --- !u!4 &700259616 stripped
 Transform:
@@ -11984,7 +11984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &700259642
+--- !u!114 &700259647
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11998,7 +11998,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &700259643
+--- !u!114 &700259648
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12015,8 +12015,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 3:1'
+  currentArea: TABLEAU
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -12491,10 +12491,10 @@ PrefabInstance:
       addedObject: {fileID: 723300348}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 103527cf96b316d48beff94abe037cde, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 723300350}
+      addedObject: {fileID: 723300355}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 103527cf96b316d48beff94abe037cde, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 723300349}
+      addedObject: {fileID: 723300354}
   m_SourcePrefab: {fileID: 100100000, guid: 103527cf96b316d48beff94abe037cde, type: 3}
 --- !u!4 &723300323 stripped
 Transform:
@@ -12655,7 +12655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &723300349
+--- !u!114 &723300354
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12669,7 +12669,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &723300350
+--- !u!114 &723300355
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12686,8 +12686,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 6:0'
+  currentArea: TABLEAU
 --- !u!1 &725929544
 GameObject:
   m_ObjectHideFlags: 0
@@ -13047,10 +13047,10 @@ PrefabInstance:
       addedObject: {fileID: 810638654}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2828ec71ab0646945964cb9669a231b4, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 810638656}
+      addedObject: {fileID: 810638661}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2828ec71ab0646945964cb9669a231b4, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 810638655}
+      addedObject: {fileID: 810638660}
   m_SourcePrefab: {fileID: 100100000, guid: 2828ec71ab0646945964cb9669a231b4, type: 3}
 --- !u!4 &810638629 stripped
 Transform:
@@ -13211,7 +13211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &810638655
+--- !u!114 &810638660
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13225,7 +13225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &810638656
+--- !u!114 &810638661
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13242,8 +13242,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 5:-1'
+  currentArea: STOCK
 --- !u!1 &846695972
 GameObject:
   m_ObjectHideFlags: 0
@@ -14061,8 +14061,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 885221590}
-  m_LocalRotation: {x: -0, y: 0.38621417, z: -0, w: 0.9224091}
-  m_LocalPosition: {x: 1.17, y: 0.347, z: -0.13}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.347, z: 0.081}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14071,7 +14071,7 @@ Transform:
   - {fileID: 544608290}
   m_Father: {fileID: 0}
   m_RootOrder: 14
-  m_LocalEulerAnglesHint: {x: 0, y: 45.438, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &912345627
 GameObject:
   m_ObjectHideFlags: 0
@@ -14516,10 +14516,10 @@ PrefabInstance:
       addedObject: {fileID: 934848491}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6cbc32ec74089a4281eb8206dcb9851, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 934848493}
+      addedObject: {fileID: 934848498}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6cbc32ec74089a4281eb8206dcb9851, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 934848492}
+      addedObject: {fileID: 934848497}
   m_SourcePrefab: {fileID: 100100000, guid: f6cbc32ec74089a4281eb8206dcb9851, type: 3}
 --- !u!4 &934848466 stripped
 Transform:
@@ -14680,7 +14680,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &934848492
+--- !u!114 &934848497
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14694,7 +14694,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &934848493
+--- !u!114 &934848498
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14711,8 +14711,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 9:-1'
+  currentArea: STOCK
 --- !u!1 &945259770
 GameObject:
   m_ObjectHideFlags: 0
@@ -14839,7 +14839,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 945259770}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.11, y: -2.157, z: 2.92}
+  m_LocalPosition: {x: 0.0614, y: -2.157, z: 2.785}
   m_LocalScale: {x: 2.618314, y: 0.48941556, z: 0.029915}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14940,10 +14940,10 @@ PrefabInstance:
       addedObject: {fileID: 974330479}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e35db453ac2250d4f9b179a11b509374, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 974330481}
+      addedObject: {fileID: 974330486}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e35db453ac2250d4f9b179a11b509374, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 974330480}
+      addedObject: {fileID: 974330485}
   m_SourcePrefab: {fileID: 100100000, guid: e35db453ac2250d4f9b179a11b509374, type: 3}
 --- !u!4 &974330454 stripped
 Transform:
@@ -15104,7 +15104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &974330480
+--- !u!114 &974330485
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15118,7 +15118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &974330481
+--- !u!114 &974330486
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15135,8 +15135,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 2:2'
+  currentArea: TABLEAU
 --- !u!1 &982581962
 GameObject:
   m_ObjectHideFlags: 0
@@ -15432,10 +15432,10 @@ PrefabInstance:
       addedObject: {fileID: 997474373}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b1c035bcaa7b6c2459cf9508f95a7a14, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 997474375}
+      addedObject: {fileID: 997474380}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b1c035bcaa7b6c2459cf9508f95a7a14, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 997474374}
+      addedObject: {fileID: 997474379}
   m_SourcePrefab: {fileID: 100100000, guid: b1c035bcaa7b6c2459cf9508f95a7a14, type: 3}
 --- !u!4 &997474349 stripped
 Transform:
@@ -15596,7 +15596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &997474374
+--- !u!114 &997474379
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15610,7 +15610,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &997474375
+--- !u!114 &997474380
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15627,8 +15627,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 29:-1'
+  currentArea: STOCK
 --- !u!1 &1019678228
 GameObject:
   m_ObjectHideFlags: 0
@@ -15986,10 +15986,10 @@ PrefabInstance:
       addedObject: {fileID: 1048247372}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ea12d3be07cd68349b390ca739013ff4, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1048247374}
+      addedObject: {fileID: 1048247379}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ea12d3be07cd68349b390ca739013ff4, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1048247373}
+      addedObject: {fileID: 1048247378}
   m_SourcePrefab: {fileID: 100100000, guid: ea12d3be07cd68349b390ca739013ff4, type: 3}
 --- !u!4 &1048247347 stripped
 Transform:
@@ -16150,7 +16150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1048247373
+--- !u!114 &1048247378
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -16164,7 +16164,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1048247374
+--- !u!114 &1048247379
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -16181,8 +16181,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 1:1'
+  currentArea: TABLEAU
 --- !u!1 &1054818713
 GameObject:
   m_ObjectHideFlags: 0
@@ -16491,10 +16491,10 @@ PrefabInstance:
       addedObject: {fileID: 1055293140}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8bc2cc32d5e3c314abca4e36081ccf57, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1055293142}
+      addedObject: {fileID: 1055293147}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8bc2cc32d5e3c314abca4e36081ccf57, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1055293141}
+      addedObject: {fileID: 1055293146}
   m_SourcePrefab: {fileID: 100100000, guid: 8bc2cc32d5e3c314abca4e36081ccf57, type: 3}
 --- !u!4 &1055293115 stripped
 Transform:
@@ -16655,7 +16655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1055293141
+--- !u!114 &1055293146
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -16669,7 +16669,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1055293142
+--- !u!114 &1055293147
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -16686,8 +16686,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 4:0'
+  currentArea: TABLEAU
 --- !u!1 &1057270348
 GameObject:
   m_ObjectHideFlags: 0
@@ -17174,10 +17174,10 @@ PrefabInstance:
       addedObject: {fileID: 1114806913}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f998ae1afd00824c8bc9d37505f1a3b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1114806915}
+      addedObject: {fileID: 1114806920}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f998ae1afd00824c8bc9d37505f1a3b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1114806914}
+      addedObject: {fileID: 1114806919}
   m_SourcePrefab: {fileID: 100100000, guid: 4f998ae1afd00824c8bc9d37505f1a3b, type: 3}
 --- !u!4 &1114806888 stripped
 Transform:
@@ -17338,7 +17338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1114806914
+--- !u!114 &1114806919
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -17352,7 +17352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1114806915
+--- !u!114 &1114806920
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -17369,8 +17369,56 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 1:0'
+  currentArea: TABLEAU
+--- !u!1 &1184462482
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1184462484}
+  - component: {fileID: 1184462483}
+  m_Layer: 0
+  m_Name: JointManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1184462483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184462482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aaf6cdff7c5d4fcf844714786058c9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spring_min_distance: 0.001
+  spring_max_distance: 0.0011
+  spring_spring: 1000
+  spring_damper: 1
+--- !u!4 &1184462484
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184462482}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.45262507, y: 0.19843239, z: 0.16402125}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1186348703
 GameObject:
   m_ObjectHideFlags: 0
@@ -17526,10 +17574,10 @@ PrefabInstance:
       addedObject: {fileID: 1187199076}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 96033b977ea7dbf458a4b5f57692ffae, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1187199078}
+      addedObject: {fileID: 1187199083}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 96033b977ea7dbf458a4b5f57692ffae, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1187199077}
+      addedObject: {fileID: 1187199082}
   m_SourcePrefab: {fileID: 100100000, guid: 96033b977ea7dbf458a4b5f57692ffae, type: 3}
 --- !u!4 &1187199050 stripped
 Transform:
@@ -17690,7 +17738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1187199077
+--- !u!114 &1187199082
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -17704,7 +17752,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1187199078
+--- !u!114 &1187199083
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -17721,8 +17769,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 0:0'
+  currentArea: TABLEAU
 --- !u!1001 &1188981920
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17817,10 +17865,10 @@ PrefabInstance:
       addedObject: {fileID: 1188981946}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0b23692b1170070428615a9ef77c6eb0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1188981948}
+      addedObject: {fileID: 1188981953}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0b23692b1170070428615a9ef77c6eb0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1188981947}
+      addedObject: {fileID: 1188981952}
   m_SourcePrefab: {fileID: 100100000, guid: 0b23692b1170070428615a9ef77c6eb0, type: 3}
 --- !u!4 &1188981921 stripped
 Transform:
@@ -17981,7 +18029,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1188981947
+--- !u!114 &1188981952
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -17995,7 +18043,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1188981948
+--- !u!114 &1188981953
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18012,101 +18060,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
---- !u!1 &1192744118
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1192744119}
-  - component: {fileID: 1192744122}
-  - component: {fileID: 1192744121}
-  - component: {fileID: 1192744120}
-  m_Layer: 5
-  m_Name: ScoreDisplay
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1192744119
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192744118}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1696023436}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -180.5, y: 120.2}
-  m_SizeDelta: {x: 271.83, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1192744120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192744118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60d9a4e95260a454682d92adfa0f066c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1192744121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192744118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.90532726, g: 0.9150943, b: 0.0316541, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
-    m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: 'Moves: 0 | Score: 0 | Time: 0:00'
---- !u!222 &1192744122
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192744118}
-  m_CullTransparentMesh: 1
+  currentSpot: 'PlayfieldSpot: STOCK 51:-1'
+  currentArea: STOCK
 --- !u!1001 &1211939836
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18201,10 +18156,10 @@ PrefabInstance:
       addedObject: {fileID: 1211939862}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 271118b01cdbd6b4a9000b83eed4ac8a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1211939864}
+      addedObject: {fileID: 1211939869}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 271118b01cdbd6b4a9000b83eed4ac8a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1211939863}
+      addedObject: {fileID: 1211939868}
   m_SourcePrefab: {fileID: 100100000, guid: 271118b01cdbd6b4a9000b83eed4ac8a, type: 3}
 --- !u!4 &1211939837 stripped
 Transform:
@@ -18365,7 +18320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1211939863
+--- !u!114 &1211939868
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18379,7 +18334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1211939864
+--- !u!114 &1211939869
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18396,8 +18351,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 35:-1'
+  currentArea: STOCK
 --- !u!1 &1220686954
 GameObject:
   m_ObjectHideFlags: 0
@@ -18823,10 +18778,10 @@ PrefabInstance:
       addedObject: {fileID: 1250126465}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d56b4d7fb34077a4eb8eea5d4e612d59, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1250126467}
+      addedObject: {fileID: 1250126472}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d56b4d7fb34077a4eb8eea5d4e612d59, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1250126466}
+      addedObject: {fileID: 1250126471}
   m_SourcePrefab: {fileID: 100100000, guid: d56b4d7fb34077a4eb8eea5d4e612d59, type: 3}
 --- !u!4 &1250126439 stripped
 Transform:
@@ -18987,7 +18942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1250126466
+--- !u!114 &1250126471
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -19001,7 +18956,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1250126467
+--- !u!114 &1250126472
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -19018,8 +18973,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 5:1'
+  currentArea: TABLEAU
 --- !u!1 &1251255472
 GameObject:
   m_ObjectHideFlags: 0
@@ -19471,10 +19426,10 @@ PrefabInstance:
       addedObject: {fileID: 1333387105}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0fc4e18db3db6c64f92179b2e3b76142, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1333387107}
+      addedObject: {fileID: 1333387111}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0fc4e18db3db6c64f92179b2e3b76142, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1333387106}
+      addedObject: {fileID: 1333387110}
   m_SourcePrefab: {fileID: 100100000, guid: 0fc4e18db3db6c64f92179b2e3b76142, type: 3}
 --- !u!4 &1333387080 stripped
 Transform:
@@ -19635,7 +19590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1333387106
+--- !u!114 &1333387110
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -19649,7 +19604,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1333387107
+--- !u!114 &1333387111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -19666,8 +19621,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 39:-1'
+  currentArea: STOCK
 --- !u!1 &1336580263
 GameObject:
   m_ObjectHideFlags: 0
@@ -19954,10 +19909,10 @@ PrefabInstance:
       addedObject: {fileID: 1339890311}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d3ebbaafe458ca4a87313c353bb172b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1339890313}
+      addedObject: {fileID: 1339890318}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d3ebbaafe458ca4a87313c353bb172b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1339890312}
+      addedObject: {fileID: 1339890317}
   m_SourcePrefab: {fileID: 100100000, guid: 7d3ebbaafe458ca4a87313c353bb172b, type: 3}
 --- !u!4 &1339890285 stripped
 Transform:
@@ -20118,7 +20073,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1339890312
+--- !u!114 &1339890317
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20132,7 +20087,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1339890313
+--- !u!114 &1339890318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20149,8 +20104,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 31:-1'
+  currentArea: STOCK
 --- !u!1 &1343272941
 GameObject:
   m_ObjectHideFlags: 0
@@ -20902,10 +20857,10 @@ PrefabInstance:
       addedObject: {fileID: 1418975959}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64ae8bab5c9f3c146b26443fb30c3476, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1418975961}
+      addedObject: {fileID: 1418975966}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64ae8bab5c9f3c146b26443fb30c3476, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1418975960}
+      addedObject: {fileID: 1418975965}
   m_SourcePrefab: {fileID: 100100000, guid: 64ae8bab5c9f3c146b26443fb30c3476, type: 3}
 --- !u!4 &1418975934 stripped
 Transform:
@@ -21066,7 +21021,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1418975960
+--- !u!114 &1418975965
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -21080,7 +21035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1418975961
+--- !u!114 &1418975966
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -21097,8 +21052,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 3:0'
+  currentArea: TABLEAU
 --- !u!1 &1422008932
 GameObject:
   m_ObjectHideFlags: 0
@@ -21920,7 +21875,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1487097918}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.028, y: 1.954, z: -0.887}
+  m_LocalPosition: {x: 0.225, y: 0.636, z: -1.221}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -22282,10 +22237,10 @@ PrefabInstance:
       addedObject: {fileID: 1526903307}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 92a311c8fc2743f4aaced89dd8b2cbb8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1526903309}
+      addedObject: {fileID: 1526903314}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 92a311c8fc2743f4aaced89dd8b2cbb8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1526903308}
+      addedObject: {fileID: 1526903313}
   m_SourcePrefab: {fileID: 100100000, guid: 92a311c8fc2743f4aaced89dd8b2cbb8, type: 3}
 --- !u!4 &1526903281 stripped
 Transform:
@@ -22446,7 +22401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1526903308
+--- !u!114 &1526903313
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -22460,7 +22415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1526903309
+--- !u!114 &1526903314
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -22477,8 +22432,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 6:2'
+  currentArea: TABLEAU
 --- !u!1 &1527185008
 GameObject:
   m_ObjectHideFlags: 0
@@ -22883,10 +22838,10 @@ PrefabInstance:
       addedObject: {fileID: 1555240073}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 099cd3dc15c77bb4e9a48417f39bcb5d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1555240075}
+      addedObject: {fileID: 1555240080}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 099cd3dc15c77bb4e9a48417f39bcb5d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1555240074}
+      addedObject: {fileID: 1555240079}
   m_SourcePrefab: {fileID: 100100000, guid: 099cd3dc15c77bb4e9a48417f39bcb5d, type: 3}
 --- !u!4 &1555240048 stripped
 Transform:
@@ -23047,7 +23002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1555240074
+--- !u!114 &1555240079
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -23061,7 +23016,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1555240075
+--- !u!114 &1555240080
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -23078,8 +23033,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 5:0'
+  currentArea: TABLEAU
 --- !u!1001 &1567870036
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23174,10 +23129,10 @@ PrefabInstance:
       addedObject: {fileID: 1567870062}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 42d9683f37b39d64a820685238edd1b9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1567870064}
+      addedObject: {fileID: 1567870069}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 42d9683f37b39d64a820685238edd1b9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1567870063}
+      addedObject: {fileID: 1567870068}
   m_SourcePrefab: {fileID: 100100000, guid: 42d9683f37b39d64a820685238edd1b9, type: 3}
 --- !u!4 &1567870037 stripped
 Transform:
@@ -23338,7 +23293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1567870063
+--- !u!114 &1567870068
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -23352,7 +23307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1567870064
+--- !u!114 &1567870069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -23369,8 +23324,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 6:6'
+  currentArea: TABLEAU
 --- !u!1 &1581969512
 GameObject:
   m_ObjectHideFlags: 0
@@ -24014,10 +23969,10 @@ PrefabInstance:
       addedObject: {fileID: 1594161088}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 94b3e4ca7e908d64c8c6fe206a44c626, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1594161090}
+      addedObject: {fileID: 1594161095}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 94b3e4ca7e908d64c8c6fe206a44c626, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1594161089}
+      addedObject: {fileID: 1594161094}
   m_SourcePrefab: {fileID: 100100000, guid: 94b3e4ca7e908d64c8c6fe206a44c626, type: 3}
 --- !u!4 &1594161063 stripped
 Transform:
@@ -24178,7 +24133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1594161089
+--- !u!114 &1594161094
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24192,7 +24147,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1594161090
+--- !u!114 &1594161095
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24209,8 +24164,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 13:-1'
+  currentArea: STOCK
 --- !u!1 &1598343001
 GameObject:
   m_ObjectHideFlags: 0
@@ -24511,10 +24466,10 @@ PrefabInstance:
       addedObject: {fileID: 1598995008}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0b6551beb18443e49bcd0dd78d38cc1d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1598995010}
+      addedObject: {fileID: 1598995015}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0b6551beb18443e49bcd0dd78d38cc1d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1598995009}
+      addedObject: {fileID: 1598995014}
   m_SourcePrefab: {fileID: 100100000, guid: 0b6551beb18443e49bcd0dd78d38cc1d, type: 3}
 --- !u!4 &1598994983 stripped
 Transform:
@@ -24675,7 +24630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1598995009
+--- !u!114 &1598995014
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24689,7 +24644,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1598995010
+--- !u!114 &1598995015
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24706,8 +24661,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 4:2'
+  currentArea: TABLEAU
 --- !u!1 &1628313406
 GameObject:
   m_ObjectHideFlags: 0
@@ -25042,10 +24997,10 @@ PrefabInstance:
       addedObject: {fileID: 1645461155}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8e310b06e358f5e4e9bced172359bd97, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1645461157}
+      addedObject: {fileID: 1645461162}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8e310b06e358f5e4e9bced172359bd97, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1645461156}
+      addedObject: {fileID: 1645461161}
   m_SourcePrefab: {fileID: 100100000, guid: 8e310b06e358f5e4e9bced172359bd97, type: 3}
 --- !u!4 &1645461130 stripped
 Transform:
@@ -25206,7 +25161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1645461156
+--- !u!114 &1645461161
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -25220,7 +25175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1645461157
+--- !u!114 &1645461162
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -25237,8 +25192,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 19:-1'
+  currentArea: STOCK
 --- !u!114 &1646144999 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114365659733525308, guid: ad152f08ed7eb6e4abd93376a0203e38, type: 3}
@@ -25557,7 +25512,6 @@ RectTransform:
   - {fileID: 1283920303}
   - {fileID: 597944627}
   - {fileID: 1323156392}
-  - {fileID: 1192744119}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -26157,10 +26111,10 @@ PrefabInstance:
       addedObject: {fileID: 1754357896}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 26b315e3d1b87c64d9064f9d8e82d2f8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1754357898}
+      addedObject: {fileID: 1754357903}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 26b315e3d1b87c64d9064f9d8e82d2f8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1754357897}
+      addedObject: {fileID: 1754357902}
   m_SourcePrefab: {fileID: 100100000, guid: 26b315e3d1b87c64d9064f9d8e82d2f8, type: 3}
 --- !u!4 &1754357870 stripped
 Transform:
@@ -26321,7 +26275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1754357897
+--- !u!114 &1754357902
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -26335,7 +26289,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1754357898
+--- !u!114 &1754357903
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -26352,8 +26306,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 21:-1'
+  currentArea: STOCK
 --- !u!1 &1764591558
 GameObject:
   m_ObjectHideFlags: 0
@@ -26928,10 +26882,10 @@ PrefabInstance:
       addedObject: {fileID: 1835351014}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 43f1c6d7797ab2441beea728283fdc89, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1835351016}
+      addedObject: {fileID: 1835351021}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 43f1c6d7797ab2441beea728283fdc89, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1835351015}
+      addedObject: {fileID: 1835351020}
   m_SourcePrefab: {fileID: 100100000, guid: 43f1c6d7797ab2441beea728283fdc89, type: 3}
 --- !u!4 &1835350989 stripped
 Transform:
@@ -27092,7 +27046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1835351015
+--- !u!114 &1835351020
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -27106,7 +27060,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1835351016
+--- !u!114 &1835351021
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -27123,8 +27077,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 6:4'
+  currentArea: TABLEAU
 --- !u!1001 &1836636463
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27219,10 +27173,10 @@ PrefabInstance:
       addedObject: {fileID: 1836636488}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5766abc6b41cbcf48a6e63979d59efc0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1836636490}
+      addedObject: {fileID: 1836636495}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5766abc6b41cbcf48a6e63979d59efc0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1836636489}
+      addedObject: {fileID: 1836636494}
   m_SourcePrefab: {fileID: 100100000, guid: 5766abc6b41cbcf48a6e63979d59efc0, type: 3}
 --- !u!4 &1836636464 stripped
 Transform:
@@ -27383,7 +27337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1836636489
+--- !u!114 &1836636494
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -27397,7 +27351,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1836636490
+--- !u!114 &1836636495
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -27414,8 +27368,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 5:5'
+  currentArea: TABLEAU
 --- !u!1 &1855002240
 GameObject:
   m_ObjectHideFlags: 0
@@ -27590,10 +27544,10 @@ PrefabInstance:
       addedObject: {fileID: 1863130773}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 07e5d72d934c29a44ab2a301d8bcfd49, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1863130775}
+      addedObject: {fileID: 1863130780}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 07e5d72d934c29a44ab2a301d8bcfd49, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1863130774}
+      addedObject: {fileID: 1863130779}
   m_SourcePrefab: {fileID: 100100000, guid: 07e5d72d934c29a44ab2a301d8bcfd49, type: 3}
 --- !u!4 &1863130749 stripped
 Transform:
@@ -27754,7 +27708,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1863130774
+--- !u!114 &1863130779
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -27768,7 +27722,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1863130775
+--- !u!114 &1863130780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -27785,8 +27739,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 15:-1'
+  currentArea: STOCK
 --- !u!1 &1871110754
 GameObject:
   m_ObjectHideFlags: 0
@@ -28019,10 +27973,10 @@ PrefabInstance:
       addedObject: {fileID: 1895137745}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d2102e43cbb6b1c4381adeed6630f8f3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1895137747}
+      addedObject: {fileID: 1895137752}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d2102e43cbb6b1c4381adeed6630f8f3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1895137746}
+      addedObject: {fileID: 1895137751}
   m_SourcePrefab: {fileID: 100100000, guid: d2102e43cbb6b1c4381adeed6630f8f3, type: 3}
 --- !u!4 &1895137720 stripped
 Transform:
@@ -28183,7 +28137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1895137746
+--- !u!114 &1895137751
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28197,7 +28151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1895137747
+--- !u!114 &1895137752
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28214,8 +28168,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 2:0'
+  currentArea: TABLEAU
 --- !u!1 &1905788447
 GameObject:
   m_ObjectHideFlags: 0
@@ -28644,10 +28598,10 @@ PrefabInstance:
       addedObject: {fileID: 1959831591}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b02500d646ddb17418dba20e06da9910, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1959831593}
+      addedObject: {fileID: 1959831598}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b02500d646ddb17418dba20e06da9910, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1959831592}
+      addedObject: {fileID: 1959831597}
   m_SourcePrefab: {fileID: 100100000, guid: b02500d646ddb17418dba20e06da9910, type: 3}
 --- !u!4 &1959831567 stripped
 Transform:
@@ -28808,7 +28762,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1959831592
+--- !u!114 &1959831597
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28822,7 +28776,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1959831593
+--- !u!114 &1959831598
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28839,8 +28793,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 4:1'
+  currentArea: TABLEAU
 --- !u!1 &1964221556
 GameObject:
   m_ObjectHideFlags: 0
@@ -29102,10 +29056,10 @@ PrefabInstance:
       addedObject: {fileID: 1976750638}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 00127ce9532c0344e96cefafbf78de58, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1976750640}
+      addedObject: {fileID: 1976750645}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 00127ce9532c0344e96cefafbf78de58, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1976750639}
+      addedObject: {fileID: 1976750644}
   m_SourcePrefab: {fileID: 100100000, guid: 00127ce9532c0344e96cefafbf78de58, type: 3}
 --- !u!4 &1976750613 stripped
 Transform:
@@ -29266,7 +29220,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1976750639
+--- !u!114 &1976750644
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29280,7 +29234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1976750640
+--- !u!114 &1976750645
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29297,8 +29251,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 17:-1'
+  currentArea: STOCK
 --- !u!1001 &1988696926
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29393,10 +29347,10 @@ PrefabInstance:
       addedObject: {fileID: 1988696952}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6f61234472df68c40b210a703b29370a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1988696954}
+      addedObject: {fileID: 1988696959}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6f61234472df68c40b210a703b29370a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1988696953}
+      addedObject: {fileID: 1988696958}
   m_SourcePrefab: {fileID: 100100000, guid: 6f61234472df68c40b210a703b29370a, type: 3}
 --- !u!4 &1988696927 stripped
 Transform:
@@ -29557,7 +29511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1988696953
+--- !u!114 &1988696958
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29571,7 +29525,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &1988696954
+--- !u!114 &1988696959
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29588,8 +29542,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 2:1'
+  currentArea: TABLEAU
 --- !u!1 &2015885370
 GameObject:
   m_ObjectHideFlags: 0
@@ -29857,10 +29811,10 @@ PrefabInstance:
       addedObject: {fileID: 2016249962}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 890316312281c464cba73ba9e8133a58, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2016249964}
+      addedObject: {fileID: 2016249969}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 890316312281c464cba73ba9e8133a58, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2016249963}
+      addedObject: {fileID: 2016249968}
   m_SourcePrefab: {fileID: 100100000, guid: 890316312281c464cba73ba9e8133a58, type: 3}
 --- !u!4 &2016249937 stripped
 Transform:
@@ -30021,7 +29975,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2016249963
+--- !u!114 &2016249968
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -30035,7 +29989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &2016249964
+--- !u!114 &2016249969
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -30052,8 +30006,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 5:3'
+  currentArea: TABLEAU
 --- !u!1001 &2020622384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30148,10 +30102,10 @@ PrefabInstance:
       addedObject: {fileID: 2020622409}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c48f998c23fcfc240950d7a8a071de6a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2020622411}
+      addedObject: {fileID: 2020622416}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c48f998c23fcfc240950d7a8a071de6a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2020622410}
+      addedObject: {fileID: 2020622415}
   m_SourcePrefab: {fileID: 100100000, guid: c48f998c23fcfc240950d7a8a071de6a, type: 3}
 --- !u!4 &2020622385 stripped
 Transform:
@@ -30312,7 +30266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2020622410
+--- !u!114 &2020622415
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -30326,7 +30280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &2020622411
+--- !u!114 &2020622416
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -30343,8 +30297,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: STOCK 37:-1'
+  currentArea: STOCK
 --- !u!1 &2070559575
 GameObject:
   m_ObjectHideFlags: 0
@@ -31001,10 +30955,10 @@ PrefabInstance:
       addedObject: {fileID: 2141593249}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ade9bc751764f4a4d8f56b6d1d296bc6, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2141593251}
+      addedObject: {fileID: 2141593256}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ade9bc751764f4a4d8f56b6d1d296bc6, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2141593250}
+      addedObject: {fileID: 2141593255}
   m_SourcePrefab: {fileID: 100100000, guid: ade9bc751764f4a4d8f56b6d1d296bc6, type: 3}
 --- !u!4 &2141593224 stripped
 Transform:
@@ -31165,7 +31119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669f94dd1fce9b24b80a7cc5da8f1f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2141593250
+--- !u!114 &2141593255
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -31179,7 +31133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Raycaster: {fileID: 0}
   click_impulse_force: 0.15
---- !u!114 &2141593251
+--- !u!114 &2141593256
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -31196,8 +31150,8 @@ MonoBehaviour:
   winchSpeed: 0.1
   maxDistance: 0.5
   minDistance: 0.001
-  currentSpot: 
-  currentArea: 
+  currentSpot: 'PlayfieldSpot: TABLEAU 3:3'
+  currentArea: TABLEAU
 --- !u!1 &1004637982714735
 GameObject:
   m_ObjectHideFlags: 0

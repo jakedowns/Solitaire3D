@@ -29,6 +29,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public float minDistance = 0.001f;
         private GameObject myAnchorGameObject;
 
+        [Unity.Collections.ReadOnly]
+        public string currentSpot = "";
+
+        [Unity.Collections.ReadOnly]
+        public string currentArea = "";
+
         public Color currentColor { get; private set; }
 
         public const float LONG_PRESS_DURATION = 0.5f;
@@ -46,9 +52,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         void Start()
         {
-            rigidBody = GetComponent<Rigidbody>();
+            /*rigidBody = GetComponent<Rigidbody>();
             rigidBody.useGravity = false;
-            rigidBody.isKinematic = false;
+            rigidBody.isKinematic = false;*/
             //rigidBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
             DestroySprings();
@@ -71,6 +77,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 m_MeshRenderer.material.color = color;
         }
 
+        public void SetDebugSpotName(string name)
+        {
+            this.currentSpot = name;
+        }
+
+        public void SetDebugAreaName(string name)
+        {
+            this.currentArea = name;
+        }
+
         /**
         * NewSpringJoint
         * @param GameObject objA - the object that will be moved
@@ -80,7 +96,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         //     // create a new SpringJoint component
 
         //     SpringJoint springJoint = objA.AddComponent<SpringJoint>();
-            
+
 
         //     // set the connected body and anchor position
         //     //springJoint.connectedBody = rigidBody;

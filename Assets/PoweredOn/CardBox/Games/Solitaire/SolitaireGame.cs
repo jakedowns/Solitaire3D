@@ -13,6 +13,7 @@ using Unity.Jobs;
 using UnityEngine.Assertions;
 using UnityEngine.SocialPlatforms.Impl;
 using PoweredOn.Managers;
+using Assets;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -22,6 +23,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // TODO: maybe Move to GameManager.Instance.Dealer.Deck
         // or GameManager.Instance.DeckManager.Deck
         private SolitaireDeck _deck;
+
+        public ScoreKeeper scoreKeeper = new ScoreKeeper();
 
         bool _isDealing = false;
         public bool MovingStockToWaste { get; internal set; } = false;
@@ -127,7 +130,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // OR: they could be moved to SolitairePlayfield.cs
         // OR: they could be moved to SolitaireDealer.cs
         public const float TAB_SPACING = 0.1f;
-        const float RANDOM_AMPLITUDE = 1f;
+        const float RANDOM_AMPLITUDE = 0.5f;
         public const float CARD_THICKNESS = 0.001f;
         public const float TAB_VERT_OFFSET = 0.02f;
 
@@ -152,8 +155,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         //public DebugOutput m_DebugOutput;
 
-        int m_Moves = 0;
-        int score = 0;
+        //int m_Moves = 0;
+        //int score = 0;
         public SolitaireGame(){}
 
         /* this is the state where auto-complete should become available to the user */
@@ -303,9 +306,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             dealtOrder = new List<SuitRank>();
 
-            // reset move count / log
-            m_Moves = 0;
-            score = 0;
             moveLog = new SolitaireMoveList();
 
             // BuildStock
@@ -321,7 +321,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
             BuildTableaus();
             BuildDeck();
 
-            JointManager.Instance.Reset();
+            scoreKeeper.Reset();
+
+            if (JointManager.Instance != null)
+            {
+                JointManager.Instance.Reset();
+            }
         }
 
         public void ToggleAutoPlace()
@@ -386,17 +391,19 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // TODO: put this in a dealer class
         public async void Deal()
         {
-            bool KEEP_ACES_AT_TOP_OF_STOCK = true;
+            bool KEEP_ACES_AT_TOP_OF_STOCK = false; // true;
 
             NewGame();
 
             // first, we want to collect all the cards into a stack
             deck.CollectCardsToDeck();
 
+            // todo: only delay as long as it will take for the cards to return to the deck
+            // if they're already in the deck pile, no delay is necessary
             await Task.Delay(1000);
 
-            // let's shuffle the card order 3 times (todo: artifically delay and animate this)
-            deck.Shuffle(10);
+            // shuffle the deck (todo: artifically delay and animate this)
+            deck.Shuffle();
 
             // Flag for Move Validator
             _isDealing = true;
@@ -417,9 +424,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 {*/
                 SolitaireCard card = deck.GetCardBySuitRank(deck.deckOrderList[initial_loop_index]);
                 //MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index), false);
-                deck.RemoveCardFromDeck(card.GetSuitRank());
-                stockCardPile.Add(card.GetSuitRank());
-                card.SetPlayfieldSpot(new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index));
+                //deck.RemoveCardFromDeck(card.GetSuitRank());
+                //stockCardPile.Add(card.GetSuitRank());
+                //card.SetPlayfieldSpot(new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index));
                 /*}
                 catch (Exception e)
                 {
@@ -449,7 +456,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             Debug.LogWarning("---------------");
             
-            if (deck.DeckCardPile.Count != 0)
+            /*if (deck.DeckCardPile.Count != 0)
             {
                 throw new Exception($"[DEAL] invalid deck card count after dealing. no cards should be in the deck list");
             }
@@ -457,7 +464,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             if (stockCardPile.Count != 52)
             {
                 throw new Exception($"[DEAL] invalid stock card count after shuffling and moving from deck to stockCards list {stockCardPile.Count}");
-            }
+            }*/
 
             /* Deal 28 cards */
 
@@ -472,7 +479,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
 
                     // Get the next card from the stock pile and deal it
-                    SuitRank suitRankToDeal = stockCardPile[0];
+                    SuitRank suitRankToDeal = deck.DeckCardPile[0];
 
                     SolitaireCard card = deck.GetCardBySuitRank(suitRankToDeal);
 
@@ -500,7 +507,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             if (dealtOrder.Count != 28)
             {
-                throw new Exception($"[DEAL] invalid dealtOrder count after moving cards from stock to tableau {stockCardPile.Count}");
+                throw new Exception($"[DEAL] invalid dealtOrder count after moving cards from stock to tableau {dealtOrder.Count}");
             }
 
             Debug.LogWarning("--------------- tableau cards set -------");
@@ -509,9 +516,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // remember to offset the local Z position a bit to make the cards appear as tho they're stacked on top of each other.
             // the last card should be the lowest z-position (same z as the stock pile guide object) and then each card up to the 0th should be the highest
             // so we should loop backwards through the remaining Stock when setting the positions
-            if (stockCardPile.Count != 24)
+            if (deck.DeckCardPile.Count != 24)
             {
-                throw new Exception($"[DEAL] invalid stock card count after moving cards from stock to tableau {stockCardPile.Count}");
+                throw new Exception($"[DEAL] invalid stock card count after moving cards from stock to tableau {deck.DeckCardPile.Count}");
             }
 
             float deal_delay = 0.1f * dealtOrder.Count;
@@ -522,12 +529,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             // Loop over ALL stock cards and set goal
-            //for (int sc2 = stockCardPile.Count-1; sc2 >= 0; sc2--)
-            for (int sc2 = 0; sc2 < stockCardPile.Count; sc2++)
+            //for (int sc2 = deck.DeckCardPile.Count-1; sc2 >= 0; sc2--)
+            for (int sc2 = 0; sc2 < deck.DeckCardPile.Count; sc2++)
             {
-                //Debug.LogWarning("SC2: " + stockCardPile.Count + " " + sc2); //
-                SolitaireCard card = deck.GetCardBySuitRank(stockCardPile[sc2]);
-                float delay = deal_delay + (0.025f * (sc2));
+                //Debug.LogWarning("SC2: " + deck.DeckCardPile.Count + " " + sc2); //
+                SolitaireCard card = deck.GetCardBySuitRank(deck.DeckCardPile[sc2]);
+                float delay = 0.0f; // deal_delay + (0.025f * (sc2));
 
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
                 /* always face down when adding to stock */
@@ -648,8 +655,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 try
                 {
                     RemoveCardFromCurrentPlayfieldSpot(card);
-
-                    JointManager.Instance.RemoveJointsToCard(card); // remove upstream joints, keep downstream joints
+                    if (!GameManager.Instance.GoalAnimationSystemEnabled)
+                    {
+                        JointManager.Instance.RemoveJointsToCard(card); // remove upstream joints, keep downstream joints
+                    }
                 }
                 catch (Exception e)
                 {
@@ -663,6 +672,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 TODO: fix it so we can reference game objects in Editor mode when running tests
                 for now we just conditionally reference the game object
              */
+            const float playfield_offset = -0.05f;
             GameObject cardGO = card.gameObject;
             GoalIdentity goalID = null;
             Transform cardTX;
@@ -686,7 +696,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // like stockCardPile.GetGoalIDAsCard(card) // returns the proper goal for the card based on it's position in the pile
                     if (goalID != null && stockCardPile.gameObject != null)
                     {
-                        Vector3 offset = new(0, 0, (-0.1f) + (stockCardPile.Count * -CARD_THICKNESS));
+                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * -CARD_THICKNESS));
                         goalID = new GoalIdentity(card.gameObject, stockCardPile.gameObject, offset);
                     }
                     break;
@@ -699,7 +709,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         /*gPos = wasteCardPile.gameObject.transform.TransformPoint(Vector3.forward * (wasteCardPile.Count * -CARD_THICKNESS));
                         goalID.position = gPos;*/
 
-                        Vector3 offset = new(0, 0, -0.1f + (wasteCardPile.Count * -CARD_THICKNESS));
+                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * CARD_THICKNESS));
                         goalID = new GoalIdentity(card.gameObject, wasteCardPile.gameObject, offset);
 
                     }
@@ -715,7 +725,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         goalID = new GoalIdentity(card.gameObject, baseGO, new Vector3(
                             0,
                             0,
-                            -0.1f + (foundationCardPileGroup[spot.index].Count * -CARD_THICKNESS)
+                            playfield_offset + (foundationCardPileGroup[spot.index].Count * -CARD_THICKNESS)
                         ));
                     }
                     break;
@@ -732,7 +742,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         goalID = new GoalIdentity(card.gameObject, tableauCardPileGroup[spot.index].gameObject, new Vector3(
                             0,
                             (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET,
-                            -0.1f + (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS
+                            playfield_offset + (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS
                         ));
                     }
                     break;
@@ -745,7 +755,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     //var hand = GetGameObjectByType(SolitaireGameObject.Hand_Base);
                     if (goalID != null && card.gameObject != null && handCardPile.gameObject != null)
                     {
-                        goalID = new GoalIdentity(card.gameObject, handCardPile.gameObject, new Vector3(0.0f, -1.0f, 0.0f));
+                        goalID = new GoalIdentity(card.gameObject, handCardPile.gameObject, new Vector3(0.0f, 0.0f, playfield_offset * spot.index * -CARD_THICKNESS));
                     }
                     break;
 
@@ -756,7 +766,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     {
                         GameObject offsetGameObject = GetGameObjectByType(SolitaireDeck.offsetGameObjectType);
                         //Debug.LogWarning($"offsetGameObject: {offsetGameObject.transform.position}");
-                        goalID = new GoalIdentity(card.gameObject, offsetGameObject, new Vector3(0.0f, 0.0f, (CARD_THICKNESS * (52 - spot.index))));
+                        goalID = new GoalIdentity(card.gameObject, offsetGameObject, new Vector3(0.0f, 0.0f, (CARD_THICKNESS * spot.index))); // (52 - spot.index)
                     }
                     break;
             }
@@ -776,16 +786,18 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // our previous system was goal-id based
             // our new system is attempting to use SpringJoint based goals
             // todo: hybridize the two systems
-            JointManager.Instance.UpdateJointsForCard(card, delay);
+            if (!GameManager.Instance.GoalAnimationSystemEnabled) { 
+                JointManager.Instance.UpdateJointsForCard(card, delay);
+            }
 
             // initiate ripple effect
-            // if (!deck.IsCollectingCardsToDeck)
-            // {
-            //     /*if (spot.area == PlayfieldArea.TABLEAU || spot.area == PlayfieldArea.FOUNDATION)
-            //     {*/
-            //         GameManager.Instance.StartCoroutine(RippleForGoalID(goalID, goalID.delayStart + DebugOutput.Instance.ripple_delay_before_placement_ripple));
-            //     //}
-            // }
+             if (!deck.IsCollectingCardsToDeck)
+             {
+                 /*if (spot.area == PlayfieldArea.TABLEAU || spot.area == PlayfieldArea.FOUNDATION)
+                 {*/
+                     GameManager.Instance.StartCoroutine(RippleForGoalID(goalID, goalID.delayStart + DebugOutput.Instance.ripple_delay_before_placement_ripple));
+                 //}
+            }
         }
 
         public IEnumerator RippleForGoalID(GoalIdentity goalID, float delay)
@@ -1121,7 +1133,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             string textBlock = "Debug Output";
 
-            textBlock += $"\n score: {score}";
+            textBlock += $"\n score: {scoreKeeper.score}";
 
             textBlock += $"\n IsInFinalStage: {IsInFinalStage}";
 
@@ -1129,7 +1141,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // TODO: IsOutOfUnattemptedValidMoves
 
-            textBlock += $"\n Move count {m_Moves}";
+            textBlock += $"\n Move count {scoreKeeper.moves}";
 
             if (stockCardPile != null)
             {
@@ -1164,8 +1176,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
-            textBlock += "\n ---------------------";
-            textBlock += $"\n {JointManager.Instance.GetDebugText()}";
+            if (!GameManager.Instance.GoalAnimationSystemEnabled)
+            {
+                textBlock += "\n ---------------------";
+                textBlock += $"\n {JointManager.Instance.GetDebugText()}";
+            }
 
             return textBlock;
         }
@@ -1306,9 +1321,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             if (isValid)
             {
-                m_Moves++;
                 // move it valid, execute it
                 bool faceUp = true;
+
+                scoreKeeper.RecordMove(move);
 
                 int substackIndex = 0;
                 //SolitaireCard first_card = deck.GetCardBySuitRank(handCardPile.First());
@@ -1338,6 +1354,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     SolitaireCard topMostCard = tPile.GetTopCard();
                     if (!topMostCard.IsFaceUp)
                     {
+                        scoreKeeper.RecordTableauCardFlipped();
                         FlipCardFaceUp(topMostCard);
                     }
                 }
@@ -1434,6 +1451,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 if (card.IsFaceUp)
                 {
+                    scoreKeeper.RecordMove(new SolitaireMove(card, card.playfieldSpot, next_spot));
                     PlayingCardIDList subStackCards 
                         =   card.playfieldSpot.area == PlayfieldArea.TABLEAU 
                             && next_spot.area == PlayfieldArea.TABLEAU
@@ -1490,6 +1508,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void WasteToStock()
         {
             Debug.Log("[WasteToStock]");
+            scoreKeeper.RecordWasteToStockRecycle();
             // Flag Op Start (for move validation)
             IsRecyclingWasteToStock = true;
             

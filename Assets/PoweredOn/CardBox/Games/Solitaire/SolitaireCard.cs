@@ -105,6 +105,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
             //Debug.Log($"card set playfield spot: {this} {spot}");
             base.SetPlayfieldSpot(spot);
 
+            this.monoCard.SetDebugSpotName(spot.ToString());
+            this.monoCard.SetDebugAreaName(spot.area.ToString());
+
             Managers.GameManager.Instance.game.RecolorCard(this);
         }
     }

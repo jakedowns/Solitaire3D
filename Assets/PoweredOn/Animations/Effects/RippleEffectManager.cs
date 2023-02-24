@@ -222,7 +222,7 @@ namespace PoweredOn.Animations.Effects
 
         public Guid NewRippleEffect(Vector3 origin)
         {
-            return Guid.NewGuid(); // TODO: bring this back
+            //return Guid.NewGuid(); // TODO: bring this back
             if (DebugOutput.Instance.ripple_clear_before)
             {
                 effectsList.Clear();
@@ -274,3 +274,4 @@ namespace PoweredOn.Animations.Effects
         }
     }
 }
+    

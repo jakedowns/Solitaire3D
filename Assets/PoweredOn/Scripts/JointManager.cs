@@ -86,6 +86,11 @@ namespace PoweredOn.Managers {
 
         public void Enable()
         {
+            if (GameManager.Instance && GameManager.Instance.GoalAnimationSystemEnabled)
+            {
+                // ignore if the joint system is disabled
+                return;
+            }
             // === per-pile "vertical" chains ===
 
             pileJointChains = new List<JointChain>();
