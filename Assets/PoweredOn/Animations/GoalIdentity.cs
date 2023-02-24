@@ -13,6 +13,7 @@ namespace PoweredOn.CardBox.Animations
     {
         public float delaySetAt;
         public float delayStart;
+        private bool _instant;
         private Vector3 _position;
         private Quaternion _rotation;
         private Vector3 _scale;
@@ -151,6 +152,16 @@ namespace PoweredOn.CardBox.Animations
             delaySetAt = Time.realtimeSinceStartup;
             delayStart = delay;
         }
+
+        internal void SetInstant(bool instant)
+        {
+            _instant = instant;
+        }
+        public bool IsInstant
+        {
+           get {
+                return _instant;
+           }
+        }
     }
-    
 }
