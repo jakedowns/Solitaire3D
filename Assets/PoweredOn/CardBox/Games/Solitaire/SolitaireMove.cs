@@ -12,6 +12,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
     public enum SolitaireMoveTypeScores
     {
+        // via https://australiancardgames.com.au/solitaire/
         STOCK_TO_WASTE = 5,
         WASTE_TO_STOCK = 5, // not actually what we award player, but we use this to rank the moves in the AutoSuggestor
         
@@ -155,12 +156,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // try getting the value using the string
             if(Enum.TryParse<SolitaireMoveTypeScores>(moveType, out SolitaireMoveTypeScores result))
             {
-                //UnityEngine.Debug.Log("reversed move to value " + (int)result);
+                UnityEngine.Debug.Log($"reversed move {moveType} to value " + (int)result);
                 return (int)result;
             }
             else
             {
-                UnityEngine.Debug.Log("failed to reverse move to value");
+                UnityEngine.Debug.Log($"failed to locate value for moveType: {moveType}");
             }
 
             return 0;

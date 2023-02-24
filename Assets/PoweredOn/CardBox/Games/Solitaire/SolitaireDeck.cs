@@ -224,6 +224,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
+        public void SetDeckOrderList(List<SuitRank> suitRankList)
+        {
+            this.deckOrderList = new PlayingCardIDList(suitRankList);
+            this.deckCardPile = new DeckCardPile(this.deckOrderList);
+        }
+
         public SuitRank GetCardIDByIndex(int index)
         {
             return this.deckOrderList.ElementAtOrDefault(index);
@@ -419,7 +425,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             _isCollectingCardsToDeck = true;
             
             // get the deck's "offset" world position
-            GameObject go = this.game.GetGameObjectByType(SolitaireDeck.offsetGameObjectType);
+            GameObject go = game.GetGameObjectByType(SolitaireDeck.offsetGameObjectType);
             if(go == null)
             {
                 Debug.LogWarning("Solitaire Deck has no game object?");

@@ -37,7 +37,15 @@ public class GameManagerGui : Editor
         }
         if (GUILayout.Button("ReInitialize"))
         {
-            myScript.MyInit();
+            myScript.MyInit(true);
+        }
+        if (GUILayout.Button("New Game"))
+        {
+            myScript.NewGame();
+        }
+        if (GUILayout.Button("Restart Game"))
+        {
+            myScript.RestartGame();
         }
         if (GUILayout.Button("Randomize"))
         {

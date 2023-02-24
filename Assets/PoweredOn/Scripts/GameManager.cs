@@ -41,6 +41,7 @@ namespace PoweredOn.Managers
             } 
         }
 
+        public DataStore dataStore { get; private set; } = new DataStore();
         public MonoSolitaireDeck monoDeck;
         public bool nrealModeEnabled = false;
         Camera mainCamera;
@@ -158,6 +159,7 @@ namespace PoweredOn.Managers
             //EnableNrealMode();
             //DisableNrealMode();
 
+            // TODO: support Landscape when NReal Mode is disabled
             /*Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
             Screen.autorotateToLandscapeLeft = true;
@@ -169,6 +171,15 @@ namespace PoweredOn.Managers
                 Debug.LogWarning("GameManager [Start] DebugOutput.Instance is still null.");
             }
             MyInit();
+            if (dataStore.LoadData())
+            {
+                // apply the decoded gamestate
+                game.LoadState(dataStore.userData);
+            }
+            else
+            {
+                game.Deal();
+            }
         }
 
         public void ToggleMenu()
@@ -176,6 +187,17 @@ namespace PoweredOn.Managers
             if(menuGroup != null)
             {
                 menuGroup.SetActive(!menuGroup.activeSelf);
+                if (menuGroup.activeSelf)
+                {
+                    menuGroup.transform.position = Vector3.zero;
+                }
+            }
+        }
+        public void ToggleMenu(bool force)
+        {
+            if (menuGroup != null)
+            {
+                menuGroup.SetActive(force);
                 if (menuGroup.activeSelf)
                 {
                     menuGroup.transform.position = Vector3.zero;
@@ -289,16 +311,24 @@ namespace PoweredOn.Managers
             
         }
 
-        public void MyInit()
+        public void NewGameAndDeal()
+        {
+            MyInit(true);
+        }
+
+        public void MyInit(bool deal = false)
         {
             m_animateCardsRoutine = null;
 
             game.NewGame();
 
-            game.Deal();
+            if (deal)
+            {
+                game.Deal();
+            }
 
-            DebugOutput.Instance.ToggleLogVisibility();
-            ToggleMenu();
+            DebugOutput.Instance.ToggleLogVisibility(false);
+            ToggleMenu(false);
 
             RefreshAnimationCoroutine();
         }
@@ -358,7 +388,6 @@ namespace PoweredOn.Managers
             }
             StopAnimationCoroutine();
             m_animateCardsRoutine = AnimateCards();
-            StartCoroutine(m_animateCardsRoutine);
         }
 
         public void AutoPlayNextMove()
@@ -421,6 +450,19 @@ namespace PoweredOn.Managers
                         continue;
                     }
                     Transform cardTX = cardGameObj.transform;
+
+                    // if it's an Instant goal, there's no lerping, 
+                    // todo: maybe only do no-lerp if goalID.HasntBeenMet
+                    /*if(goalID.IsInstant)
+                    {
+                        
+                        Transform cardTx = cardGameObj.transform;
+                        cardTx.position = goalID.position;
+                        //cardTx.position = game.fxManager.ApplyEffectsToPoint(cardTx.position);
+                        cardTx.localRotation = goalID.rotation;
+                        cardTx.localScale = goalID.scale;
+                        continue;
+                    }*/
 
                     // NEW: lerping between a cached "start" position that is cached any time a new GoalID is set
                     // rather than always lerping from the "current" position, which leads to only being able to support "ease-out" easing
@@ -495,6 +537,10 @@ namespace PoweredOn.Managers
                         //cardTx.position = game.fxManager.ApplyEffectsToPoint(cardTx.position);
                         cardTx.localRotation = job.startRotations[i];
                         cardTx.localScale = job.startScales[i];
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"card game object missing {i} {game.deck.cards[i].gameObjectTypeName}");
                     }
                 }
 
@@ -580,6 +626,11 @@ namespace PoweredOn.Managers
         public void NewGame()
         {
             game.NewGame();
+        }
+
+        public void RestartGame()
+        {
+            game.RestartGame();
         }
 
         public void Deal()

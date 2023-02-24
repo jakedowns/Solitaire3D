@@ -67,5 +67,21 @@ namespace PoweredOn.CardBox.PlayingCards
         {
             return Enum.GetName(typeof(Suit), suit) + " " + Enum.GetName(typeof(Rank), rank);
         }
+
+        internal static SuitRank FromInt(int suitRank)
+        {
+            if(suitRank >= 1000)
+            {
+                suitRank -= 1000; // remove extra offset for "face-up-ness" of tableau cards
+            }
+            Suit suit = (Suit)(suitRank / 100);
+            Rank rank = (Rank)(suitRank % 100);
+            return new SuitRank(suit, rank);
+        }
+
+        public static explicit operator int(SuitRank v)
+        {
+            return (int)v.suit * 100 + (int)v.rank;
+        }
     }
 }

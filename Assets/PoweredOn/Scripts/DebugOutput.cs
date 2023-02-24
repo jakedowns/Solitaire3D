@@ -108,6 +108,11 @@ namespace PoweredOn
             gameObject.SetActive(!gameObject.activeSelf);
         }
 
+        public void ToggleLogVisibility(bool force)
+        {
+            gameObject.SetActive(force);   
+        }
+
         public void ClearLog()
         {
             logMessages.Clear();

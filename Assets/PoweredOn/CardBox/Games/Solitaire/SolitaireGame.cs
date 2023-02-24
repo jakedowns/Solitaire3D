@@ -391,7 +391,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // TODO: put this in a dealer class
         public async void Deal()
         {
-            bool KEEP_ACES_AT_TOP_OF_STOCK = false; // true;
+            //bool KEEP_ACES_AT_TOP_OF_STOCK = false; // true;
 
             NewGame();
 
@@ -418,23 +418,23 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // move cards from the deck to the stock pile
             // capture all SuitRanks in the "stockCards" pile to begin with
-            for (int initial_loop_index = 0; initial_loop_index < 52; initial_loop_index++)
+            /*for (int initial_loop_index = 0; initial_loop_index < 52; initial_loop_index++)
             {
-                /*try
-                {*/
+                *//*try
+                {*//*
                 SolitaireCard card = deck.GetCardBySuitRank(deck.deckOrderList[initial_loop_index]);
                 //MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index), false);
                 //deck.RemoveCardFromDeck(card.GetSuitRank());
                 //stockCardPile.Add(card.GetSuitRank());
                 //card.SetPlayfieldSpot(new PlayfieldSpot(PlayfieldArea.STOCK, initial_loop_index));
-                /*}
+                *//*}
                 catch (Exception e)
                 {
                     iDebug.LogError(e.ToString());
-                }*/
-            }
+                }*//*
+            }*/
 
-            List<SuitRank> aceIdList = new List<SuitRank>
+            /*List<SuitRank> aceIdList = new List<SuitRank>
             {
                 new SuitRank(Suit.CLUBS, Rank.ACE),
                 new SuitRank(Suit.DIAMONDS, Rank.ACE),
@@ -452,7 +452,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     stockCardPile.RemoveAt(stockCardPile.IndexOf(aceid)); // remove from current position
                     stockCardPile.Add(aceid); // move to end of list
                 }
-            }
+            }*/
 
             Debug.LogWarning("---------------");
             
@@ -523,11 +523,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             float deal_delay = 0.1f * dealtOrder.Count;
 
-            if (KEEP_ACES_AT_TOP_OF_STOCK)
-            {
-                // pull aces to top of stock
-            }
-
             // Loop over ALL stock cards and set goal
             //for (int sc2 = deck.DeckCardPile.Count-1; sc2 >= 0; sc2--)
             for (int sc2 = 0; sc2 < deck.DeckCardPile.Count; sc2++)
@@ -543,6 +538,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // flag as done
             _isDealing = false;
+
+            GameManager.Instance.dataStore.UpdateAndStore(this);
         }
 
         public void SetCardGoalsToRandomPositions()
@@ -639,11 +636,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         // todo: substackIndex is redundant, we could just read spot.index spot.substackIndex
 
-        public void MoveCardToNewSpot(ref SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f, int substackIndex = 0)
+        public void MoveCardToNewSpot(ref SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f, int substackIndex = 0, bool instant = false)
         {
             if (!IsDealing && !deck.IsCollectingCardsToDeck && DebugOutput.Instance.ripple_on_click)
             {
-                GameManager.Instance.StartCoroutine(RippleForGoalID(card.GetGoalIdentity(),0.0f));
+                //GameManager.Instance.StartCoroutine(RippleForGoalID(card.GetGoalIdentity(),0.0f));
             }
             //if(runningInTestMode) Debug.Log($"MoveCardToNewSpot {card.GetGameObjectName()} from {card.playfieldSpot} to {spot} faceup:{faceUp} delay:{delay}");
             moveLog.Add(new SolitaireMove(card, card.previousPlayfieldSpot, spot, substackIndex));
@@ -709,7 +706,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         /*gPos = wasteCardPile.gameObject.transform.TransformPoint(Vector3.forward * (wasteCardPile.Count * -CARD_THICKNESS));
                         goalID.position = gPos;*/
 
-                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * CARD_THICKNESS));
+                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * -CARD_THICKNESS));
                         goalID = new GoalIdentity(card.gameObject, wasteCardPile.gameObject, offset);
 
                     }
@@ -779,6 +776,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 goalID.rotation = (spot.area == PlayfieldArea.HAND) ? (faceUp ? options[0] : options[1]) : (faceUp ? options[1] : options[0]);
                 goalID.SetUseCustomRotation(true); // use our custom rotation instead of a goalObjects (if applicable) rotation
                 goalID.SetDelay(delay);
+                goalID.SetInstant(instant);
             }
             card.SetGoalIdentity(goalID);
             card.SetPlayfieldSpot(spot);
@@ -791,13 +789,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             // initiate ripple effect
-             if (!deck.IsCollectingCardsToDeck)
-             {
+            if (!deck.IsCollectingCardsToDeck)
+            {
                  /*if (spot.area == PlayfieldArea.TABLEAU || spot.area == PlayfieldArea.FOUNDATION)
                  {*/
-                     GameManager.Instance.StartCoroutine(RippleForGoalID(goalID, goalID.delayStart + DebugOutput.Instance.ripple_delay_before_placement_ripple));
+                     //GameManager.Instance.StartCoroutine(RippleForGoalID(goalID, goalID.delayStart + DebugOutput.Instance.ripple_delay_before_placement_ripple));
                  //}
             }
+
+            GameManager.Instance.dataStore.UpdateData(this); // encode game state as arrays of ints
+            GameManager.Instance.dataStore.StoreData(); // write to disk
         }
 
         public IEnumerator RippleForGoalID(GoalIdentity goalID, float delay)
@@ -805,7 +806,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             if (delay>0) { 
                 yield return new WaitForSeconds(delay);
             }
-            fxManager.NewRippleEffect(goalID.position);
+            //fxManager.NewRippleEffect(goalID.position);
         }
 
         public void RemoveCardFromCurrentPlayfieldSpot(SolitaireCard card)
@@ -1494,6 +1495,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 Debug.LogWarning("StockToWaste");
             }
 
+            scoreKeeper.RecordStockToWaste();
+
             MovingStockToWaste = true;
             
             // TODO: support 3 at a time mode
@@ -1595,6 +1598,174 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void ToggleAutoPlay()
         {
             autoplaying = !autoplaying;
+        }
+
+        internal void LoadState(DataStore.UserData userData)
+        {
+            scoreKeeper.LoadState(userData);
+
+            dealtOrder = new List<SuitRank>();
+            foreach (int suitRank in userData.dealtOrder)
+            {
+                dealtOrder.Add(SuitRank.FromInt(suitRank));
+            }
+
+            stockCardPile = new StockCardPile();
+            foreach (int suitRank in userData.stockCards)
+            {
+                stockCardPile.Add(SuitRank.FromInt(suitRank));
+                SolitaireCard card = deck.GetCardBySuitRank(SuitRank.FromInt(suitRank));
+                MoveCardToNewSpot(ref card, PlayfieldSpot.STOCK, false, 0, 0, true);
+            }
+
+            wasteCardPile = new WasteCardPile();
+            foreach (int suitRank in userData.wasteCards)
+            {
+                wasteCardPile.Add(SuitRank.FromInt(suitRank));
+                SolitaireCard card = deck.GetCardBySuitRank(SuitRank.FromInt(suitRank));
+                MoveCardToNewSpot(ref card, PlayfieldSpot.WASTE, true, 0, 0, true);
+            }
+
+            foundationCardPileGroup = new FoundationCardPileGroup();
+            for (int i = 0; i < 4; i++)
+            {
+                foundationCardPileGroup[i] = new FoundationCardPile(i);
+                int[] loadedList = userData.GetType().GetProperty($"foundation{i + 1}Cards")?.GetValue(userData) as int[] ?? new int[0];
+                foreach (int suitRank in loadedList)
+                {
+                    foundationCardPileGroup[i].Add(SuitRank.FromInt(suitRank));
+                    SolitaireCard card = deck.GetCardBySuitRank(SuitRank.FromInt(suitRank));
+                    MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.FOUNDATION, i), true, 0, 0, true);
+                }
+            }
+
+            tableauCardPileGroup = new TableauCardPileGroup();
+            List<PlayingCardIDList> lists = new List<PlayingCardIDList>(7);
+            for (int i = 0; i < 7; i++)
+            {
+                lists.Add(new PlayingCardIDList());
+                int[] loadedList = userData.GetType().GetProperty($"tableau{i + 1}Cards")?.GetValue(userData) as int[] ?? new int[0];
+                
+                foreach (int suitRank in loadedList)
+                {
+                    lists[i].Add(SuitRank.FromInt(suitRank));
+                    SolitaireCard card = deck.GetCardBySuitRank(SuitRank.FromInt(suitRank));
+                    MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, i), suitRank >= 1000, 0, 0, true);
+                }
+
+                tableauCardPileGroup[i] = new TableauCardPile(lists[i], i);
+            }
+        }
+
+        internal async void RestartGame()
+        {
+            // re-deal without shuffling
+            //bool KEEP_ACES_AT_TOP_OF_STOCK = false; // true;
+
+            // remember previous dealtOrder
+            List<SuitRank> previousDealtOrder = new List<SuitRank>(dealtOrder);
+            // remember previous deckOrder
+            List<SuitRank> previousDeckOrder = new List<SuitRank>(deck.deckOrderList);
+            
+            NewGame();
+
+            // first, we want to collect all the cards into a stack
+            deck.CollectCardsToDeck();
+
+            // todo: only delay as long as it will take for the cards to return to the deck
+            // if they're already in the deck pile, no delay is necessary
+            await Task.Delay(1000);
+
+            // Flag for Move Validator
+            _isDealing = true;
+
+            // re-apply the previous dealtOrder
+            dealtOrder = new List<SuitRank>(previousDealtOrder);
+            // re-apply the previous deckOrder
+            deck.SetDeckOrderList(new List<SuitRank>(previousDeckOrder));
+
+            //await Task.Delay(1000);
+
+            if (deck.cards.Count != 52)
+                throw new Exception($"[DEAL] invalid deck card count after shuffling {deck.cards.Count}");
+
+            if (deck.deckOrderList.Count != 52)
+                throw new Exception($"[DEAL] invalid deck deckOrderList count after shuffling {deck.deckOrderList.Count}");
+
+            /* Deal 28 cards */
+
+            for (int round = 0; round < 7; round++)
+            {
+                for (int pile = 0; pile < 7; pile++)
+                {
+                    // Skip piles before the current round
+                    if (pile < round)
+                    {
+                        continue;
+                    }
+
+                    // Get the next card from the stock pile and deal it
+                    SuitRank suitRankToDeal = deck.DeckCardPile[0];
+
+                    SolitaireCard card = deck.GetCardBySuitRank(suitRankToDeal);
+
+                    bool faceUp = pile == round;
+
+                    dealtOrder.Add(suitRankToDeal);
+
+                    // NOTE: inside this method, we handle adding SuitRank to the proper Tableau list
+                    // we also handle removing it from the previous spot (PlayfieldArea.Stock)
+                    MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.1f * dealtOrder.Count);
+
+                    //iDebug.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
+                    //Debug.LogWarning($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
+
+                    // assert the playfield spot updated
+                    Assert.IsTrue(card.playfieldSpot.area == PlayfieldArea.TABLEAU);
+
+                    // assert the index within the tableau is correct
+                    Assert.IsTrue(card.playfieldSpot.index == pile);
+
+                    // assert the IsFaceUp value is correctly set
+                    Assert.IsTrue(card.IsFaceUp == faceUp);
+                }
+            }
+
+            if (dealtOrder.Count != 28)
+            {
+                throw new Exception($"[DEAL] invalid dealtOrder count after moving cards from stock to tableau {dealtOrder.Count}");
+            }
+
+            Debug.LogWarning("--------------- tableau cards set -------");
+
+            // then, for the remaining cards, update their GoalIdentity to place them where the "Stock" Pile should go
+            // remember to offset the local Z position a bit to make the cards appear as tho they're stacked on top of each other.
+            // the last card should be the lowest z-position (same z as the stock pile guide object) and then each card up to the 0th should be the highest
+            // so we should loop backwards through the remaining Stock when setting the positions
+            if (deck.DeckCardPile.Count != 24)
+            {
+                throw new Exception($"[DEAL] invalid stock card count after moving cards from stock to tableau {deck.DeckCardPile.Count}");
+            }
+
+            float deal_delay = 0.1f * dealtOrder.Count;
+
+            // Loop over ALL stock cards and set goal
+            //for (int sc2 = deck.DeckCardPile.Count-1; sc2 >= 0; sc2--)
+            for (int sc2 = 0; sc2 < deck.DeckCardPile.Count; sc2++)
+            {
+                //Debug.LogWarning("SC2: " + deck.DeckCardPile.Count + " " + sc2); //
+                SolitaireCard card = deck.GetCardBySuitRank(deck.DeckCardPile[sc2]);
+                float delay = 0.0f; // deal_delay + (0.025f * (sc2));
+
+                // NOTE: inside this method we handle adding SuitRank to the stockCards list
+                /* always face down when adding to stock */
+                MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.STOCK, sc2), false, delay);
+            }
+
+            // flag as done
+            _isDealing = false;
+
+            GameManager.Instance.dataStore.UpdateAndStore(this);
         }
     }
 }
