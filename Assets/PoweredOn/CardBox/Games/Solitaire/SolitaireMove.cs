@@ -156,7 +156,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // try getting the value using the string
             if(Enum.TryParse<SolitaireMoveTypeScores>(moveType, out SolitaireMoveTypeScores result))
             {
-                UnityEngine.Debug.Log($"reversed move {moveType} to value " + (int)result);
+                UnityEngine.Debug.Log($"calculated value for move {moveType} : " + (int)result);
                 return (int)result;
             }
             else

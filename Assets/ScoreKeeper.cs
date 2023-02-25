@@ -12,6 +12,7 @@ namespace Assets
 {
     public class ScoreKeeper
     {
+        private int _10_sec_penalty_counter = 0;
         public int score { get; private set; } = 0;
         public int moves { get; private set; } = 0;
         public int time { get; private set; } = 0;
@@ -118,6 +119,14 @@ namespace Assets
         {
             // increase by 1 second
             time++;
+            _10_sec_penalty_counter++;
+            if(_10_sec_penalty_counter >= 10)
+            {
+                // apply 10 second penalty
+                RecordScore((int)SolitaireMoveTypeScores.PENALTY_PER_10_SECONDS_ELAPSED);
+                _10_sec_penalty_counter = 0;
+            }
+            
             scoreDisplay.UpdateText(this);
             if (PoweredOn.Managers.GameManager.Instance == null)
             {
@@ -132,6 +141,11 @@ namespace Assets
             score = 0;
             moves = 0;
             time = 0;
+        }
+
+        internal void CalculateFinalScore()
+        {
+            
         }
     }
 }
