@@ -33,6 +33,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             // do we need to retain / load "dealtOrder" ? (yes for "restart" mechanism (vs. new game))
             public int[] dealtOrder;
+            public int[] deckOrder;
 
             public int[] deckCards;
             public int[] handCards;
@@ -94,6 +95,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             UpdateScoreData(game);
             UpdateDealtOrder(game);
+            UpdateDeckOrder(game);
 
             SolitaireGameState gameState = game.GetGameState();
             UpdateDeckCards(gameState);
@@ -102,6 +104,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
             UpdateWasteCards(gameState);
             UpdateTableauCards(gameState);
             UpdateFoundationCards(gameState);
+        }
+
+        public void UpdateDeckOrder(SolitaireGame game)
+        {
+            var i = 0;
+            userData.deckOrder = new int[game.deck.deckOrderList.Count];
+            foreach (SuitRank id in game.deck.deckOrderList)
+            {
+                userData.deckOrder[i] = (int)id;
+                i++;
+            }
         }
 
         private void UpdateFoundationCards(SolitaireGameState gameState)

@@ -204,7 +204,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // call SetCard on the matching child's cardInteractive component
                     monoCard.SetCard(newCard);
 
-                    // remove an existing click impulse components
+                    // remove any existing click impulse components
                     ClickImpulse[] prevClickImpulses = child.GetComponents<ClickImpulse>();
                     foreach (ClickImpulse prevClickImpulse in prevClickImpulses)
                     {
@@ -212,14 +212,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
 
                     // add a click impulse component
-                    ClickImpulse clickImpulse = child.gameObject.AddComponent(typeof(ClickImpulse)) as ClickImpulse;
+                    /*ClickImpulse clickImpulse = child.gameObject.AddComponent(typeof(ClickImpulse)) as ClickImpulse;
                     // set click_impulse_force to .15
-                    clickImpulse.click_impulse_force = .15f;
+                    clickImpulse.click_impulse_force = .15f;*/
 
                     // link the cardInteractive component to the card
                     // needs to be done AFTER attaching the cardInteractive component to the child
                     // TODO: try to remember why
                     newCard.SetMonoCard(monoCard);
+
+                    newCard.SetGoalIdentity(new GoalIdentity(monoCard.gameObject, GameManager.Instance.game.GetGameObjectByType(SolitaireGameObject.Deck_Offset))); 
                 }
             }
         }
@@ -281,6 +283,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
             
             PlayingCardIDList prevDeckOrderList = deckOrderList.Count > 0 ? deckOrderList : new PlayingCardIDList(DEFAULT_DECK_ORDER);
 
+            // set seed to current epoch time in seconds
+            UnityEngine.Random.InitState((int)System.DateTime.Now.Ticks);
+
             deckOrderList = new PlayingCardIDList(prevDeckOrderList);
             List<ShuffleMove> iteration_log = new List<ShuffleMove>();
             for (int j = 0; j < 52; j++)
@@ -302,7 +307,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 throw new Exception("invalid deckOrderList count after shuffle");
             }
             shuffleLog.Add(iteration_log);
-            
+
+            // update the deckCardPile
+            deckCardPile = new DeckCardPile(deckOrderList);
+
             _isShuffling = false;
         }
 

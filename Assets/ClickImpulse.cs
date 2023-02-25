@@ -86,6 +86,10 @@ public class ClickImpulse : MonoBehaviour
         // apply force when the object is clicked
         if (isClicked)
         {
+            if(rigidBody == null)
+            {
+                return;
+            }
             //rigidBody.AddForce(Vector3.forward * click_impulse_force, ForceMode.Impulse);
 
             // the previous code was applying the force at the center of the card, let's try new code that applies the force based on where the user clicked:

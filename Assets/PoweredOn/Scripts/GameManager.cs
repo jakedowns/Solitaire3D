@@ -48,6 +48,7 @@ namespace PoweredOn.Managers
         Camera nrealCamera;
         public float gmi_id;
         GameObject menuGroup;
+        public bool didLoad { get; private set; } = false;
         public bool GoalAnimationSystemEnabled { get; private set; } = true; // disable to use the "joint" system instead of the goal system
         public Camera TargetWorldCam { get; private set; }
 
@@ -159,6 +160,11 @@ namespace PoweredOn.Managers
             //EnableNrealMode();
             //DisableNrealMode();
 
+            // hide log
+            DebugOutput.Instance.ToggleLogVisibility(false);
+            // hide menu
+            ToggleMenu(false);
+
             // TODO: support Landscape when NReal Mode is disabled
             /*Screen.autorotateToPortrait = true;
             Screen.autorotateToPortraitUpsideDown = false;
@@ -178,8 +184,11 @@ namespace PoweredOn.Managers
             }
             else
             {
+                // deal a fresh game
                 game.Deal();
             }
+
+            didLoad = true;
         }
 
         public void ToggleMenu()
@@ -327,7 +336,7 @@ namespace PoweredOn.Managers
                 game.Deal();
             }
 
-            DebugOutput.Instance.ToggleLogVisibility(false);
+            // hide menu
             ToggleMenu(false);
 
             RefreshAnimationCoroutine();
@@ -335,18 +344,18 @@ namespace PoweredOn.Managers
 
         public void ToggleGoalAnimationSystem()
         {
-            GoalAnimationSystemEnabled = !GoalAnimationSystemEnabled;
-            if (!GoalAnimationSystemEnabled)
+            //GoalAnimationSystemEnabled = !GoalAnimationSystemEnabled;
+            /*if (!GoalAnimationSystemEnabled)
             {
                 JointManager.Instance.Enable();
                 StopAnimationCoroutine();
             }
             else
-            {
+            {*/
                 // clean up joints
-                JointManager.Instance.Disable();
+                //JointManager.Instance.Disable();
                 RefreshAnimationCoroutine();
-            }
+            //}
         }
 
         public void StopAnimationCoroutine()
@@ -388,6 +397,7 @@ namespace PoweredOn.Managers
             }
             StopAnimationCoroutine();
             m_animateCardsRoutine = AnimateCards();
+            StartCoroutine(m_animateCardsRoutine);
         }
 
         public void AutoPlayNextMove()
@@ -444,6 +454,11 @@ namespace PoweredOn.Managers
                     SolitaireCard card = game.deck.cards[i];
                     GoalIdentity goalID = card.GetGoalIdentity();
                     GameObject cardGameObj = card.gameObject;
+                    if(goalID == null)
+                    {
+                        Debug.LogWarning("goalID not found");
+                        continue;
+                    }
                     if(cardGameObj == null)
                     {
                         Debug.LogWarning("cant animate card, gameObject is null");
@@ -529,8 +544,9 @@ namespace PoweredOn.Managers
                 for (int i = 0; i < game.deck.cards.Count; i++)
                 {
                     // NOTE: the lerp function writes back to the startX arrays with the lerped values
-                    GameObject cardGO = game.deck.cards[i].gameObject;
-                    if (cardGO != null)
+                    SolitaireCard card = game.deck.cards[i];
+                    GameObject cardGO = card.gameObject;
+                    if (cardGO != null && card.GetGoalIdentity() != null)
                     {
                         Transform cardTx = cardGO.transform;
                         cardTx.position = job.startPositions[i];
@@ -630,6 +646,8 @@ namespace PoweredOn.Managers
 
         public void RestartGame()
         {
+
+            ToggleMenu(false); // hide menu
             game.RestartGame();
         }
 
@@ -703,7 +721,23 @@ namespace PoweredOn.Managers
                     game.AutoPlayNextMove();
                 }
 
-                game.scoreKeeper.Tick();
+                if (didLoad)
+                {
+                    if(game.IsComplete && game.DidCalculateFinalScore)
+                    {
+                        // do nothing
+                    }
+                    else if (game.IsComplete && !game.DidCalculateFinalScore)
+                    {
+                        game.SetDidCalculateFinalScore(true);
+                        Debug.Log("Game is complete! Calculating final Score");
+                        game.scoreKeeper.CalculateFinalScore();
+                    }
+                    else
+                    {
+                        game.scoreKeeper.Tick();
+                    }
+                }
             }
 
             /*if (Input.GetMouseButtonDown(0))

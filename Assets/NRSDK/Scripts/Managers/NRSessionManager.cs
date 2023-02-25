@@ -455,7 +455,7 @@ namespace NRKernal
         {
             if (SessionState != SessionState.Running || m_IsSessionError)
             {
-                //Debug.LogError(SessionState.ToString());
+                Debug.LogError(SessionState.ToString());
                 return;
             }
 
