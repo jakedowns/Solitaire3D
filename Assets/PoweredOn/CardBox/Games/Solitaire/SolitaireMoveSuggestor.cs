@@ -56,6 +56,37 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
             }
 
+            // filter out any King to empty tableau moves if the tableau it's leaving has all face up cards
+            SolitaireMoveList filteredMoves = new SolitaireMoveList();
+            foreach (var move in movesToRank)
+            {
+                if (
+                    move.Subject.GetRank() == Rank.KING
+                    && move.FromSpot.area == PlayfieldArea.TABLEAU
+                    && move.ToSpot.area == PlayfieldArea.TABLEAU
+                )
+                {
+                    var fromPile = cardPiles[move.FromSpot.index + 1]; // offset by one cause of Waste in array
+                    var toPile = cardPiles[move.ToSpot.index + 1]; // offset by one cause of Waste in array
+                    if(
+                        fromPile.Count == fromPile.GetFaceUpCards().Count
+                        && toPile.Count == toPile.GetFaceUpCards().Count
+                    )
+                    {
+                        Debug.LogWarning("ignoring tableau<->tableau move for king");
+                    }
+                    else
+                    {
+                        // include
+                        filteredMoves.Add(move);
+                    }
+                }
+                else
+                {
+                    filteredMoves.Add(move);
+                }
+            }
+
             if (gameState.StockPile.Count > 0)
             {
                 SolitaireMoveList moves = new SolitaireMoveList();
