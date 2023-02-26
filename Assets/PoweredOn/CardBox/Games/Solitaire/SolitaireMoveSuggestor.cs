@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 //using Unity.VisualScripting;
 //using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine.Assertions;
@@ -77,8 +78,36 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 rankedMoves.Add(SolitaireMove.WASTE_TO_STOCK);   
             }
 
+            SolitaireMoveList tabShuffleCompare = new();
+
             // TODO if the best move is a "to_foundation" move, always return that move
-            
+            foreach(var move in rankedMoves)
+            {
+                if(move.ToSpot.area == PlayfieldArea.FOUNDATION)
+                {
+                    return new SolitaireMoveList() { move };
+                }
+
+                if(move.FromSpot.area == PlayfieldArea.WASTE && move.ToSpot.area == PlayfieldArea.TABLEAU)
+                {
+                    return new SolitaireMoveList() { move };
+                }
+
+                // T<->T, let's record and compare, the one that is moving FROM the pile with the fewest cards should be preferable
+                // if it's an emptyTab to an emptyTab (King shuffling) just skip it and do a waste<->stock|stock<->waste
+                // TODO: just filter out suggestions for moving kings between empty tableaus
+                // TODO: prefer Tab<->Tab moves that actually REVEAL a face down card or empty a tableau OVER moves that leave face up cards on the pile (tho don't totally exclude them from suggestions, sometimes that's a valuable play to free up a spot for a waste<->tableau move that can be a pre-requisite for freeing up ANOTHER tableau or face down card)
+                if(
+                    move.FromSpot.area == PlayfieldArea.TABLEAU 
+                    && move.ToSpot.area == PlayfieldArea.TABLEAU 
+                    && move.Subject.GetRank() != Rank.KING
+                )
+                {
+                    tabShuffleCompare.Add(move);
+                }
+            }
+
+            //Debug.LogWarning("todo: compare tabShuffleMoves " + tabShuffleCompare.Count);
 
             // shuffle the moves
             // half the time, shuffle

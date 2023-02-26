@@ -153,7 +153,7 @@ namespace PoweredOn.CardBox.PlayingCards
             }
         }*/
 
-        internal void SetIsFaceUp(bool faceUp)
+        internal virtual void SetIsFaceUp(bool faceUp)
         {
             this.IsFaceUp = faceUp;
         }

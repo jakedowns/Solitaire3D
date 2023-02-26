@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -71,6 +72,33 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 cards.Add(cardID);
             }
             return cards;
+        }
+
+        public List<SuitRank> GetNextValidCards()
+        {
+            Suit myPileSuit = (Suit)Enum.Parse(typeof(Suit), pile_index + "");
+            var valid = new List<SuitRank>();
+            if (this.Count == 0)
+            {
+                valid.Add(new SuitRank(myPileSuit, Rank.ACE));
+                Debug.LogWarning($"foundation is empty, only the ACE matching myPileSuit is a valid next card {pile_index} {myPileSuit} {this}");
+                return valid;
+            }
+
+            SolitaireCard topCard = this.GetTopCard();
+            if (topCard.GetRank() == Rank.KING)
+            {
+                Debug.LogWarning($"top card is king, no valid next cards for foundation {this}");
+                return valid; // empty list
+            }
+
+            int nextValidRank = (int)topCard.GetRank() + 1;
+            valid.Add(new SuitRank(myPileSuit, (Rank)Enum.Parse(typeof(Rank), nextValidRank + "")));
+
+            Debug.LogWarning($"next valid card for foundation {this}: {valid} \n TopCard: {topCard}");
+
+
+            return valid;
         }
     }
 }

@@ -46,20 +46,63 @@ namespace PoweredOn.Managers
         public bool nrealModeEnabled = false;
         Camera mainCamera;
         Camera nrealCamera;
+        public DifficultyAssistant difficultyAssistant { get; private set; } = new DifficultyAssistant();
         public float gmi_id;
         GameObject menuGroup;
+        ParticleSystem ps;
+        AudioSource bgMusicPlayer;
+        AudioSource sfxPlayer;
+        AudioClip shuffleClip;
+        AudioClip dealClip;
+        AudioClip hintClip;
+        AudioClip errorClip;
+        AudioClip clickClip;
+
         public bool didLoad { get; private set; } = false;
         public bool GoalAnimationSystemEnabled { get; private set; } = true; // disable to use the "joint" system instead of the goal system
         public Camera TargetWorldCam { get; private set; }
 
+        public enum SFX
+        {
+            Shuffle,
+            Deal,
+            Hint,
+            Error,
+            Click
+        };
+
+        public Dictionary<SFX, AudioClip> soundDict { get; private set; } = new();
 
         private void Awake()
         {
-            if(_instance == null)
+            if (_instance == null)
             {
                 _instance = GameObject.FindObjectOfType<GameManager>();
             }
-            
+
+            ps = GameObject.Find("Particle System").GetComponent<ParticleSystem>();
+
+            // shuffle
+            shuffleClip = Resources.Load<AudioClip>("Audio/Sfx/Shuffle");
+            // deal
+            dealClip = Resources.Load<AudioClip>("Audio/Sfx/Deal");
+            // hint
+            hintClip = Resources.Load<AudioClip>("Audio/Sfx/Hint");
+            // error
+            errorClip = Resources.Load<AudioClip>("Audio/Sfx/Error");
+            // click
+            clickClip = Resources.Load<AudioClip>("Audio/Sfx/Click");
+
+            if (new List<AudioClip>(){ shuffleClip, dealClip, hintClip, errorClip, clickClip }.Contains(null)){
+                Debug.LogError("failed to load a sound");
+            }
+
+            soundDict[SFX.Shuffle] = shuffleClip;
+            soundDict[SFX.Deal] = dealClip;
+            soundDict[SFX.Hint] = hintClip;
+            soundDict[SFX.Error] = errorClip;
+            soundDict[SFX.Click] = clickClip;
+
             gmi_id = UnityEngine.Random.Range(-10.0f, 10.0f); // System.Guid.NewGuid();
             //Debug.LogWarning("GMI Awake: set id: "+ gmi_id);
             // If there is an instance, and it's not me, delete myself.
@@ -138,6 +181,28 @@ namespace PoweredOn.Managers
             _game.NewGame();
         }
 
+        public void StopParticleSystem()
+        {
+            ps.Stop();
+        }
+
+        public void StartParticleSystem()
+        {
+            ps.Play();
+        }
+        
+        public void ToggleParticleSystem()
+        {
+            if (ps.isPlaying)
+            {
+                StopParticleSystem();
+            }
+            else
+            {
+                StartParticleSystem();
+            }
+        }
+
 #nullable enable
         IEnumerator? m_animateCardsRoutine = null;
 
@@ -160,10 +225,15 @@ namespace PoweredOn.Managers
             //EnableNrealMode();
             //DisableNrealMode();
 
+            // disable particles at start
+            ps.Stop();
             // hide log
             DebugOutput.Instance.ToggleLogVisibility(false);
             // hide menu
             ToggleMenu(false);
+
+            bgMusicPlayer = GameObject.Find("BGMusic").GetComponent<AudioSource>();
+            sfxPlayer = GameObject.Find("SFXPlayer").GetComponent<AudioSource>();
 
             // TODO: support Landscape when NReal Mode is disabled
             /*Screen.autorotateToPortrait = true;
@@ -186,6 +256,16 @@ namespace PoweredOn.Managers
             {
                 // deal a fresh game
                 game.Deal();
+            }
+
+            if (dataStore.userData.bgMusicEnabled)
+            {
+                bgMusicPlayer.Play();
+                //bgMusicPlayer.volume = dataStore.bgMusicVolume;
+            }
+            else
+            {
+                bgMusicPlayer.Stop();
             }
 
             didLoad = true;
@@ -244,6 +324,18 @@ namespace PoweredOn.Managers
             game.TogglePlayfield();
         }
 
+        public void ToggleBGMusic()
+        {
+            dataStore.SetBGMusicEnabled(!dataStore.userData.bgMusicEnabled);
+            if (dataStore.userData.bgMusicEnabled)
+            {
+                bgMusicPlayer.Play();
+            }
+            else
+            {
+                bgMusicPlayer.Stop();
+            }
+        }
         public void SetNrealMode(bool value)
         {
             nrealModeEnabled = value;
@@ -668,6 +760,17 @@ namespace PoweredOn.Managers
             game.SetCardGoalsToRandomPositions();
         }
         
+        public void PlaySFX(SFX clipID)
+        {
+            // TODO: if sfx disabled, bail
+            if (!soundDict.ContainsKey(clipID)){
+                Debug.LogError("no clip for id " + clipID);
+                return;
+            }
+            AudioClip clip = soundDict[clipID];
+            sfxPlayer.clip = clip;
+            sfxPlayer.PlayOneShot(clip);
+        }
 
         public void OnSingleClickCard(SolitaireCard card)
         {
@@ -732,10 +835,17 @@ namespace PoweredOn.Managers
                         game.SetDidCalculateFinalScore(true);
                         Debug.Log("Game is complete! Calculating final Score");
                         game.scoreKeeper.CalculateFinalScore();
+
+                        // start particle system
+                        ps.Play();
                     }
                     else
                     {
-                        game.scoreKeeper.Tick();
+                        // don't tick while dealing
+                        if (!game.IsDealing)
+                        {
+                            game.scoreKeeper.Tick();
+                        }
                     }
                 }
             }

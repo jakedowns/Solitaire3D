@@ -12,6 +12,7 @@ using Unity.Jobs;
 //using Unity.VisualScripting;
 using UnityEngine.Assertions;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 using PoweredOn.Managers;
 using Assets;
 using System.Reflection;
@@ -24,6 +25,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // TODO: maybe Move to GameManager.Instance.Dealer.Deck
         // or GameManager.Instance.DeckManager.Deck
         private SolitaireDeck _deck;
+
+        private Text bestScoreDisplayText;
 
         public ScoreKeeper scoreKeeper = new ScoreKeeper();
 
@@ -307,6 +310,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // reset game object references
             UpdateGameObjectReferences();
 
+            GameManager.Instance.difficultyAssistant.ResetPool();
+
             dealtOrder = new List<SuitRank>();
 
             moveLog = new SolitaireMoveList();
@@ -362,6 +367,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                 if (move.IsValid())
                 {
+                    scoreKeeper.RecordMove(move);
                     move.Execute();
                 }
                 else
@@ -404,6 +410,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             Assert.IsTrue(deck.DeckCardPile.Count == 52);
 
+            if (!IsRunningInTestMode)
+            {
+                GameManager.Instance.PlaySFX(GameManager.SFX.Shuffle);
+            }
+
             // todo: only delay as long as it will take for the cards to return to the deck
             // if they're already in the deck pile, no delay is necessary
             await Task.Delay(2000);
@@ -411,8 +422,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // shuffle the deck (todo: artifically delay and animate this)
             if (!skipShuffle)
             {
-                deck.Shuffle();
+                //deck.Shuffle();
+
+                // based on difficulty setting, the stacked deck will be easier or harder
+                // difficultyAssistant.difficulty 10 = 100% random shuffle 
+                // difficultyAssistant.difficulty 0  = 100% stacked deck
+                List<SuitRank> stackedDeck = GameManager.Instance.difficultyAssistant.GetStackedDeck();
+                deck.SetDeckOrderList(stackedDeck);
             }
+
+            
 
             // Flag for Move Validator
             _isDealing = true;
@@ -464,7 +483,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }*/
 
             Debug.LogWarning("---------------");
-            
+
             /*if (deck.DeckCardPile.Count != 0)
             {
                 throw new Exception($"[DEAL] invalid deck card count after dealing. no cards should be in the deck list");
@@ -474,6 +493,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 throw new Exception($"[DEAL] invalid stock card count after shuffling and moving from deck to stockCards list {stockCardPile.Count}");
             }*/
+
+            if (!IsRunningInTestMode)
+            {
+                GameManager.Instance.PlaySFX(GameManager.SFX.Deal);
+            }
 
             /* Deal 28 cards */
 
@@ -487,7 +511,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         continue;
                     }
 
-                    // Get the next card from the stock pile and deal it
+                    // Get the next card from the deck pile and deal it
                     SuitRank suitRankToDeal = deck.DeckCardPile[0];
 
                     SolitaireCard card = deck.GetCardBySuitRank(suitRankToDeal);
@@ -496,9 +520,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     dealtOrder.Add(suitRankToDeal);
 
+                    // remove card from difficultyAssitant's "unseenPool"
+                    GameManager.Instance.difficultyAssistant.FlagSeen(suitRankToDeal);
+
                     // NOTE: inside this method, we handle adding SuitRank to the proper Tableau list
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
-                    MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.1f * dealtOrder.Count);
+                    MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.05f * dealtOrder.Count);
 
                     //iDebug.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
                     //Debug.LogWarning($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
@@ -530,7 +557,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 throw new Exception($"[DEAL] invalid deck card count after moving cards from deck to tableau {deck.DeckCardPile.Count}");
             }
 
-            float deal_delay = 0.1f * dealtOrder.Count;
+            float deal_delay = 0.05f * dealtOrder.Count;
 
             // Loop over remaining deck cards and send to stock
             int i = 0;
@@ -538,7 +565,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 //Debug.LogWarning("SC2: " + deck.DeckCardPile.Count + " " + sc2); //
                 SolitaireCard card = deck.GetCardBySuitRank(deck.DeckCardPile[deck.DeckCardPile.Count-1]);
-                float delay = deal_delay + (0.025f * (i));
+                float delay = deal_delay + (0.02f * (i));
 
                 // NOTE: inside this method we handle adding SuitRank to the stockCards list
                 /* always face down when adding to stock */
@@ -998,6 +1025,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void UpdateGameObjectReferences()
         {
+            
             Debug.LogWarning("[UpdatingGameObjectReferences] IsRunningInTestMode:"+IsRunningInTestMode);
             gameObjectReferences = new Dictionary<SolitaireGameObject, GameObject>();
 
@@ -1383,6 +1411,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void OnSingleClickCardPileBase(MonoSolitaireCardPileBase pileBase)
         {
             Debug.LogWarning("[SolitaireGame]@OnSingleClickCardPileBase");
+            GameManager.Instance.PlaySFX(GameManager.SFX.Hint); // todo: move to use card.mono's audiosource for correct spatialization
+            
             switch (pileBase.playfieldArea)
             {
                 case PlayfieldArea.STOCK:
@@ -1415,6 +1445,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void OnSingleClickCard(SolitaireCard card)
         {
             Debug.Log($"SolitaireGame@OnSingleClickCard {card}");
+
+            GameManager.Instance.PlaySFX(GameManager.SFX.Hint); // todo: move to use card.mono's audiosource for correct spatialization
 
             if (card.playfieldSpot.area == PlayfieldArea.STOCK)
             {
@@ -1520,8 +1552,22 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // TODO: support 3 at a time mode
             SuitRank cardSuitRank = stockCardPile.Last();
 
-            SolitaireCard card = deck.GetCardBySuitRank(cardSuitRank);
-            MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
+            // NEW: we use difficulty assistant to get the next most helpful "unseen" card, and swap it in on the fly
+            // based on difficulty setting, this method has the probability of returning a completely random card
+            SuitRank nextMostHelpful = GameManager.Instance.difficultyAssistant.GetNextMostHelpfulCard(GetGameState());
+            // first we have to move it to the end of the stock pile, and swap whatever card we were about to pick up with whereever we just moved the nextMostHelpful card
+            SolitaireCard nextMostHelpfulCard = deck.GetCardBySuitRank(nextMostHelpful);
+            SolitaireCard cardToSwap = deck.GetCardBySuitRank(cardSuitRank);
+            MoveCardToNewSpot(ref cardToSwap, nextMostHelpfulCard.playfieldSpot, false, 0, nextMostHelpfulCard.playfieldSpot.subindex, true); // instant = true
+            MoveCardToNewSpot(ref nextMostHelpfulCard, new PlayfieldSpot(PlayfieldArea.STOCK, stockCardPile.Count-1), false, 0, nextMostHelpfulCard.playfieldSpot.subindex, true); // instant = true
+
+            Debug.LogWarning($"difficulty asssistant picked {nextMostHelpful} to swap in for {cardSuitRank}");
+
+            // NOW reveal the newly swapped in card
+            MoveCardToNewSpot(ref nextMostHelpfulCard, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
+
+            // Make sure difficultyAssistant Flags it as Seen (remove it from the unseenPool)
+            GameManager.Instance.difficultyAssistant.FlagSeen(nextMostHelpful);
 
             MovingStockToWaste = false;
         }
@@ -1538,6 +1584,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 iDebug.LogWarning("WasteToStock: No cards in Waste pile");
                 return;
+            }
+            if (!IsRunningInTestMode)
+            {
+                GameManager.Instance.PlaySFX(GameManager.SFX.Shuffle);
             }
             // return all wasteCards to the stockCards list (in reverse order)
             int order_i = 0;
@@ -1658,7 +1708,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             for (int i = 0; i < 4; i++)
             {
                 foundationCardPileGroup[i] = new FoundationCardPile(i);
-                Debug.LogWarning("loading foundation cards from savefile " + $"foundation{i + 1}Cards");
+                //Debug.LogWarning("loading foundation cards from savefile " + $"foundation{i + 1}Cards");
                 FieldInfo fieldInfo = userData.GetType().GetField($"foundation{i + 1}Cards");
                 if(fieldInfo == null)
                 {
@@ -1686,7 +1736,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
                 int[] loadedList = fieldInfo.GetValue(userData) as int[];
                 object loadedListAsObj = fieldInfo.GetValue(userData);
-                Debug.LogWarning($"loaded tableau cards: {i}: {loadedList.Count()} {JsonUtility.ToJson(loadedList)}");
+                //Debug.LogWarning($"loaded tableau cards: {i}: {loadedList.Count()} {JsonUtility.ToJson(loadedList)}");
                 foreach (int suitRank in loadedList)
                 {
                     lists[i].Add(SuitRank.FromInt(suitRank));

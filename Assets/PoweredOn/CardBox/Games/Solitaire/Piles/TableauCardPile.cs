@@ -85,5 +85,41 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             return new PlayfieldSpot(PlayfieldArea.TABLEAU, pile_index, Count);
         }
+
+        public List<SuitRank> GetNextValidCards()
+        {
+            var valid = new List<SuitRank>();
+            if(this.Count == 0) {
+                valid.Add(new SuitRank(Suit.CLUBS, Rank.KING));
+                valid.Add(new SuitRank(Suit.DIAMONDS, Rank.KING));
+                valid.Add(new SuitRank(Suit.HEARTS, Rank.KING));
+                valid.Add(new SuitRank(Suit.SPADES, Rank.KING));
+                Debug.LogWarning($"tableau is empty, any king is a valid next card {this}");
+                return valid;
+            }
+
+            SolitaireCard topCard = this.GetTopCard();
+            if(topCard.GetRank() == Rank.ACE)
+            {
+                Debug.LogWarning($"top card is ace, no valid next cards for tableau {this}");
+                return valid; // empty list
+            }
+
+            int nextValidRank = (int)topCard.GetRank() - 1;
+            Suit[] nextValidSuits = new Suit[2] { Suit.CLUBS, Suit.SPADES };
+            if(topCard.GetSuit() == Suit.CLUBS || topCard.GetSuit() == Suit.SPADES)
+            {
+                nextValidSuits = new Suit[2] { Suit.DIAMONDS, Suit.HEARTS };
+            }
+            foreach(var suit in nextValidSuits)
+            {
+                valid.Add(new SuitRank(suit, (Rank)Enum.Parse(typeof(Rank),nextValidRank+"")));
+            }
+
+            Debug.LogWarning($"next valid cards for tableau {this}: {valid} \n TopCard: {topCard}");
+
+
+            return valid;
+        }
     }
 }

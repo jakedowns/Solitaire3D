@@ -4,6 +4,7 @@ using PoweredOn.Managers;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -28,6 +29,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public float maxDistance = 0.5f;
         public float minDistance = 0.001f;
         private GameObject myAnchorGameObject;
+        private AudioSource drawSFX;
 
         [Unity.Collections.ReadOnly]
         public string currentSpot = "";
@@ -56,6 +58,19 @@ namespace PoweredOn.CardBox.Games.Solitaire
             rigidBody.useGravity = false;
             rigidBody.isKinematic = false;*/
             //rigidBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+            // delete any existing AudioSource components
+            foreach (AudioSource audioSource in GetComponents<AudioSource>())
+            {
+                DestroyImmediate(audioSource);
+            }
+
+            // attach an audiosource component and hold a reference to it
+            drawSFX = gameObject.AddComponent<AudioSource>();
+            drawSFX.playOnAwake = false;
+            drawSFX.loop = false;
+            drawSFX.volume = 0.5f;
+            drawSFX.clip = Resources.Load<AudioClip>("Audio/Sfx/Draw");
 
             DestroySprings();
         }
@@ -323,6 +338,20 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             //m_MeshRenderer.material.color = Color.white;
             this.card.UpdateGoalIDScale(Vector3.one);
+        }
+
+        internal void PlayFlipSound()
+        {
+            // play the flip sound effect using the audio source component
+            if (
+                GameManager.Instance.game.IsDealing 
+                || GameManager.Instance.game.deck.IsCollectingCardsToDeck
+                || GameManager.Instance.game.IsRecyclingWasteToStock
+            )
+            {
+                return;
+            }
+            this.drawSFX.Play();
         }
     }
 }

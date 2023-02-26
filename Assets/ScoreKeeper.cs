@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using PoweredOn.CardBox.Games.Solitaire;
 using PoweredOn.Managers;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets
 {
@@ -22,10 +23,12 @@ namespace Assets
         public int best_moves { get; private set; } = int.MaxValue;
 
         private ScoreDisplay scoreDisplay;
+        private Text bestScoreDisplayText;
 
         public ScoreKeeper()
         {
             this.scoreDisplay = GameObject.Find("ScoreDisplay").GetComponent<ScoreDisplay>();
+            bestScoreDisplayText = GameObject.Find("BestScoreDisplay").GetComponent<Text>();
         }
 
         public void LoadState(DataStore.UserData userData)
@@ -65,13 +68,13 @@ namespace Assets
             RecordScore(0);
         }
 
-        public void RecordScore(int score)
+        public void RecordScore(int _score)
         {
-            score += score;
+            this.score += _score;
 
             // prevent score from going below 0
             // TODO: keep a second internal score for the AI to see?
-            score = Math.Max(0, score);
+            this.score = Math.Max(0, this.score);
 
             scoreDisplay.UpdateText(this);
 
@@ -115,6 +118,16 @@ namespace Assets
                 t.Seconds);
         }
 
+        public string GetBestTimeFormatted()
+        {
+            // convert int time (seconds) in MM:SS format:
+            TimeSpan t = TimeSpan.FromSeconds(best_time);
+            return string.Format("{0:D2}:{1:D2}:{2:D2}",
+                t.Hours,
+                t.Minutes,
+                t.Seconds);
+        }
+
         public void Tick()
         {
             // increase by 1 second
@@ -130,6 +143,7 @@ namespace Assets
             scoreDisplay.UpdateText(this);
             if (PoweredOn.Managers.GameManager.Instance == null)
             {
+                Debug.LogError("cannot save score, no game manager instance");
                 return;
             }
             PoweredOn.Managers.GameManager.Instance.dataStore.UpdateScoreData(PoweredOn.Managers.GameManager.Instance.game);
@@ -143,9 +157,38 @@ namespace Assets
             time = 0;
         }
 
+        internal void UpdateBestScoreDisplay()
+        {
+            string text = $"Best Score: {best_score} | Best Time: {GetBestTimeFormatted()} | Best Moves: {best_moves}";
+            bestScoreDisplayText.text = text;
+        }
+
         internal void CalculateFinalScore()
         {
+            if (PoweredOn.Managers.GameManager.Instance == null)
+            {
+                Debug.LogError("cannot CalculateFinalScore, no game manager instance");
+                return;
+            }
             
+            if (score > best_score)
+            {
+                best_score = score;
+            }   
+            
+            if(time < best_time)
+            {
+                best_time = time;
+            }
+
+            if(moves < best_moves)
+            {
+                best_moves = moves;
+            }
+
+            UpdateBestScoreDisplay();
+            PoweredOn.Managers.GameManager.Instance.dataStore.UpdateScoreData(PoweredOn.Managers.GameManager.Instance.game);
+            PoweredOn.Managers.GameManager.Instance.dataStore.StoreData();
         }
     }
 }

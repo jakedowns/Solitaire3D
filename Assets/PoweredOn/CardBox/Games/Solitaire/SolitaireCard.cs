@@ -96,9 +96,21 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
-        // public override void SetGoalIdentity(GoalIdentity goalIdentity) {
-        //     base.SetGoalIdentity(goalIdentity);
-        // }
+        public override void SetGoalIdentity(GoalIdentity goalIdentity) {
+            
+            base.SetGoalIdentity(goalIdentity);
+            
+        }
+
+        internal new virtual void SetIsFaceUp(bool faceUp)
+        {
+            bool prevFaceUp = this.IsFaceUp;
+            base.SetIsFaceUp(faceUp);
+            if (this.IsFaceUp != prevFaceUp)
+            {
+                this.monoCard.PlayFlipSound();
+            }
+        }
 
         public override void SetPlayfieldSpot(PlayfieldSpot spot)
         {

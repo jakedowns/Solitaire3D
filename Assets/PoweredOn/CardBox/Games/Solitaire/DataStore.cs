@@ -53,6 +53,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
             public int[] tableau5Cards;
             public int[] tableau6Cards;
             public int[] tableau7Cards;
+
+            public bool bgMusicEnabled = true;
+            public float musicVolume = 0.66f;
+            public bool soundFXEnabled = true;
+            public float sfxVolume = 0.66f;
         }
 
         public DataStore()
@@ -88,6 +93,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void UpdateAndStore(SolitaireGame game)
         {
             UpdateData(game);
+            StoreData();
+        }
+
+        public void SetBGMusicEnabled(bool enabled)
+        {
+            userData.bgMusicEnabled = enabled;
             StoreData();
         }
 

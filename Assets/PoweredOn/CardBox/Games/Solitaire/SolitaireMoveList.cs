@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 //using Unity.VisualScripting;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public class SolitaireMoveList
+    public class SolitaireMoveList : IEnumerable<SolitaireMove>
     {
         public List<SolitaireMove> moves = new List<SolitaireMove>();
 
@@ -31,6 +33,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
             this.moves.Add(move);
         }
 
+        // collection initializer
+        public SolitaireMoveList(IEnumerable<SolitaireMove> _moves)
+        {
+            this.moves = new List<SolitaireMove>(_moves);
+        }
+
         internal void Clear()
         {
             this.moves.Clear();
@@ -39,7 +47,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // shuffle
         public void Shuffle()
         {
-            Random rng = new Random();
+            System.Random rng = new System.Random();
             int n = this.moves.Count;
             while (n > 1)
             {
@@ -100,6 +108,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return outString;
         }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.moves.GetEnumerator();
+        }
     }
 
     // Todo: improve ranking to rank moves that move MORE cards from a tableau (lower subindex) higher than moves that only move a single card (to help unblock face down cards in tableaus)
