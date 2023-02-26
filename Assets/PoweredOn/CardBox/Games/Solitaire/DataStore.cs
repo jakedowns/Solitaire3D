@@ -10,6 +10,7 @@ using PoweredOn.CardBox.PlayingCards;
 using static PoweredOn.CardBox.Games.Solitaire.DataStore;
 using PoweredOn.Managers;
 using UnityEditor.XR.LegacyInputHelpers;
+using UnityEngine.Assertions;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
@@ -126,6 +127,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 userData.deckOrder[i] = (int)id;
                 i++;
             }
+            Assert.IsTrue(i == 52, $"expected i to equal 52, got: {i}");
         }
 
         private void UpdateFoundationCards(SolitaireGameState gameState)
@@ -190,6 +192,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 userData.wasteCards[i] = (int)id;
                 i++;
             }
+            Assert.IsTrue(i <= 24);
         }
 
         private void UpdateStockCards(SolitaireGameState gameState)
@@ -201,6 +204,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 userData.stockCards[i] = (int)id;
                 i++;
             }
+            Assert.IsTrue(userData.stockCards.Count() <= 24, $"should never be more than 24 cards in the stock. got: {userData.stockCards.Count()}");
         }
 
         private void UpdateHandCards(SolitaireGameState gameState)
@@ -212,6 +216,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 userData.handCards[i] = (int)id;
                 i++;
             }
+            Assert.IsTrue(i <= 13);
         }
 
         private void UpdateDeckCards(SolitaireGameState gameState)
@@ -223,6 +228,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 userData.deckCards[i] = (int)id;
                 i++;
             }
+            Assert.IsTrue(i <= 52);
         }
 
         public void UpdateScoreData(SolitaireGame game)

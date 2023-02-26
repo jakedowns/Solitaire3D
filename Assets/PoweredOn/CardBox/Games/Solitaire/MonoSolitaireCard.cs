@@ -344,14 +344,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             // play the flip sound effect using the audio source component
             if (
-                GameManager.Instance.game.IsDealing 
+                drawSFX == null
+                || GameManager.Instance == null
+                || GameManager.Instance.game.IsDealing 
                 || GameManager.Instance.game.deck.IsCollectingCardsToDeck
                 || GameManager.Instance.game.IsRecyclingWasteToStock
             )
             {
                 return;
             }
-            this.drawSFX.Play();
+            this.drawSFX?.Play();
         }
     }
 }

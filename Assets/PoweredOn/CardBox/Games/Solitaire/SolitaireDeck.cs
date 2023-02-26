@@ -126,6 +126,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             {
                 this.deckCardPile.RemoveAt(index);
             }
+            else
+            {
+                Debug.LogError($"Failed to remove card from deck {card}");
+            }
         }
 
         public SolitaireDeck(SolitaireGame game)

@@ -402,6 +402,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public async void Deal(bool skipShuffle = false)
         {
             //bool KEEP_ACES_AT_TOP_OF_STOCK = false; // true;
+            var prevDeckOrderList = new PlayingCardIDList(deck.deckOrderList);
+            if(prevDeckOrderList.Count != 52)
+            {
+                skipShuffle = false; // force shuffle if we have a bad prevDeck
+            }
 
             NewGame();
 
@@ -419,22 +424,48 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // if they're already in the deck pile, no delay is necessary
             await Task.Delay(2000);
 
+            // Flag for Move Validator
+            _isDealing = true;
+
             // shuffle the deck (todo: artifically delay and animate this)
             if (!skipShuffle)
             {
-                //deck.Shuffle();
+                if(GameManager.Instance.difficultyAssistant.difficulty == 10)
+                {
+                    deck.Shuffle();
 
-                // based on difficulty setting, the stacked deck will be easier or harder
-                // difficultyAssistant.difficulty 10 = 100% random shuffle 
-                // difficultyAssistant.difficulty 0  = 100% stacked deck
-                List<SuitRank> stackedDeck = GameManager.Instance.difficultyAssistant.GetStackedDeck();
-                deck.SetDeckOrderList(stackedDeck);
+                }
+                else
+                {
+                    // based on difficulty setting, the stacked deck will be easier or harder
+                    // difficultyAssistant.difficulty 10 = 100% random shuffle 
+                    // difficultyAssistant.difficulty 0  = 100% stacked deck
+                    List<SuitRank> stackedDeck = GameManager.Instance.difficultyAssistant.GetStackedDeck();
+                    Debug.LogWarning("stackedDeck count: " + stackedDeck.Count);
+                    deck.SetDeckOrderList(stackedDeck);
+                }
+            }
+            else
+            {
+                deck.SetDeckOrderList(prevDeckOrderList.GetUnderlyingList());
             }
 
-            
+            Assert.IsTrue(deck.DeckCardPile.Count == 52);
+            Assert.IsTrue(deck.deckOrderList.Count == 52);
 
-            // Flag for Move Validator
-            _isDealing = true;
+            // make sure the cards know they are in the deck
+            int di = 0;
+            foreach (var id in deck.deckOrderList)
+            {
+                var card = deck.GetCardBySuitRank(id);
+                card.SetPlayfieldSpot(new PlayfieldSpot(PlayfieldArea.DECK, di));
+                card.SetDeckOrder(di);
+                di++;
+            }
+
+
+
+
 
             //await Task.Delay(1000);
 
@@ -500,7 +531,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             /* Deal 28 cards */
-
+            int d = 0;
             for (int round = 0; round < 7; round++)
             {
                 for (int pile = 0; pile < 7; pile++)
@@ -512,6 +543,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
 
                     // Get the next card from the deck pile and deal it
+                    // MoveCardToNewSpot should handle removing the card from the pile :G
                     SuitRank suitRankToDeal = deck.DeckCardPile[0];
 
                     SolitaireCard card = deck.GetCardBySuitRank(suitRankToDeal);
@@ -527,6 +559,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
                     MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.05f * dealtOrder.Count);
 
+                    // assert DeckCardPile has one less card
+                    Assert.IsTrue(deck.DeckCardPile.Count == 52 - (d+1), $"expected {52-(d+1)} got {deck.DeckCardPile.Count}");
+
                     //iDebug.Log($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
                     //Debug.LogWarning($"Dealing {dealtOrder.Count}: {card} | round:{round} pile:{pile} faceup:{faceUp}");
 
@@ -538,6 +573,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     
                     // assert the IsFaceUp value is correctly set
                     Assert.IsTrue(card.IsFaceUp == faceUp);
+
+                    d++;
                 }
             }
 
@@ -1052,10 +1089,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             var hand = GameObject.Find("Hand");
             if (hand == null)
-                iDebug.LogError("hand not found");
+            {
+                //iDebug.LogError("hand not found");
+            }
             else
+            {
                 gameObjectReferences[SolitaireGameObject.Hand_Base] = hand;
-
+            }
+            
             var deckOfCards = GameObject.Find("DeckOfCards");
             if (deckOfCards == null)
             {
@@ -1552,22 +1593,35 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // TODO: support 3 at a time mode
             SuitRank cardSuitRank = stockCardPile.Last();
 
-            // NEW: we use difficulty assistant to get the next most helpful "unseen" card, and swap it in on the fly
-            // based on difficulty setting, this method has the probability of returning a completely random card
-            SuitRank nextMostHelpful = GameManager.Instance.difficultyAssistant.GetNextMostHelpfulCard(GetGameState());
-            // first we have to move it to the end of the stock pile, and swap whatever card we were about to pick up with whereever we just moved the nextMostHelpful card
-            SolitaireCard nextMostHelpfulCard = deck.GetCardBySuitRank(nextMostHelpful);
-            SolitaireCard cardToSwap = deck.GetCardBySuitRank(cardSuitRank);
-            MoveCardToNewSpot(ref cardToSwap, nextMostHelpfulCard.playfieldSpot, false, 0, nextMostHelpfulCard.playfieldSpot.subindex, true); // instant = true
-            MoveCardToNewSpot(ref nextMostHelpfulCard, new PlayfieldSpot(PlayfieldArea.STOCK, stockCardPile.Count-1), false, 0, nextMostHelpfulCard.playfieldSpot.subindex, true); // instant = true
+            if (GameManager.Instance.difficultyAssistant.useJITHelper)
+            {
+                // NEW: we use difficulty assistant to get the next most helpful "unseen" card, and swap it in on the fly
+                // based on difficulty setting, this method has the probability of returning a completely random card
+                SuitRank nextMostHelpful = GameManager.Instance.difficultyAssistant.GetNextMostHelpfulCard(GetGameState());
+                // first we have to move it to the end of the stock pile, and swap whatever card we were about to pick up with whereever we just moved the nextMostHelpful card
+                SolitaireCard nextMostHelpfulCard = deck.GetCardBySuitRank(nextMostHelpful);
+                SolitaireCard cardToSwap = deck.GetCardBySuitRank(cardSuitRank);
+                MoveCardToNewSpot(ref cardToSwap, nextMostHelpfulCard.playfieldSpot, false, 0, nextMostHelpfulCard.playfieldSpot.subindex, true); // instant = true
+                MoveCardToNewSpot(ref nextMostHelpfulCard, new PlayfieldSpot(PlayfieldArea.STOCK, stockCardPile.Count - 1), false, 0, nextMostHelpfulCard.playfieldSpot.subindex, true); // instant = true
 
-            Debug.LogWarning($"difficulty asssistant picked {nextMostHelpful} to swap in for {cardSuitRank}");
+                Debug.LogWarning($"difficulty asssistant picked {nextMostHelpful} to swap in for {cardSuitRank}");
 
-            // NOW reveal the newly swapped in card
-            MoveCardToNewSpot(ref nextMostHelpfulCard, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
+                // NOW reveal the newly swapped in card
+                MoveCardToNewSpot(ref nextMostHelpfulCard, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
 
-            // Make sure difficultyAssistant Flags it as Seen (remove it from the unseenPool)
-            GameManager.Instance.difficultyAssistant.FlagSeen(nextMostHelpful);
+                // Make sure difficultyAssistant Flags it as Seen (remove it from the unseenPool)
+                GameManager.Instance.difficultyAssistant.FlagSeen(nextMostHelpful);
+            }
+            else
+            {
+                SolitaireCard topStockCard = deck.GetCardBySuitRank(cardSuitRank);
+                MoveCardToNewSpot(ref topStockCard, new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
+
+                // in case we allow enabling "JITHelper" mid-game, still keep track of what we've seen
+                GameManager.Instance.difficultyAssistant.FlagSeen(cardSuitRank);
+            }
+
+            
 
             MovingStockToWaste = false;
         }
@@ -1670,7 +1724,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
         internal void LoadState(DataStore.UserData userData)
         {
             // validity check
-            if(userData == null || userData.dealtOrder.Count() != 28 || userData?.deckOrder?.Count() != 52)
+            if(userData == null 
+                || userData.dealtOrder.Count() != 28 
+                || userData?.deckOrder?.Count() != 52
+                || userData?.stockCards?.Count() > 24
+                || userData?.wasteCards?.Count() > 24
+            )
             {
                 Debug.LogWarning("invalid userData, resetting dataStore and skipping load");
                 GameManager.Instance.dataStore.Reset();

@@ -41,6 +41,7 @@ namespace Assets
             this.best_score = userData.best_score;
             this.best_time = userData.best_time;
             this.best_moves = userData.best_moves;
+            UpdateBestScoreDisplay();
         }
 
         public void RecordMove(SolitaireMove move)

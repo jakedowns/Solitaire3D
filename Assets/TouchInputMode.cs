@@ -1,6 +1,8 @@
 using PoweredOn.CardBox.Games.Solitaire;
 using PoweredOn.Managers;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TouchInputMode : MonoBehaviour
 {
@@ -104,9 +106,25 @@ public class TouchInputMode : MonoBehaviour
         ray = mainCamera.ScreenPointToRay(touchPosition);
 
         // visualize the raycast
-        //Debug.DrawRay(ray.origin, ray.direction * 1000, Color.white, 3f);
+        Debug.DrawRay(ray.origin, ray.direction * 1000, Color.white, 3f);
 
-        if(Physics.Raycast(ray, out hitData, 1000))
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+        pointerData.position = touchPosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+        if(results.Count > 0)
+        {
+            foreach(var result in results)
+            {
+                if(result.gameObject.layer == LayerMask.NameToLayer("UI")){
+                    Debug.LogWarning("we hit UI, ignoring raycast");
+                    results.Clear();
+                    return;
+                }
+            }
+        }
+
+        if (Physics.Raycast(ray, out hitData, 1000))
         {
             if (hitData.collider != null)
             {
@@ -119,7 +137,7 @@ public class TouchInputMode : MonoBehaviour
                     //Debug.Log($"soliCard: {card}");
                     if (longTouch)
                     {
-                        GameManager.Instance.game.OnLongPressCard(card);
+                        //GameManager.Instance.game.OnLongPressCard(card);
                     }
                     else
                     {

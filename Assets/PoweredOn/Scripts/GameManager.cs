@@ -228,7 +228,9 @@ namespace PoweredOn.Managers
             // disable particles at start
             ps.Stop();
             // hide log
+#if !UNITY_EDITOR
             DebugOutput.Instance.ToggleLogVisibility(false);
+#endif
             // hide menu
             ToggleMenu(false);
 
@@ -279,6 +281,9 @@ namespace PoweredOn.Managers
                 if (menuGroup.activeSelf)
                 {
                     menuGroup.transform.position = Vector3.zero;
+
+                    // update difficulty slider & text
+                    difficultyAssistant.UpdateDifficultyText();
                 }
             }
         }
@@ -872,39 +877,66 @@ namespace PoweredOn.Managers
             // CheckCardAnimationsShouldPlay();   
         }
 
-        /*void CheckCardAnimationsShouldPlay()
+        internal void SetDifficulty(float value)
         {
-            if (cards.Count == 0)
+            difficultyAssistant.SetDifficulty((int)value);
+        }
+
+        public void DecreaseDifficulty()
+        {
+            if (difficultyAssistant.difficulty == 0)
             {
                 return;
             }
+            int next = difficultyAssistant.difficulty - 1;
+            difficultyAssistant.SetDifficulty(next);
+            difficultyAssistant.UpdateDifficultyText();
+        }
 
-            double now = Time.realtimeSinceStartupAsDouble;
-
-            foreach (Card card in cards)
+        public void IncreaseDifficulty()
+        {
+            if (difficultyAssistant.difficulty == 10)
             {
-                if (card.animation is not null)
+                return;
+            }
+            int next = difficultyAssistant.difficulty + 1;
+            difficultyAssistant.SetDifficulty(next);
+            difficultyAssistant.UpdateDifficultyText();
+        }
+
+            /*void CheckCardAnimationsShouldPlay()
+            {
+                if (cards.Count == 0)
                 {
-                    // play it if it's not playing / was waiting for delay to expire
-                    if (!card.animation.IsPlaying)
+                    return;
+                }
+
+                double now = Time.realtimeSinceStartupAsDouble;
+
+                foreach (Card card in cards)
+                {
+                    if (card.animation is not null)
                     {
-                        if (now - card.animation.delaySetAt > card.animation.delayStart)
+                        // play it if it's not playing / was waiting for delay to expire
+                        if (!card.animation.IsPlaying)
                         {
-                            card.animation.Play();
+                            if (now - card.animation.delaySetAt > card.animation.delayStart)
+                            {
+                                card.animation.Play();
+                            }
                         }
-                    }
-                    else
-                    {
-
-
-                        if (card.animation.playhead > 2.0f)
+                        else
                         {
-                            card.animation.Stop();
+
+
+                            if (card.animation.playhead > 2.0f)
+                            {
+                                card.animation.Stop();
+                            }
                         }
                     }
                 }
-            }
-        }*/
-    }
+            }*/
+        }
 
 }
