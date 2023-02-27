@@ -313,9 +313,31 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
+        public bool DoHelp()
+        {
+            if(difficulty == 10 || unseenPool.Count == 0)
+            {
+                return false;
+            }
+            if(difficulty == 0)
+            {
+                return true;
+            }
+            float prob = UnityEngine.Random.value;
+            float threshold = (10f - difficulty) / 10f;
+            Debug.Log($"[DiffAssist] prob:{prob}, threshold:{threshold}");
+            if (prob < threshold)
+            {
+                // probability says we don't intervene this time
+                return false;
+            }
+            return true;
+        }
+
         public SuitRank GetNextMostHelpfulCard(SolitaireGameState gameState)
         {
             Debug.Log($"[DifficultyAssistant] GetNextMostHelpfulCard. Current Difficulty: {difficulty}");
+
             UnityEngine.Random.InitState((int)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             List<SuitRank> candidates = new List<SuitRank>();
             for (int i = 0; i < 4; i++)
