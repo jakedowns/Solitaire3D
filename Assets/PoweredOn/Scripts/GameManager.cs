@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 using System.Linq;
 using Unity.Collections;
@@ -57,6 +58,7 @@ namespace PoweredOn.Managers
         AudioClip hintClip;
         AudioClip errorClip;
         AudioClip clickClip;
+        Dropdown assistModeSelect;
 
         public bool didLoad { get; private set; } = false;
         public bool GoalAnimationSystemEnabled { get; private set; } = true; // disable to use the "joint" system instead of the goal system
@@ -81,6 +83,12 @@ namespace PoweredOn.Managers
             }
 
             ps = GameObject.Find("Particle System").GetComponent<ParticleSystem>();
+
+            assistModeSelect = GameObject.Find("AssistMode").GetComponent<Dropdown>();
+            assistModeSelect.onValueChanged.AddListener(delegate
+            {
+                DropdownValueChanged(assistModeSelect);
+            });
 
             // shuffle
             shuffleClip = Resources.Load<AudioClip>("Audio/Sfx/Shuffle");
@@ -484,7 +492,18 @@ namespace PoweredOn.Managers
             }
         }
 
-
+        public void DropdownValueChanged(Dropdown dropdown)
+        {
+            int i = dropdown.value;
+            Debug.LogWarning($"assist mode selected: {i} {assistModeSelect.options[i]} {(DifficultyAssistant.AssistMode)i}");
+                
+            DifficultyAssistant.AssistMode mode = (DifficultyAssistant.AssistMode)dropdown.value;
+            difficultyAssistant.SetAssistMode(mode);
+        }
+        public void TogglePerCardAssist()
+        {
+            difficultyAssistant.TogglePerCardAssist();
+        }
         public void RefreshAnimationCoroutine()
         {
             //return; // testing physics engine instead

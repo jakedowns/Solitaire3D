@@ -12,6 +12,15 @@ namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class DifficultyAssistant
     {
+        public enum AssistMode
+        {
+            RANDOM, // 50/50 chance between the two
+            VALUE_SPLIT, // cards < 7 are in tableau, rest are in stock
+            ORDERED_SUITS // tableau is 2 full suits + A,2 of a third suit
+        };
+
+        public AssistMode _assist_mode { get; private set; } = AssistMode.ORDERED_SUITS;
+        //public bool perCardAssistModeEnabled { get; private set; } = false;
         private GameObject difficultySlider;
         public int difficulty { get; private set; } = 0;
         public bool useJITHelper { get; private set; } = false;
@@ -25,9 +34,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
         }
 
-        public void SetJITHelperEnabled(bool enabled)
+        /*public void SetJITHelperEnabled(bool enabled)
         {
             useJITHelper = enabled;
+        }*/
+
+        public void TogglePerCardAssist()
+        {
+            useJITHelper = !useJITHelper;
         }
 
         public void SetDifficultySliderGameObject(GameObject go)
@@ -59,6 +73,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     outputList.Add(id);
                 }
             }
+
+            // split the list in two and shuffle each half separately
+
+
             Assert.IsTrue(outputList.Count == 52, $"expected 52, got {outputList.Count}");
             return outputList;
         }
@@ -108,6 +126,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     suit_index++;
                 }
             }
+
+            Assert.IsTrue(cardsForTableau.Distinct().Count() == cardsForTableau.Count, "expect cards for tab to have no dupes");
             
             for (int row = 0; row < 7; row++)
             {
@@ -123,6 +143,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
 
                 // 0     +2    +3    +4     +5    +6    +7
+                //-----------------------------------------
                 // 0,    2,    5,    9,     14,   20,   27
                 // -,    1,    4,    8,     13,   19,   26
                 // -,    -,    3,    7,     12,   18,   25
@@ -139,22 +160,62 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     // 0,   1,  3,  6, 10, 15, 21
                     // +0, +1, +2, +3, +4, +5, +6
-                    int rowStart = row;
+                    int rowStart = 0;
+                    if (row > 0) {
+                        for (int a = 0; a < row - 1; a++)
+                        {
+                            // row 0 = 0
+                            // row 1 = 1
+                            // row 2 = 1 + 2 = 3
+                            // row 3 = 1 + 2 + 3 = 6
+                            // row 4 = 1 + 2 + 3 + 4 = 10
+                            // row 5 = 1 + 2 + 3 + 4 + 5 = 15
+                            // row 6 = 1 + 2 + 3 + 4 + 5 + 6 = 21
+                            rowStart += a;
+                        }
+                        rowStart += row;
+                    }
                     int colOffset = col == 0 ? 0 : col + 2;
                     int lookupIndex = rowStart + colOffset;
+                    Debug.LogWarning($"rowStart {rowStart}, colOffset {colOffset}, lookupIndex {lookupIndex}");
                     idealOrder.Add(cardsForTableau[lookupIndex]);
                 }
             }
 
             // round out the list by adding the other 24 cards from the deck from the removed suit, and the remaining 11 cards from suit 3 (randomSuits[2])
-            for(var i = 0; i < 11; i++)
+            for(var i = 2; i < 13; i++)
             {
-                idealOrder.Add(new SuitRank(randomSuits[2], (Rank)i + 2));
+                idealOrder.Add(new SuitRank(randomSuits[2], (Rank)i));
             }
             for(var i = 0; i < 13; i++)
             {
                 idealOrder.Add(new SuitRank(suits[removedSuit], (Rank)i));
             }
+
+            string debugString = "";
+            foreach(var id in idealOrder)
+            {
+                debugString += id + ", ";
+            }
+            Debug.LogWarning("Our Ideal List: " + debugString);
+
+            Debug.LogWarning("Dupes:");
+            var dupes = idealOrder.GroupBy(x => x)
+              .Where(g => g.Count() > 1)
+              .Select(y => y.Key)
+              .ToList();
+            foreach (var dupe in dupes)
+            {
+                Debug.LogWarning("Dupe: " + dupe);
+            }
+
+            // verify NO duplicates in the list
+            Assert.IsTrue(
+                condition: idealOrder.Distinct().Count() == idealOrder.Count, 
+                message: $"expect no duplicates, Distinct: {idealOrder.Distinct().Count()} v {idealOrder.Count}"
+            );
+
+            
 
             Assert.IsTrue(idealOrder.Count == 52);
             return idealOrder;
@@ -181,14 +242,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // 50/50 chance of using GetIdealOrder or GetIdealOrderTwo
             float idealProb = UnityEngine.Random.value;
             Debug.Log($"idealProb:{idealProb}");
-            if (idealProb > 0.5f)
+            if (
+                (_assist_mode == AssistMode.RANDOM && idealProb > 0.5f)
+                || _assist_mode == AssistMode.VALUE_SPLIT
+            ) 
             {
-                Debug.Log("[DiffAssist] using ideal one");
+                Debug.Log("[DiffAssist] using ideal VALUE_SPLIT");
                 idealOrder = GetIdealOrder();
             }
             else
             {
-                Debug.Log("[DiffAssist] using ideal two");
+                Debug.Log("[DiffAssist] using ideal ORDERED_SUITS");
                 idealOrder = GetIdealOrderTwo();
             }
 
@@ -271,6 +335,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
             SuitRank card = candidates[randomIndex];
             FlagSeen(card);
             return card;
+        }
+
+        internal void SetAssistMode(AssistMode mode)
+        {
+            this._assist_mode = mode;
         }
     }
 }

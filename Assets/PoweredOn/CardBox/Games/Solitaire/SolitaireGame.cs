@@ -559,6 +559,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
                     MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.05f * dealtOrder.Count);
 
+                    if(deck.DeckCardPile.Count != 52 - (d + 1))
+                    {
+                        Debug.LogError($"error after dealing card {card}");
+                    }
+
                     // assert DeckCardPile has one less card
                     Assert.IsTrue(deck.DeckCardPile.Count == 52 - (d+1), $"expected {52-(d+1)} got {deck.DeckCardPile.Count}");
 
@@ -619,6 +624,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // persist the state to json
             GameManager.Instance.dataStore.UpdateAndStore(this);
         }
+        
 
         public void SetCardGoalsToRandomPositions()
         {
