@@ -307,6 +307,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
         {
             fxManager = new PoweredOn.Animations.Effects.RippleEffectManager();
 
+            // stop "winning" particles if they were playing
+            GameManager.Instance.StopParticleSystem();
+
             // reset game object references
             UpdateGameObjectReferences();
 
@@ -881,6 +884,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
                  //}
             }
 
+            // play an effect when we add a card to the foundation
+            if (spot.area == PlayfieldArea.FOUNDATION)
+            {
+                //fxManager.NewFoundationEffect(goalID.position);
+                GameManager.Instance.RunOneShotFoundationParticlesAfterDelay(spot.index, goalID.delayStart + 0.8f);
+            }
+
             // don't overwrite save file if we're still loading 
             if (GameManager.Instance.didLoad)
             {
@@ -1229,6 +1239,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             textBlock += $"\n score: {scoreKeeper.score}";
 
+            textBlock += $"\n difficulty level: {GameManager.Instance.difficultyAssistant.difficulty}";
+
+            textBlock += $"\n per card assist: {(GameManager.Instance.difficultyAssistant.useJITHelper ? "enabled" : "disabled")}";
+
+            textBlock += $"\n deck stack mode: {GameManager.Instance.difficultyAssistant._assist_mode}";
+
             textBlock += $"\n IsInFinalStage: {IsInFinalStage}";
 
             textBlock += $"\n IsComplete: {IsComplete}";
@@ -1281,6 +1297,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void FlipCardFaceUp(SolitaireCard card)
         {
+            scoreKeeper.RecordTableauCardFlipped();
+
+            if (
+                GameManager.Instance.difficultyAssistant.useJITHelper
+                && GameManager.Instance.difficultyAssistant.DoHelp()
+            ) {
+                // swap in a "helpful" card
+                SuitRank nextMostHelpfulSuitRank = GameManager.Instance.difficultyAssistant.GetNextMostHelpfulCard(GetGameState());
+                card = deck.GetCardBySuitRank(nextMostHelpfulSuitRank);
+            }
+
             GameObject cardGO = card.gameObject;
             Transform cardTX = cardGO.transform;
             // retain position, just flip over y axis
@@ -1292,6 +1319,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 cardTX.localScale + Vector3.zero
             ));
             card.SetIsFaceUp(true);
+            GameManager.Instance.difficultyAssistant.FlagSeen(card.GetSuitRank());
         }
 
         public void TryPickupCardInSpot(PlayfieldSpot spot, SolitaireCard card)
@@ -1361,8 +1389,11 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     card = stockCardPile.GetTopCard();
 
                     // move it to the waste pile; face up
-                    MoveCardToNewSpot(ref card,
-                        new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), true);
+                    MoveCardToNewSpot(
+                        ref card,
+                        new PlayfieldSpot(PlayfieldArea.WASTE, wasteCardPile.Count), 
+                        true
+                    );
 
                     return;
 
@@ -1448,7 +1479,6 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     SolitaireCard topMostCard = tPile.GetTopCard();
                     if (!topMostCard.IsFaceUp)
                     {
-                        scoreKeeper.RecordTableauCardFlipped();
                         FlipCardFaceUp(topMostCard);
                     }
                 }
@@ -1599,7 +1629,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
             // TODO: support 3 at a time mode
             SuitRank cardSuitRank = stockCardPile.Last();
 
-            if (GameManager.Instance.difficultyAssistant.useJITHelper)
+            if (GameManager.Instance.difficultyAssistant.useJITHelper && GameManager.Instance.difficultyAssistant.DoHelp())
             {
                 // NEW: we use difficulty assistant to get the next most helpful "unseen" card, and swap it in on the fly
                 // based on difficulty setting, this method has the probability of returning a completely random card

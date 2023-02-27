@@ -51,6 +51,13 @@ namespace PoweredOn.Managers
         public float gmi_id;
         GameObject menuGroup;
         ParticleSystem ps;
+        ParticleSystem foundationOneParticles;
+        ParticleSystem foundationTwoParticles;
+        ParticleSystem foundationThreeParticles;
+        ParticleSystem foundationFourParticles;
+
+        List<ParticleSystem> foundationPS = new List<ParticleSystem>(4);
+
         AudioSource bgMusicPlayer;
         AudioSource sfxPlayer;
         AudioClip shuffleClip;
@@ -83,6 +90,20 @@ namespace PoweredOn.Managers
             }
 
             ps = GameObject.Find("Particle System").GetComponent<ParticleSystem>();
+
+            foundationPS = new List<ParticleSystem>(4) { null, null, null, null };
+            // clubs
+            foundationOneParticles = GameObject.Find("foundationOneParticles").GetComponent<ParticleSystem>();
+            foundationPS[0] = foundationOneParticles;
+            // diamonds
+            foundationTwoParticles = GameObject.Find("foundationTwoParticles").GetComponent<ParticleSystem>();
+            foundationPS[1] = foundationTwoParticles;
+            // hearts
+            foundationThreeParticles = GameObject.Find("foundationThreeParticles").GetComponent<ParticleSystem>();
+            foundationPS[2] = foundationThreeParticles;
+            // spades
+            foundationFourParticles = GameObject.Find("foundationFourParticles").GetComponent<ParticleSystem>();
+            foundationPS[3] = foundationFourParticles;
 
             assistModeSelect = GameObject.Find("AssistMode").GetComponent<Dropdown>();
             assistModeSelect.onValueChanged.AddListener(delegate
@@ -153,11 +174,27 @@ namespace PoweredOn.Managers
                     mainCamera = _camera;
                 }
             }
-
-#if !UNITY_EDITOR
-            MyInit();
-#endif
         }
+
+        public void RunOneShotFoundationParticlesAfterDelay(int foundationIndex, float delay)
+        {
+            StartCoroutine(RunOneShotFoundationParticles_delayed(foundationIndex, delay));
+        }
+
+        public IEnumerator RunOneShotFoundationParticles_delayed(int foundationIndex, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            foundationPS[foundationIndex].Play();
+            // stop after a small # of seconds
+            //StartCoroutine(StopFoundationParticles(foundationIndex, 0.3f));
+        }
+
+        // coroutine to stop the foundationPS particle system of a particular index, after a specified amount of time
+        /*public IEnumerator StopFoundationParticles(int foundationIndex, float time)
+        {
+            yield return new WaitForSeconds(time);
+            foundationPS[foundationIndex].Stop();
+        }*/
 
         public void SetGame(SolitaireGame game)
         {
