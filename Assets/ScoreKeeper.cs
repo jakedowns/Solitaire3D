@@ -160,6 +160,11 @@ namespace Assets
 
         internal void UpdateBestScoreDisplay()
         {
+            if(best_score < 1)
+            {
+                bestScoreDisplayText.text = "";
+                return;
+            }
             string text = $"Best Score: {best_score} | Best Time: {GetBestTimeFormatted()} | Best Moves: {best_moves}";
             bestScoreDisplayText.text = text;
         }

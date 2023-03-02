@@ -105,11 +105,15 @@ namespace PoweredOn.Managers
             foundationFourParticles = GameObject.Find("foundationFourParticles").GetComponent<ParticleSystem>();
             foundationPS[3] = foundationFourParticles;
 
-            assistModeSelect = GameObject.Find("AssistMode").GetComponent<Dropdown>();
-            assistModeSelect.onValueChanged.AddListener(delegate
+            GameObject assistModeSelectGameObject = GameObject.Find("AssistMode");
+            if (assistModeSelectGameObject != null)
             {
-                DropdownValueChanged(assistModeSelect);
-            });
+                assistModeSelect = assistModeSelectGameObject.GetComponent<Dropdown>();
+                assistModeSelect.onValueChanged.AddListener(delegate
+                {
+                    DropdownValueChanged(assistModeSelect);
+                });
+            }
 
             // shuffle
             shuffleClip = Resources.Load<AudioClip>("Audio/Sfx/Shuffle");
@@ -265,10 +269,9 @@ namespace PoweredOn.Managers
 #if UNITY_ANDROID && !UNITY_EDITOR
              EnableNrealMode();
 #else
-             DisableNrealMode();
-#endif
-            //EnableNrealMode();
             //DisableNrealMode();
+            EnableNrealMode();
+#endif
 
             // disable particles at start
             ps.Stop();
@@ -325,7 +328,7 @@ namespace PoweredOn.Managers
                 menuGroup.SetActive(!menuGroup.activeSelf);
                 if (menuGroup.activeSelf)
                 {
-                    menuGroup.transform.position = Vector3.zero;
+                    //menuGroup.transform.position = Vector3.zero;
 
                     // update difficulty slider & text
                     difficultyAssistant.UpdateDifficultyText();
@@ -340,6 +343,9 @@ namespace PoweredOn.Managers
                 if (menuGroup.activeSelf)
                 {
                     menuGroup.transform.position = Vector3.zero;
+
+                    // update difficulty slider & text
+                    difficultyAssistant.UpdateDifficultyText();
                 }
             }
         }
@@ -855,6 +861,7 @@ namespace PoweredOn.Managers
         // cards are .0002 m thick, so the stack should account for offsetting them on the local y axis according to their "depth" in the deck      
 
         float lastFired = 0;
+        float autoplayLastFired = 0;
 
         // Update is called once per frame
         void Update()
@@ -876,14 +883,21 @@ namespace PoweredOn.Managers
                 Debug.LogWarning("no fxManager?");
             }
 
-            // Every 1s if autoplay is enabled, play a new move
-            if (Time.time - lastFired > 1.0f)
+            // Every .3s
+            if (Time.time - autoplayLastFired > 0.3f)
             {
-                lastFired = Time.time;
+                autoplayLastFired = Time.time;
                 if (game.autoplaying)
                 {
                     game.AutoPlayNextMove();
                 }
+            }
+
+            // Every 1s
+            if (Time.time - lastFired > 1.0f)
+            {
+                lastFired = Time.time;
+                
 
                 if (didLoad)
                 {

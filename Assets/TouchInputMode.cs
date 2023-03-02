@@ -35,6 +35,11 @@ public class TouchInputMode : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.nrealModeEnabled)
+        {
+            // don't run when nreal mode is active
+            return; 
+        }
         /* TOUCH START */
         if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
         {

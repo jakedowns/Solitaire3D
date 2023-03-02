@@ -1,0 +1,73 @@
+using System;
+using System.Linq;
+using Microsoft.ML;
+using Microsoft.ML.Data;
+using Microsoft.ML.Transforms;
+using Microsoft.ML.TensorFlow;
+using UnityEngine;
+using Tensorflow.Keras.Layers;
+using Tensorflow;
+
+public class AITrainer : MonoBehaviour
+{
+
+    // Define the input and output data types
+    public class SolitaireData
+    {
+        [VectorType(2)]
+        public float[] Input { get; set; }
+
+        [VectorType(2)]
+        public float[] Output { get; set; }
+    }
+
+    // Define the neural network architecture
+    public static IEstimator<ITransformer> CreateModel(MLContext mlContext)
+    {
+        // Define the feature columns
+        var featureColumns = new[] { new InputOutputColumnPair("Input") };
+
+        // Define the neural network architecture
+        var neuralNetwork = new TensorFlowEstimator(mlContext, "Model", "Input", "Output")
+            .AddLayers(new[] {
+                new InputLayer("Input", shape: new int[] { 2 }),
+            new DenseLayer("Hidden", units: 4, activation: TensorFlow.Activations.Relu),
+            new DenseLayer("Output", units: 2, activation: TensorFlow.Activations.Tanh)
+            });
+
+        return neuralNetwork;
+    }
+
+
+
+    // Generate a new neural network with random weights
+    public void GenerateNewNetwork()
+    {
+        var mlContext = new MLContext();
+
+        // Create an empty model
+        var emptyData = new SolitaireData[] { };
+        var data = mlContext.Data.LoadFromEnumerable(emptyData);
+        var pipeline = CreateModel(mlContext);
+        var model = pipeline.Fit(data);
+
+        // Get the weights of the model
+        var transformer = model.LastTransformer;
+        var weights = transformer.GetGetter<VBuffer<float>>(transformer.Schema["Weights"]).Invoke();
+        var weightsArray = weights.DenseValues().ToArray();
+
+        // Initialize the weights with random values
+        var random = new System.Random();
+        for (int i = 0; i < weightsArray.Length; i++)
+        {
+            weightsArray[i] = (float)random.NextDouble() * 2 - 1;
+        }
+
+        // Set the weights of the model
+        var newWeights = new VBuffer<float>(weights.Length, weightsArray);
+        var newTransformer = mlContext.Transforms.CopyColumns("Weights", "Weights")
+            .Append(mlContext.Transforms.ReplaceMissingValues("Weights", "Weights"))
+            .Fit(mlContext.Data.LoadFromEnumerable(new[] { new SolitaireData { Input = new float[2], Output = new float[2] } }));
+        var newModel = newTransformer.Transform(model);
+    }
+}

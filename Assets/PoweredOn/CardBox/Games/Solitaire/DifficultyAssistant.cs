@@ -19,10 +19,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
             ORDERED_SUITS // tableau is 2 full suits + A,2 of a third suit
         };
 
-        public AssistMode _assist_mode { get; private set; } = AssistMode.ORDERED_SUITS;
+        public AssistMode _assist_mode { get; private set; } = AssistMode.VALUE_SPLIT;
         //public bool perCardAssistModeEnabled { get; private set; } = false;
         private GameObject difficultySlider;
-        public int difficulty { get; private set; } = 0;
+        public int difficulty { get; private set; } = 8;
         public bool useJITHelper { get; private set; } = false;
         private List<SuitRank> unseenPool = new List<SuitRank>();
 
@@ -75,10 +75,52 @@ namespace PoweredOn.CardBox.Games.Solitaire
             }
 
             // split the list in two and shuffle each half separately
+            List<SuitRank> firstHalf = new(outputList.GetRange(0, 26));
+            List<SuitRank> secondHalf = new(outputList.GetRange(26, 26));
+            firstHalf = ShuffleList(firstHalf);
+            secondHalf = ShuffleList(secondHalf);
+            outputList = new List<SuitRank>();
+            outputList.AddRange(firstHalf);
+            outputList.AddRange(secondHalf);
+
+            // depending on the difficulty, we may want to swap a few more cards.
+            // first, get probability as a function of difficulty
+            // get number of swaps as a function of difficulty
+            if (difficulty > 0 && difficulty < 10) {
+                float difficultyProbability = (float)difficulty / 10.0f;
+                int numSwaps = (int)(difficultyProbability * 42.0f); // 0-42
+                Debug.LogWarning($"difficultyProbability, difficulty, numSwaps {difficultyProbability} {difficulty} {numSwaps}");
+                // we want to swap 1 card for every 2 difficulty points
+                for (int i = 0; i < numSwaps; i++)
+                {
+                    // pick two random cards to swap
+                    int firstIndex = UnityEngine.Random.Range(0, outputList.Count);
+                    int secondIndex = UnityEngine.Random.Range(0, outputList.Count);
+                    SuitRank temp = outputList[firstIndex];
+                    outputList[firstIndex] = outputList[secondIndex];
+                    outputList[secondIndex] = temp;
+                }
+            }
 
 
             Assert.IsTrue(outputList.Count == 52, $"expected 52, got {outputList.Count}");
             return outputList;
+        }
+
+        // TODO: I think PlayingCardList already has a shuffle method we could've used.
+        public List<SuitRank> ShuffleList(List<SuitRank> input)
+        {
+            List<SuitRank> output = new(input);
+            for (int i = 0; i < output.Count; i++)
+            {
+                // fischer-yates in-place shuffle
+                int j = UnityEngine.Random.Range(i + 1, output.Count);
+                j = Mathf.Clamp(0, output.Count - 1, j);
+                SuitRank temp = output[i];
+                output[i] = output[j];
+                output[j] = temp;
+            }
+            return output;
         }
 
         // a different "ideal order" where we deal 2-ish suits in A->K order so they can be move directly to the foundations from the tableau
