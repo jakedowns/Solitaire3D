@@ -34284,6 +34284,7 @@ GameObject:
   - component: {fileID: 1186348704}
   - component: {fileID: 1186348705}
   - component: {fileID: 1186348706}
+  - component: {fileID: 1186348707}
   m_Layer: 0
   m_Name: DeckOfCards
   m_TagString: Untagged
@@ -34332,6 +34333,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b086dfe70baa54ba8909223c09c432fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1186348707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186348703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41d9846ab69c6df40a5ac432997fdd9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1187199049

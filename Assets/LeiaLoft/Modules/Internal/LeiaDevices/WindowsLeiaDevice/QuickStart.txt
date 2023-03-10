@@ -1,0 +1,59 @@
+Windows LeiaDevice Add-on
+
+Description:
+    Contains device support for Windows builds.
+
+Requisite:
+    Windows builds are available to business partners of Leia Inc.
+    Requires Leia Inc. Windows firmware platform 1.1.0.3 or above.
+    Check C:\Program Files\LeiaInc\LeiaDisplaySdk to verify that your firmware is installed.
+    Check that your external monitor is connected by USB.
+
+Quick start:
+    Build to Windows on x86 or x86_64 with this SDK.
+    Run an app built with the Leia Inc. Unity SDK.
+
+Troubleshooting:
+    1. Is there a folder C:\Program Files\LeiaInc\ on your machine? Is there a file C:\Program Files\LeiaInc\LeiaService\Logs\ServiceLog_<currentDate>.txt?
+        If not, contact Leia Inc. for Windows firmware.
+
+    2. Open Add or Remove Programs and search for "Leia" programs; confirm that LeiaService is installed on your machine and that it is described as 1.1.0.3+.
+        If not, contact Leia Inc. for the Windows firmware installer / "bootstrapper" and install instructions.
+
+    3. Disconnect your Leia Inc. display's back microUSB port, reconnect it, then wait 20 seconds.
+
+    4. For the following questions, refer to the last lines of the log file at
+        C:\Program Files\LeiaInc\LeiaService\Logs\ServiceLog_<currentDate>.txt
+
+    5. Does the log file report that a USB device was recently connected?
+        If not, check the USB wire and ports of the PC and display.
+
+    6. Does the log file report that the recently connected USB device is a Leia device?
+        If not, check the USB wire and ports of the PC and display.
+
+    7. Run C:\Program Files\LeiaInc\LeiaDisplaySdk\TestConsoleCpp.exe. Did the .exe run without generating any errors?
+        If not, please report the errors in the log file to Leia Inc. and continue to next steps to see if the issue appears in Unity builds also.
+
+    8. Build a Unity scene with a LeiaCamera + LeiaDisplay in the scene from LeiaLoft internal SDK version 0.6.14+.
+        To check the LeiaLoft SDK version, please report all the lines of Assets/LeiaLoft/Resources/VERSION.txt
+
+    9. Is LeiaDisplayService.Wcf.dll in the same directory as the .exe which you wish to run?
+        If not, please move LeiaDisplayService.Wcf.dll so that it is in the same directory as your .exe
+
+    10. Did the .exe run with the backlight on?
+        If not,
+            - please share the LeiaService log file with Leia Inc.
+            - please share the Unity .executable's log file with Leia Inc. - see https://docs.unity3d.com/Manual/LogFiles.html
+
+    11. Did the .exe draw the pixels in generally the correct position onscreen?
+        If not,
+            - please share a screenshot with Leia Inc.
+            - please share the LeiaService log file with Leia Inc.
+            - please share the Unity .executable's log file with Leia Inc. - see https://docs.unity3d.com/Manual/LogFiles.html
+
+    12. Did the .exe draw the pixels in generally correct sections of the screen, but do the pixels not produce an image with depth?
+        Try using the LeiaConfigSettingsUI (Assets/LeiaLoft/Modules/Internal/LeiaConfigSettingsUI/Prefabs) to change the slant of the display.
+        If that did not resolve the issue,
+            - please share a screenshot with Leia Inc.
+            - please share the LeiaService log file with Leia Inc.
+            - please share the Unity .executable's log file with Leia Inc. - see https://docs.unity3d.com/Manual/LogFiles.html

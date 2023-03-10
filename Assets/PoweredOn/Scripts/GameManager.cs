@@ -16,6 +16,8 @@ using NRKernal;
 using static PoweredOn.Animations.EasingFunction;
 using PoweredOn.Animations.Effects;
 using UnityEngine.Assertions;
+using LeiaLoft;
+using UnityEngine.Audio;
 //using UnityEngine.InputSystem;
 
 namespace PoweredOn.Managers
@@ -29,6 +31,7 @@ namespace PoweredOn.Managers
     public class GameManager : MonoBehaviour
     {
         private static GameManager _instance;
+        private static CheckExternalDisplay checkExternalDisplay;
         public static GameManager Instance { 
             get {
                 if (_instance == null)
@@ -90,6 +93,8 @@ namespace PoweredOn.Managers
             }
 
             ps = GameObject.Find("Particle System").GetComponent<ParticleSystem>();
+
+            checkExternalDisplay = GetComponent<CheckExternalDisplay>();
 
             foundationPS = new List<ParticleSystem>(4) { null, null, null, null };
             // clubs
@@ -265,13 +270,7 @@ namespace PoweredOn.Managers
         // Start is called before the first frame update
         void Start()
         {
-            // really this only here until I can get Canvas UI buttons responding again.
-#if UNITY_ANDROID && !UNITY_EDITOR
-             EnableNrealMode();
-#else
-            //DisableNrealMode();
-            EnableNrealMode();
-#endif
+            // 
 
             // disable particles at start
             ps.Stop();
@@ -286,12 +285,12 @@ namespace PoweredOn.Managers
             sfxPlayer = GameObject.Find("SFXPlayer").GetComponent<AudioSource>();
 
             // TODO: support Landscape when NReal Mode is disabled
-            /*Screen.autorotateToPortrait = true;
+            Screen.orientation = ScreenOrientation.LandscapeLeft;
             Screen.autorotateToPortraitUpsideDown = false;
-            Screen.autorotateToLandscapeLeft = true;
-            Screen.autorotateToLandscapeRight = true;
-            Screen.orientation = ScreenOrientation.AutoRotation;*/
-            Screen.orientation = ScreenOrientation.Portrait;
+            Screen.autorotateToPortrait = false;
+            Screen.autorotateToLandscapeRight = false;
+            Screen.autorotateToLandscapeLeft = false;
+
             if (DebugOutput.Instance == null)
             {
                 Debug.LogWarning("GameManager [Start] DebugOutput.Instance is still null.");
@@ -321,6 +320,19 @@ namespace PoweredOn.Managers
             didLoad = true;
         }
 
+        public void OnFOVSliderChange(Slider fovSlider)
+        {
+            Camera camera = GameObject.Find("RenderCamera")?.GetComponent<Camera>();
+            if (camera != null)
+            {
+                camera.fieldOfView = fovSlider.value;
+            }
+            else
+            {
+                Debug.LogWarning("fieldOfView slider: render camera is null");
+            }
+        }
+
         public void ToggleMenu()
         {
             if(menuGroup != null)
@@ -342,7 +354,7 @@ namespace PoweredOn.Managers
                 menuGroup.SetActive(force);
                 if (menuGroup.activeSelf)
                 {
-                    menuGroup.transform.position = Vector3.zero;
+                    //menuGroup.transform.position = Vector3.zero;
 
                     // update difficulty slider & text
                     difficultyAssistant.UpdateDifficultyText();
@@ -392,8 +404,52 @@ namespace PoweredOn.Managers
                 bgMusicPlayer.Stop();
             }
         }
+        
+        public void ListAudioDeviceNames()
+        {
+            AndroidJavaObject context = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity").Call<AndroidJavaObject>("getApplicationContext");
+            AndroidJavaObject audioManager = context.Call<AndroidJavaObject>("getSystemService", new AndroidJavaObject("java.lang.String", "audio"));
+
+            // load the value for the AudioManager const from the AudioManager class
+            int GET_DEVICES_OUTPUTS = new AndroidJavaClass("android.media.AudioManager").GetStatic<int>("GET_DEVICES_OUTPUTS");
+
+            AndroidJavaObject[] devices = audioManager.Call<AndroidJavaObject[]>("getDevices", new AndroidJavaObject("java.lang.Integer", GET_DEVICES_OUTPUTS));
+
+            for (int i = 0; i < devices.Length; i++)
+            {
+                string deviceName = devices[i].Call<string>("getProductName");
+                Debug.Log("Device Name: " + deviceName);
+            }
+        }
+
+        public void TryEnableNreal()
+        {
+            // if the platform is android,
+            // and ( there's an external display connected OR we're in the simulator )
+            // then enable nreal mode
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (checkExternalDisplay.DisplayCount > 1 || Application.isEditor)
+                {
+                    SetNrealMode(true);
+                }
+            }
+        }
+
         public void SetNrealMode(bool value)
         {
+            // if platform is not android, skip
+            if (Application.platform != RuntimePlatform.Android)
+            {
+                Debug.LogWarning("SetNrealMode, skipping, not android platform");
+                return;
+            }
+            // if there's no external displays connected, force to disabled
+            if (checkExternalDisplay.DisplayCount < 2)
+            {
+                Debug.LogWarning("SetNrealMode, skipping, only 1 display detected");
+                value = false;
+            }
             nrealModeEnabled = value;
             var finds = Resources.FindObjectsOfTypeAll<NRVirtualDisplayer>();
             if (finds.Count() > 0)
@@ -974,39 +1030,70 @@ namespace PoweredOn.Managers
             difficultyAssistant.UpdateDifficultyText();
         }
 
-            /*void CheckCardAnimationsShouldPlay()
+        public void OnSliderChanged(Slider slider)
+        {
+            var lc = GameObject.Find("MainCamera").GetComponent<LeiaCamera>();
+            var ld = GameObject.FindObjectOfType<LeiaDisplay>();
+            switch (slider.gameObject.name)
             {
-                if (cards.Count == 0)
-                {
-                    return;
-                }
+                case "BaselineSlider":
+                    
+                    lc.BaselineScaling = slider.value;
+                    break;
 
-                double now = Time.realtimeSinceStartupAsDouble;
+                case "PlaxSlider":
 
-                foreach (Card card in cards)
+                    lc.CameraShiftScaling = slider.value;
+                    break;
+                    
+                case "FocusSlider":
+
+                    lc.ConvergenceDistance = slider.value;
+                    break;
+
+                case "ZoomSlider":
+                    mainCamera.fieldOfView = slider.value;
+                    break;
+
+                case "OffsetSlider":
+                    game.Z_SPACING = slider.value;
+                    break;
+            }
+        }
+
+        /*void CheckCardAnimationsShouldPlay()
+        {
+            if (cards.Count == 0)
+            {
+                return;
+            }
+
+            double now = Time.realtimeSinceStartupAsDouble;
+
+            foreach (Card card in cards)
+            {
+                if (card.animation is not null)
                 {
-                    if (card.animation is not null)
+                    // play it if it's not playing / was waiting for delay to expire
+                    if (!card.animation.IsPlaying)
                     {
-                        // play it if it's not playing / was waiting for delay to expire
-                        if (!card.animation.IsPlaying)
+                        if (now - card.animation.delaySetAt > card.animation.delayStart)
                         {
-                            if (now - card.animation.delaySetAt > card.animation.delayStart)
-                            {
-                                card.animation.Play();
-                            }
+                            card.animation.Play();
                         }
-                        else
+                    }
+                    else
+                    {
+
+
+                        if (card.animation.playhead > 2.0f)
                         {
-
-
-                            if (card.animation.playhead > 2.0f)
-                            {
-                                card.animation.Stop();
-                            }
+                            card.animation.Stop();
                         }
                     }
                 }
-            }*/
-        }
+            }
+        }*/
+    }
 
 }

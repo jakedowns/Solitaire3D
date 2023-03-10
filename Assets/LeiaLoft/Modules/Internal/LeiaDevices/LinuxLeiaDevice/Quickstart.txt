@@ -1,0 +1,18 @@
+﻿Linux LeiaDevice Add-on
+
+Description:
+    Contains device support for Linux builds.
+
+Requisite:
+    Linux builds are available to business partners of Leia Inc.
+    Requires Leia Inc. Linux firmware platform 0.1.0.1 or above.
+    Check ~/leialfmgr.log to verify that your firmware is installed.
+    Check that your external monitor is connected by USB.
+
+Quick start:
+    Build to Linux on x86_64 with this SDK.
+    From terminal, add Leia Linux libraries to your path
+        $ export LD_LIBRARY_PATH=/usr/local/leia/lfmgr/lib:$LD_LIBRARY_PATH
+        (slashes, spaces, and $ symbols matter; copy exactly)
+    From terminal, run your Unity .x86_64 application which had a Leia Display in scene
+        $ ./<appname>.x86_64

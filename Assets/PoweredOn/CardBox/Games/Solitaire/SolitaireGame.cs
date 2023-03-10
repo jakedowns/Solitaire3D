@@ -30,6 +30,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public ScoreKeeper scoreKeeper = new ScoreKeeper();
 
+        public float Z_SPACING = 0.0043f;
+
         bool _isDealing = false;
         public bool MovingStockToWaste { get; internal set; } = false;
 
@@ -135,7 +137,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // OR: they could be moved to SolitaireDealer.cs
         public const float TAB_SPACING = 0.1f;
         const float RANDOM_AMPLITUDE = 0.5f;
-        public const float CARD_THICKNESS = 0.001f;
+        //public const float CARD_THICKNESS = 0.001f;
         public const float TAB_VERT_OFFSET = 0.02f;
 
         // z-axis rotation is temporary until i fix the orientation of the mesh in blender
@@ -780,7 +782,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // like stockCardPile.GetGoalIDAsCard(card) // returns the proper goal for the card based on it's position in the pile
                     if (goalID != null && stockCardPile.gameObject != null)
                     {
-                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * -CARD_THICKNESS));
+                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * -Z_SPACING));
                         goalID = new GoalIdentity(card.gameObject, stockCardPile.gameObject, offset);
                     }
                     break;
@@ -790,10 +792,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     wasteCardPile.Add(card.GetSuitRank());
                     if (goalID != null && wasteCardPile.gameObject != null)
                     {
-                        /*gPos = wasteCardPile.gameObject.transform.TransformPoint(Vector3.forward * (wasteCardPile.Count * -CARD_THICKNESS));
+                        /*gPos = wasteCardPile.gameObject.transform.TransformPoint(Vector3.forward * (wasteCardPile.Count * -Z_SPACING));
                         goalID.position = gPos;*/
 
-                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * -CARD_THICKNESS));
+                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * -Z_SPACING));
                         goalID = new GoalIdentity(card.gameObject, wasteCardPile.gameObject, offset);
 
                     }
@@ -809,7 +811,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         goalID = new GoalIdentity(card.gameObject, baseGO, new Vector3(
                             0,
                             0,
-                            playfield_offset + (foundationCardPileGroup[spot.index].Count * -CARD_THICKNESS)
+                            playfield_offset + (foundationCardPileGroup[spot.index].Count * -Z_SPACING)
                         ));
                     }
                     break;
@@ -820,13 +822,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     if (goalID != null && tableauCardPileGroup[spot.index].gameObject != null)
                     {
                         /*gPos = tableauCardPileGroup[spot.index].gameObject.transform.position;
-                        gPos.z = (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS - .02f;;
+                        gPos.z = (tableauCardPileGroup[spot.index].Count) * -Z_SPACING - .02f;;
                         gPos.y = (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET;
                         goalID.position = gPos;*/
                         goalID = new GoalIdentity(card.gameObject, tableauCardPileGroup[spot.index].gameObject, new Vector3(
                             0,
                             (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET,
-                            playfield_offset + (tableauCardPileGroup[spot.index].Count) * -CARD_THICKNESS
+                            playfield_offset + (tableauCardPileGroup[spot.index].Count) * -Z_SPACING
                         ));
                     }
                     break;
@@ -839,7 +841,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     //var hand = GetGameObjectByType(SolitaireGameObject.Hand_Base);
                     if (goalID != null && card.gameObject != null && handCardPile.gameObject != null)
                     {
-                        goalID = new GoalIdentity(card.gameObject, handCardPile.gameObject, new Vector3(0.0f, 0.0f, playfield_offset * spot.index * -CARD_THICKNESS));
+                        goalID = new GoalIdentity(card.gameObject, handCardPile.gameObject, new Vector3(0.0f, 0.0f, playfield_offset * spot.index * -Z_SPACING));
                     }
                     break;
 
@@ -850,7 +852,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     {
                         GameObject offsetGameObject = GetGameObjectByType(SolitaireDeck.offsetGameObjectType);
                         //Debug.LogWarning($"offsetGameObject: {offsetGameObject.transform.position}");
-                        goalID = new GoalIdentity(card.gameObject, offsetGameObject, new Vector3(0.0f, 0.0f, (CARD_THICKNESS * spot.index))); // (52 - spot.index)
+                        goalID = new GoalIdentity(card.gameObject, offsetGameObject, new Vector3(0.0f, 0.0f, (Z_SPACING * spot.index))); // (52 - spot.index)
                     }
                     break;
             }
@@ -1495,6 +1497,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case PlayfieldArea.STOCK:
                     if(handCardPile.Count == 0 && stockCardPile.Count < 1 && wasteCardPile.Count > 0)
                     {
+                        Vibration.Vibrate(30, 70);
                         WasteToStock();
                     }
                     break;
@@ -1505,6 +1508,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     else if (stockCardPile.Count > 0)
                     {
+                        Vibration.Vibrate(30, 70);
                         StockToWaste();
                     }
                     break;
@@ -1527,6 +1531,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             if (card.playfieldSpot.area == PlayfieldArea.STOCK)
             {
+                Vibration.Vibrate(30, 78);
                 // send to waste
                 StockToWaste();
                 return;
@@ -1534,6 +1539,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             if (card.playfieldSpot.area == PlayfieldArea.INVALID || card.playfieldSpot.area == PlayfieldArea.DECK)
             {
+                Vibration.Vibrate(30, 78);
+                Vibration.Vibrate(30, 78);
                 Debug.LogError("invalid or deck card clicked, ignoring");
                 return;
             }
@@ -1572,11 +1579,14 @@ namespace PoweredOn.CardBox.Games.Solitaire
             Debug.LogWarning($"single-click: autoplace: {card.GetSuitRank()} -> {next_spot}");
             if (next_spot.area == PlayfieldArea.INVALID)
             {
+                Vibration.Vibrate(30, 78);
+                Vibration.Vibrate(30,78);
                 iDebug.LogWarning("no valid spot found for card, ignoring");
                 return;
             }
             else
             {
+                Vibration.Vibrate(30,78);
                 if (card.IsFaceUp)
                 {
                     scoreKeeper.RecordMove(new SolitaireMove(card, card.playfieldSpot, next_spot));

@@ -1,0 +1,9 @@
+Android LeiaDevice Add-on
+
+Description:
+    Contains device support for Android builds.
+
+Quick start:
+    Build an APK with this SDK.
+    Install your APK on a Hydrogen or Lumepad.
+    Run the installed app on a Hydrogen or Lumepad.

@@ -1,0 +1,23 @@
+{
+    "intParams": [
+        {
+            "Name": "anisoLevel",
+            "Collection": [
+                0
+            ]
+        },
+        {
+            "Name": "filterMode",
+            "Collection": [
+                1
+            ]
+        },
+        {
+            "Name": "antiAliasing",
+            "Collection": [
+                8
+            ]
+        }
+    ]
+}
+

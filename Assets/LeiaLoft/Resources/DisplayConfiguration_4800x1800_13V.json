@@ -1,0 +1,248 @@
+{
+    "stringParams": [
+    ],
+    "intParams": [
+        {
+            "Name": "PanelResolution",
+            "Collection": [
+                4800,
+                1800
+            ]
+        },
+        {
+            "Name": "NumViews",
+            "Collection": [
+                13,
+                1
+            ]
+        },
+        {
+            "Name": "DisplaySizeInMm",
+            "Collection": [
+                191.6,
+                109.35
+            ]
+        },
+        {
+            "Name": "ViewResolution",
+            "Collection": [
+                1562,
+                650
+            ]
+        }
+    ],
+    "boolParams": [
+        {
+            "Name": "Slant",
+            "Collection": [
+                true
+            ]
+        },
+        {
+            "Name": "isSquare",
+            "Collection": [
+                false
+            ]
+        },
+        {
+            "Name": "isSlanted",
+            "Collection": [
+                true
+            ]
+        }
+    ],
+    "floatParams": [
+        {
+            "Name": "ResolutionScale",
+            "Collection": [
+                1.0
+            ]
+        },
+        {
+            "Name": "InterlacingMatrixLandscape",
+            "Collection": [
+                2.5,
+                7.34994,
+                1.6,
+                0,
+                7.1001,
+                0.345002,
+                3,
+                0,
+                1,
+                0,
+                18,
+                81,
+                2,
+                2,
+                0,
+                86
+            ]
+        },
+        {
+            "Name": "InterlacingMatrixLandscape180",
+            "Collection": [
+                2.5,
+                7.34994,
+                1.6,
+                0,
+                7.1001,
+                0.345002,
+                3,
+                0,
+                1,
+                0,
+                18,
+                81,
+                2,
+                2,
+                0,
+                86
+            ]
+        },
+        {
+            "Name": "InterlacingMatrixPortrait",
+            "Collection": [
+                2.5,
+                7.34994,
+                1.6,
+                0,
+                7.1001,
+                0.345002,
+                3,
+                0,
+                1,
+                0,
+                18,
+                81,
+                2,
+                2,
+                0,
+                86
+            ]
+        },
+        {
+            "Name": "InterlacingMatrixPortrait180",
+            "Collection": [
+                2.5,
+                7.34994,
+                1.6,
+                0,
+                7.1001,
+                0.345002,
+                3,
+                0,
+                1,
+                0,
+                18,
+                81,
+                2,
+                2,
+                0,
+                86
+            ]
+        },
+        {
+            "Name": "InterlacingVectorLandscape",
+            "Collection": [
+                0,
+                -1,
+                0,
+                0
+            ]
+        },
+        {
+            "Name": "InterlacingVectorLandscape180",
+            "Collection": [
+                0,
+                -1,
+                0,
+                0
+            ]
+        },
+        {
+            "Name": "InterlacingVectorPortrait",
+            "Collection": [
+                0,
+                -1,
+                0,
+                0
+            ]
+        },
+        {
+            "Name": "InterlacingVectorPortrait180",
+            "Collection": [
+                0,
+                -1,
+                0,
+                0
+            ]
+        },
+        {
+            "Name": "Gamma",
+            "Collection": [
+                1.99
+            ]
+        },
+        {
+            "Name": "Beta",
+            "Collection": [
+                2
+            ]
+        },
+        {
+            "Name": "DotPitchInMm",
+            "Collection": [
+                0.06084,
+                0.06084
+          ]
+        },
+        {
+            "Name": "AlignmentOffset",
+            "Collection": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Name": "ActCoefficientsY",
+            "Collection": [
+                0,
+                0,
+                0,
+                0.450,
+                0.150,
+                -0.450,
+                -0.150,
+                0.5,
+                0.5
+            ]
+        },
+        {
+            "Name": "ActCoefficientsX",
+            "Collection": [
+                0.049,
+                0.022,
+                0.013,
+                0.014,
+                0.006,
+                0.009,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "Name": "SystemDisparityPercent",
+            "Collection": [
+                0.012500000186264515
+            ]
+        },
+        {
+            "Name": "SystemDisparityPixels",
+            "Collection": [
+                4.0
+            ]
+        }
+    ]
+}

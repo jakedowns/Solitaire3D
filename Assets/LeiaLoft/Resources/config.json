@@ -1,0 +1,69 @@
+{
+    "pragma" : {
+        "value" : "#version 130\n",
+        "description" : "OpenGL shader version"
+    },
+    "numHorizontalViews" : {
+        "value" : 12,
+        "description" : "Number of horizontal views"
+    },
+    "numVerticalViews" : {
+        "value" : 1,
+        "description" : "Number of vertical views"
+    },
+    "atlas" : {
+        "horizontal" : 3,
+        "vertical" : 4,
+        "description" : "Atlas configuration"
+    },
+    "width" : {
+        "value" : 3840,
+        "description" : "Width of display"
+    },
+    "height" : {
+        "value" : 2160,
+        "description" : "Height of display"
+    },
+    "tileWidth" : {
+        "value" : 1280,
+        "description" : "Width of rendering tile"
+    },
+    "tileHeight" : {
+        "value" : 720,
+        "description" : "Height of rendering tile"
+    },
+    "act_coefficients" : {
+        "value" : [0.08, 0.009,0.017,0.008,0.008,0.004],
+        "beta" : 2.0,
+        "gamma" : 2.0,
+        "description" : "Sharpening ACT coefficients"
+    },
+    "display" : {
+        "offsetX" : -3.23,
+        "convergenceDistance" : 540.0,
+        "viewBoxSizeX" : 30.0,
+        "n" : 1.5,
+        "pixelPitch" : 0.08964,
+        "theta" : 0.3,
+        "description" : "Display configuration properties"
+    },
+    "rounding" : {
+        "input" : true,
+        "output" : true,
+        "description" : "Pixel centering, input is on texture, output is on viewIndex"
+    },
+    "magicMatrix" : {
+        "value" : [],
+        "description" : "Magic Matrix, if not supplied then will be automatically computed"
+    },
+    "subpixel" : {
+        "value" :true,
+        "description" : "Subpixel, either True or False"
+    },
+    "subpixelViewStepRate" : {
+        "uvx" : 3,
+        "uvy" : 1,
+        "rgb" : 1,
+        "description" : "uvy negative does negative slant"
+    }
+}
