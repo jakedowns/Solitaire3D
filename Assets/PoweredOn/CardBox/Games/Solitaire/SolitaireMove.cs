@@ -100,6 +100,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return string.Format($"Move: {GetSolitaireMoveType()}:{GetMoveValue()} ");
         }
 
+        public string MoveID {
+            get
+            {
+                return string.Format($"{GetSolitaireMoveType()}-{Subject.GetSuitRank()}-{ToSpot.index}-{ToSpot.subindex}");
+            }
+        }
+
         internal bool IsValid()
         {
             return SolitaireMoveValidator.IsValidMove(Managers.GameManager.Instance.game.GetGameState(), this);

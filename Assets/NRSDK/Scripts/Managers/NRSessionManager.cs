@@ -414,6 +414,8 @@ namespace NRKernal
         /// <param name="msg"> The message.</param>
         private void ShowErrorTips(NRKernalError error)
         {
+            // don't quit
+            return;
             string msg = GetErrorTip(error);
 
             var sessionbehaviour = GameObject.FindObjectOfType<NRSessionBehaviour>();
@@ -455,7 +457,7 @@ namespace NRKernal
         {
             if (SessionState != SessionState.Running || m_IsSessionError)
             {
-                Debug.LogError(SessionState.ToString());
+                //Debug.LogError(SessionState.ToString());
                 return;
             }
 

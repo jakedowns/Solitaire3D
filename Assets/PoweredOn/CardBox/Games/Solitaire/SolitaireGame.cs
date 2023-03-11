@@ -35,6 +35,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         bool _isDealing = false;
         public bool MovingStockToWaste { get; internal set; } = false;
 
+        public SolitaireMoveSuggestor moveSuggestor { get; internal set; } = new SolitaireMoveSuggestor();
         public bool DebugCardColors { get; internal set; } = false;
 
         DebugOutput iDebug
@@ -163,7 +164,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         //int m_Moves = 0;
         //int score = 0;
-        public SolitaireGame(){}
+        public SolitaireGame(){
+        }
 
         /* this is the state where auto-complete should become available to the user */
         public bool IsInFinalStage
@@ -350,7 +352,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void AutoPlayNextMove()
         {
-            SolitaireMoveList moves = SolitaireMoveSuggestor.SuggestMoves(this);
+            SolitaireMoveList moves = moveSuggestor.SuggestMoves(this);
             
             Debug.LogWarning("[Autoplay] Suggested moves: " + moves.Count);
             Debug.Log(moves);
@@ -373,15 +375,17 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 if (move.IsValid())
                 {
                     scoreKeeper.RecordMove(move);
+                    moveSuggestor.RecordPlayedSuggestion(move); // remember this move so we don't suggest it again
                     move.Execute();
                 }
                 else
                 {
                     Debug.LogError("[Autoplay] Suggestor suggested invalid move");
+                    // TODO: maybe call moveSuggestor.recordInvalidSuggestion(move) so we don't suggest it again
                 }
 
 
-                if(move.FromSpot.area == PlayfieldArea.WASTE && move.ToSpot.area == PlayfieldArea.STOCK)
+                if (move.FromSpot.area == PlayfieldArea.WASTE && move.ToSpot.area == PlayfieldArea.STOCK)
                 {
                     this.IsRecyclingWasteToStock = false;
                 }

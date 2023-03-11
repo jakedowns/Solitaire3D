@@ -11,15 +11,35 @@ using UnityEngine.Assertions;
 
 namespace PoweredOn.CardBox.Games.Solitaire
 {
-    public static class SolitaireMoveSuggestor
+    public class SolitaireMoveSuggestor
     {
-        public static SolitaireMoveList SuggestMoves(SolitaireGame game)
+        public Dictionary<string, bool> suggestedMoves { get; internal set; } = new Dictionary<string, bool>();
+        public SolitaireMoveSuggestor()
+        {
+            suggestedMoves = new Dictionary<string, bool>();
+        }
+
+        public void ResetSuggestedMoves() 
+        { 
+            suggestedMoves.Clear();
+        }
+
+        public void RecordPlayedSuggestion(SolitaireMove move)
+        {
+            if(move.FromSpot.area == PlayfieldArea.TABLEAU && move.ToSpot.area == PlayfieldArea.TABLEAU)
+            {
+                Debug.LogWarning("recording prev suggestion: " + move.MoveID);
+                suggestedMoves[move.MoveID] = true;
+            }
+        }
+        public SolitaireMoveList SuggestMoves(SolitaireGame game)
         {
             SolitaireGameState gameState = game.GetGameState();
             SolitaireMoveList movesToRank = new SolitaireMoveList();
+            
 
             // 1. get moves and then rank them by type
-            
+
             // 1.1 check spots in this order: waste, tableau, or return STOCK_TO_WASTE
             var TableauPileGroup = game.GetTableauCardPileGroup();
             SolitaireCardPile[] cardPiles = new SolitaireCardPile[] {
@@ -60,20 +80,37 @@ namespace PoweredOn.CardBox.Games.Solitaire
             SolitaireMoveList filteredMoves = new SolitaireMoveList();
             foreach (var move in movesToRank)
             {
+
+                // if we've already suggested the move
+                bool isTabToTabMove = move.FromSpot.area == PlayfieldArea.TABLEAU
+                    && move.ToSpot.area == PlayfieldArea.TABLEAU;
+
+                if (isTabToTabMove)
+                {
+                    if (suggestedMoves.ContainsKey(move.MoveID))
+                    {
+                        //Debug.Log("skipping previously suggested move: " + move.MoveID);
+                        //Debug.Log("current suggestedMoves count = " + suggestedMoves.Count);
+                        // skip this move
+                        continue;   
+                    }
+                }
+
                 if (
                     move.Subject.GetRank() == Rank.KING
-                    && move.FromSpot.area == PlayfieldArea.TABLEAU
-                    && move.ToSpot.area == PlayfieldArea.TABLEAU
+                    && isTabToTabMove
                 )
                 {
-                    var fromPile = cardPiles[move.FromSpot.index + 1]; // offset by one cause of Waste in array
+                    //var fromPile = cardPiles[move.FromSpot.index + 1]; // offset by one cause of Waste in array
                     var toPile = cardPiles[move.ToSpot.index + 1]; // offset by one cause of Waste in array
                     if(
-                        fromPile.Count == fromPile.GetFaceUpCards().Count
-                        && toPile.Count == toPile.GetFaceUpCards().Count
+                        move.FromSpot.subindex == 0
+                        && toPile.Count == 0
                     )
                     {
-                        Debug.LogWarning("ignoring tableau<->tableau move for king");
+                        // Don't just move kings from pile to pile if they're not revealing anything under themselves
+                        //Debug.LogWarning("ignoring tableau<->tableau move for king");
+                        continue;
                     }
                     else
                     {
@@ -89,16 +126,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
             if (gameState.StockPile.Count > 0)
             {
-                SolitaireMoveList moves = new SolitaireMoveList();
+                //SolitaireMoveList moves = new SolitaireMoveList();
                 var TopStockCard = gameState.StockPile.GetTopCard();
                 // Stock -> Waste
-                movesToRank.Add(new SolitaireMove(TopStockCard, TopStockCard.playfieldSpot, new PlayfieldSpot(PlayfieldArea.WASTE, gameState.WastePile.Count)));
+                filteredMoves.Add(new SolitaireMove(TopStockCard, TopStockCard.playfieldSpot, new PlayfieldSpot(PlayfieldArea.WASTE, gameState.WastePile.Count)));
             }
 
             //UnityEngine.Debug.Log("Suggested Moves before Ranking: " + movesToRank.Count);
             
-            SolitaireMoveList rankedMoves = movesToRank.SortByMoveRank();
-            Assert.IsTrue(movesToRank.Count == rankedMoves.Count);
+            SolitaireMoveList rankedMoves = filteredMoves.SortByMoveRank();
+            Assert.IsTrue(filteredMoves.Count == rankedMoves.Count);
             UnityEngine.Debug.Log("Suggested Moves After Ranking: " + rankedMoves);
 
             

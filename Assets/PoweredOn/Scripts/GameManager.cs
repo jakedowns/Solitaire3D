@@ -16,8 +16,8 @@ using NRKernal;
 using static PoweredOn.Animations.EasingFunction;
 using PoweredOn.Animations.Effects;
 using UnityEngine.Assertions;
-using LeiaLoft;
 using UnityEngine.Audio;
+using UnityEngine.EventSystems;
 //using UnityEngine.InputSystem;
 
 namespace PoweredOn.Managers
@@ -31,7 +31,6 @@ namespace PoweredOn.Managers
     public class GameManager : MonoBehaviour
     {
         private static GameManager _instance;
-        private static CheckExternalDisplay checkExternalDisplay;
         public static GameManager Instance { 
             get {
                 if (_instance == null)
@@ -92,9 +91,12 @@ namespace PoweredOn.Managers
                 _instance = GameObject.FindObjectOfType<GameManager>();
             }
 
-            ps = GameObject.Find("Particle System").GetComponent<ParticleSystem>();
+            // bind a callback to OnAudioConfigurationChanged
+            AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
+            // Subscribe to the displaysUpdated event
+            //Display.displaysUpdated += OnDisplaysUpdated;
 
-            checkExternalDisplay = GetComponent<CheckExternalDisplay>();
+            ps = GameObject.Find("Particle System").GetComponent<ParticleSystem>();
 
             foundationPS = new List<ParticleSystem>(4) { null, null, null, null };
             // clubs
@@ -182,6 +184,20 @@ namespace PoweredOn.Managers
                 {
                     mainCamera = _camera;
                 }
+            }
+        }
+
+        public void OnDisplaysUpdated()
+        {
+            Debug.Log("OnDisplaysUpdated");
+        }
+
+        public void OnAudioConfigurationChanged(bool deviceWasChanged)
+        {
+            Debug.Log("OnAudioConfigurationChanged: deviceWasChanged: " + deviceWasChanged);
+            if (deviceWasChanged)
+            {
+                string[] deviceNames = ListAudioDeviceNames();
             }
         }
 
@@ -281,11 +297,15 @@ namespace PoweredOn.Managers
             // hide menu
             ToggleMenu(false);
 
+            // MaybeEnableNreal
+            TryEnableNreal();
+            ListAudioDeviceNames();
+
             bgMusicPlayer = GameObject.Find("BGMusic").GetComponent<AudioSource>();
             sfxPlayer = GameObject.Find("SFXPlayer").GetComponent<AudioSource>();
 
-            // TODO: support Landscape when NReal Mode is disabled
-            Screen.orientation = ScreenOrientation.LandscapeLeft;
+            
+            //Screen.orientation = ScreenOrientation.LandscapeLeft;
             Screen.autorotateToPortraitUpsideDown = false;
             Screen.autorotateToPortrait = false;
             Screen.autorotateToLandscapeRight = false;
@@ -405,21 +425,48 @@ namespace PoweredOn.Managers
             }
         }
         
-        public void ListAudioDeviceNames()
+        public string[] ListAudioDeviceNames()
         {
-            AndroidJavaObject context = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity").Call<AndroidJavaObject>("getApplicationContext");
-            AndroidJavaObject audioManager = context.Call<AndroidJavaObject>("getSystemService", new AndroidJavaObject("java.lang.String", "audio"));
+            // if we're in the editor, use the Unity API to get the list of output audio devices
+            //if (Application.isEditor)
+            //{
+                var config = UnityEngine.AudioSettings.GetConfiguration();
+                // list the available fields and properties and getters on the config
+                // Print the audio configuration to the console
+                Debug.Log("Audio configuration:");
+                Debug.Log("  Sample rate: " + config.sampleRate);
+                Debug.Log("  Speaker mode: " + config.speakerMode);
+                Debug.Log("  DSP buffer size: " + config.dspBufferSize);
+                //Debug.Log("  DSP buffer count: " + config.dspBufferCount);
+                //Debug.Log("  Output device names: " + string.Join(", ", config.outputDeviceNames));
 
-            // load the value for the AudioManager const from the AudioManager class
-            int GET_DEVICES_OUTPUTS = new AndroidJavaClass("android.media.AudioManager").GetStatic<int>("GET_DEVICES_OUTPUTS");
 
-            AndroidJavaObject[] devices = audioManager.Call<AndroidJavaObject[]>("getDevices", new AndroidJavaObject("java.lang.Integer", GET_DEVICES_OUTPUTS));
-
-            for (int i = 0; i < devices.Length; i++)
+                string[] deviceNames = new string[0];
+                return deviceNames;
+            //}
+            /*else
             {
-                string deviceName = devices[i].Call<string>("getProductName");
-                Debug.Log("Device Name: " + deviceName);
-            }
+                // otherwise, use the Android API to get the list of audio devices
+                // get the context from the UnityPlayer class
+
+
+                AndroidJavaObject context = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity").Call<AndroidJavaObject>("getApplicationContext");
+                AndroidJavaObject audioManager = context.Call<AndroidJavaObject>("getSystemService", new AndroidJavaObject("java.lang.String", "audio"));
+
+                // load the value for the AudioManager const from the AudioManager class
+                int GET_DEVICES_OUTPUTS = new AndroidJavaClass("android.media.AudioManager").GetStatic<int>("GET_DEVICES_OUTPUTS");
+
+                AndroidJavaObject[] devices = audioManager.Call<AndroidJavaObject[]>("getDevices", new AndroidJavaObject("java.lang.Integer", GET_DEVICES_OUTPUTS));
+                string[] deviceNames = new string[devices.Length];
+                for (int i = 0; i < devices.Length; i++)
+                {
+                    string deviceName = devices[i].Call<string>("getProductName");
+                    Debug.Log("Device Name: " + deviceName);
+                    deviceNames[i] = deviceName;
+                }
+
+                return deviceNames;
+            }*/
         }
 
         public void TryEnableNreal()
@@ -429,33 +476,65 @@ namespace PoweredOn.Managers
             // then enable nreal mode
             if (Application.platform == RuntimePlatform.Android)
             {
-                if (checkExternalDisplay.DisplayCount > 1 || Application.isEditor)
+                if (Display.displays.Length > 1 || Application.isEditor)
                 {
                     SetNrealMode(true);
+                    return;
                 }
             }
+            SetNrealMode(false);
         }
 
         public void SetNrealMode(bool value)
         {
             // if platform is not android, skip
-            if (Application.platform != RuntimePlatform.Android)
+            if (value == true && Application.platform != RuntimePlatform.Android && !Application.isEditor)
             {
                 Debug.LogWarning("SetNrealMode, skipping, not android platform");
                 return;
             }
+
             // if there's no external displays connected, force to disabled
-            if (checkExternalDisplay.DisplayCount < 2)
+            if (Display.displays.Length < 2 && !Application.isEditor)
             {
                 Debug.LogWarning("SetNrealMode, skipping, only 1 display detected");
                 value = false;
             }
+
+            var findEventSystem = Resources.FindObjectsOfTypeAll<EventSystem>();
+            if(findEventSystem.Length > 0)
+            {
+                foreach(var es in findEventSystem)
+                {
+                    if(es.gameObject.name == "MainEventSystem")
+                    {
+                        // Non-NR Event System
+                        es.gameObject.SetActive(!value);
+                    }
+                    else if(es.gameObject.name == "[EventSystem]")
+                    {
+                        // NR's Event System
+                        es.gameObject.SetActive(value);
+                    }
+                }
+            }
+
+            var mainCanvas = GameObject.Find("MainCanvas");
+            var mainCanvasGraphicRaycaster = mainCanvas?.GetComponent<GraphicRaycaster>();
+            if (mainCanvasGraphicRaycaster != null)
+            {
+                mainCanvasGraphicRaycaster.enabled = !value;
+            }
+
+            Screen.orientation = value ? ScreenOrientation.Portrait : ScreenOrientation.LandscapeLeft;
             nrealModeEnabled = value;
             var finds = Resources.FindObjectsOfTypeAll<NRVirtualDisplayer>();
             if (finds.Count() > 0)
             {
-                var nrVirtDisplay = finds.First();
-                nrVirtDisplay.gameObject.SetActive(value);
+                foreach(var nrVirtDisplay in finds)
+                {
+                    nrVirtDisplay.gameObject.SetActive(value);
+                }
             }
 
             var finds2 = Resources.FindObjectsOfTypeAll<NRHMDPoseTracker>();
@@ -470,6 +549,23 @@ namespace PoweredOn.Managers
             {
                 var nrCamera = finds3.First();
                 nrCamera.gameObject.SetActive(value);
+            }
+
+            var finds4 = Resources.FindObjectsOfTypeAll<GameObject>();
+            if(finds4.Count() > 0)
+            {
+                bool foundCameraRig = false;
+                int i = 0;
+                while(!foundCameraRig && i < finds4.Count())
+                {
+                    GameObject obj = finds4[i];
+                    if(obj.name == "NRCameraRig")
+                    {
+                        NRMultiDisplayManager mdm = obj.GetComponent<NRMultiDisplayManager>();
+                        foundCameraRig = true;
+                    }
+                    i++;
+                }
             }
 
             Camera nrealCam = null;
@@ -886,7 +982,7 @@ namespace PoweredOn.Managers
         public void PlaySFX(SFX clipID)
         {
             // TODO: if sfx disabled, bail
-            if (!soundDict.ContainsKey(clipID)){
+            if (sfxPlayer == null || soundDict == null || !soundDict.ContainsKey(clipID)){
                 Debug.LogError("no clip for id " + clipID);
                 return;
             }
@@ -1032,11 +1128,12 @@ namespace PoweredOn.Managers
 
         public void OnSliderChanged(Slider slider)
         {
-            var lc = GameObject.Find("MainCamera").GetComponent<LeiaCamera>();
-            var ld = GameObject.FindObjectOfType<LeiaDisplay>();
+        
+            //var lc = GameObject.Find("MainCamera").GetComponent<LeiaCamera>();
+            //var ld = GameObject.FindObjectOfType<LeiaDisplay>();
             switch (slider.gameObject.name)
             {
-                case "BaselineSlider":
+                /*case "BaselineSlider":
                     
                     lc.BaselineScaling = slider.value;
                     break;
@@ -1049,15 +1146,15 @@ namespace PoweredOn.Managers
                 case "FocusSlider":
 
                     lc.ConvergenceDistance = slider.value;
-                    break;
+                    break;*/
 
                 case "ZoomSlider":
-                    mainCamera.fieldOfView = slider.value;
+                    TargetWorldCam.fieldOfView = 100.0f - slider.value;
                     break;
 
-                case "OffsetSlider":
+                /*case "OffsetSlider":
                     game.Z_SPACING = slider.value;
-                    break;
+                    break;*/
             }
         }
 

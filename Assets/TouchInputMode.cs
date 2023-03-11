@@ -40,6 +40,20 @@ public class TouchInputMode : MonoBehaviour
             // don't run when nreal mode is active
             return; 
         }
+
+        // Get the amount the mouse wheel has been scrolled
+        Vector2 scrollDelta = Input.mouseScrollDelta;
+
+        // Check if the magnitude of the scroll delta is greater than zero
+        if (scrollDelta.magnitude > 0)
+        {
+            // Respond to the mouse wheel input
+            float scrollAmount = scrollDelta.y;
+            // do something with scrollAmount
+            mainCamera.fieldOfView += scrollDelta.y * -10;
+            mainCamera.fieldOfView = Mathf.Clamp(mainCamera.fieldOfView, 10.0f, 90.0f);
+        }
+
         /* TOUCH START */
         if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
         {

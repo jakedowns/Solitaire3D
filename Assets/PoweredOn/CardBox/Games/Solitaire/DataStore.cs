@@ -9,7 +9,6 @@ using UnityEngine;
 using PoweredOn.CardBox.PlayingCards;
 using static PoweredOn.CardBox.Games.Solitaire.DataStore;
 using PoweredOn.Managers;
-using UnityEditor.XR.LegacyInputHelpers;
 using UnityEngine.Assertions;
 
 namespace PoweredOn.CardBox.Games.Solitaire
