@@ -19,6 +19,7 @@ using UnityEngine.Assertions;
 using UnityEngine.Audio;
 using UnityEngine.EventSystems;
 //using UnityEngine.InputSystem;
+using NRKernal.NRExamples;
 
 namespace PoweredOn.Managers
 {
@@ -46,7 +47,7 @@ namespace PoweredOn.Managers
 
         public DataStore dataStore { get; private set; } = new DataStore();
         public MonoSolitaireDeck monoDeck;
-        public bool nrealModeEnabled = false;
+        public bool nrealModeEnabled { get; private set; } = false;
         Camera mainCamera;
         Camera nrealCamera;
         public DifficultyAssistant difficultyAssistant { get; private set; } = new DifficultyAssistant();
@@ -72,6 +73,14 @@ namespace PoweredOn.Managers
         public bool didLoad { get; private set; } = false;
         public bool GoalAnimationSystemEnabled { get; private set; } = true; // disable to use the "joint" system instead of the goal system
         public Camera TargetWorldCam { get; private set; }
+        public Camera LeftCamera { get; private set; }
+        public Camera RightCamera { get; private set; }
+        public Camera CenterCamera { get; private set; }
+
+        public bool FollowHead = false;
+        public GameObject CanvasScaler;
+        public GameObject PlayPlaneOffset;
+        public GameObject FollowCheckbox;
 
         public enum SFX
         {
@@ -90,6 +99,8 @@ namespace PoweredOn.Managers
             {
                 _instance = GameObject.FindObjectOfType<GameManager>();
             }
+
+            nrealModeEnabled = false;
 
             // bind a callback to OnAudioConfigurationChanged
             AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
@@ -162,14 +173,40 @@ namespace PoweredOn.Managers
                 _ = GameObject.FindObjectOfType<DebugOutput>();
             }
 
+            // Find CameraSmoothFollow
+            var finds_cam_smooth_follows = Resources.FindObjectsOfTypeAll<CameraSmoothFollow>();
+            foreach (var csf in finds_cam_smooth_follows)
+            {
+                csf.enabled = false;
+            }
+
             // Find First in All (incl. Inactive)
             GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
             foreach(var obj in allObjects)
             {
-                if ( obj.name == "MenuGroup" && obj.transform.parent.name == "MainCanvas")
+                if ( obj.name == "MenuGroup" && obj.transform.parent.name == "CanvasScaler")
                 {
                     menuGroup = obj;
-                    break;
+                    // disable 
+                    obj.SetActive(false);
+                    //break;
+                }
+                else if (obj.name == "CanvasScaler")
+                {
+                    CanvasScaler = obj;
+                }
+                else if (obj.name == "MainCanvas")
+                {
+                    // allow disabling in editor without preventing it from showing at runtime
+                    obj.SetActive(true);
+                }
+                else if (obj.name == "PlayPlaneOffset")
+                {
+                    PlayPlaneOffset = obj;
+                }
+                else if (obj.name == "FollowCheckbox")
+                {
+                    FollowCheckbox = obj;
                 }
             }
             if(menuGroup == null)
@@ -183,6 +220,15 @@ namespace PoweredOn.Managers
                 if (_camera.gameObject.name == "MainCamera")
                 {
                     mainCamera = _camera;
+                }else if(_camera.gameObject.name == "LeftCamera")
+                {
+                    LeftCamera = _camera;
+                }else if(_camera.gameObject.name == "RightCamera")
+                {
+                    RightCamera = _camera;
+                }else if(_camera.gameObject.name == "CenterCamera")
+                {
+                    CenterCamera = _camera;
                 }
             }
         }
@@ -224,6 +270,7 @@ namespace PoweredOn.Managers
         public void SetGame(SolitaireGame game)
         {
             this._game = game;
+            this._game.playfield.SetActive(true);
         }
 
 /*#if UNITY_EDITOR
@@ -302,14 +349,18 @@ namespace PoweredOn.Managers
             ListAudioDeviceNames();
 
             bgMusicPlayer = GameObject.Find("BGMusic").GetComponent<AudioSource>();
+            if(bgMusicPlayer == null)
+            {
+                Debug.LogError("error finding BGMusic AudioSource");
+            }
             sfxPlayer = GameObject.Find("SFXPlayer").GetComponent<AudioSource>();
 
             
-            //Screen.orientation = ScreenOrientation.LandscapeLeft;
+            /*Screen.orientation = ScreenOrientation.LandscapeLeft;
             Screen.autorotateToPortraitUpsideDown = false;
             Screen.autorotateToPortrait = false;
             Screen.autorotateToLandscapeRight = false;
-            Screen.autorotateToLandscapeLeft = false;
+            Screen.autorotateToLandscapeLeft = false;*/
 
             if (DebugOutput.Instance == null)
             {
@@ -430,7 +481,7 @@ namespace PoweredOn.Managers
             // if we're in the editor, use the Unity API to get the list of output audio devices
             //if (Application.isEditor)
             //{
-                var config = UnityEngine.AudioSettings.GetConfiguration();
+                var config = AudioSettings.GetConfiguration();
                 // list the available fields and properties and getters on the config
                 // Print the audio configuration to the console
                 Debug.Log("Audio configuration:");
@@ -471,12 +522,13 @@ namespace PoweredOn.Managers
 
         public void TryEnableNreal()
         {
+            return;
             // if the platform is android,
-            // and ( there's an external display connected OR we're in the simulator )
+            // and ( there's an external display connected AND we're not running in the editor...
             // then enable nreal mode
-            if (Application.platform == RuntimePlatform.Android)
+            if (Application.platform == RuntimePlatform.Android && !Application.isEditor)
             {
-                if (Display.displays.Length > 1 || Application.isEditor)
+                if (Display.displays.Length > 1)
                 {
                     SetNrealMode(true);
                     return;
@@ -487,11 +539,16 @@ namespace PoweredOn.Managers
 
         public void SetNrealMode(bool value)
         {
+            if(nrealModeEnabled == value)
+            {
+                Debug.LogWarning("SetNrealMode, skipping, already set");
+                return;
+            }
             // if platform is not android, skip
             if (value == true && Application.platform != RuntimePlatform.Android && !Application.isEditor)
             {
                 Debug.LogWarning("SetNrealMode, skipping, not android platform");
-                return;
+                value = false;
             }
 
             // if there's no external displays connected, force to disabled
@@ -526,6 +583,15 @@ namespace PoweredOn.Managers
                 mainCanvasGraphicRaycaster.enabled = !value;
             }
 
+            // change render mode of main canvas to world space when in nreal mode, and screen space when not
+            if (mainCanvas != null)
+            {
+                mainCanvas.GetComponent<Canvas>().renderMode = value ? RenderMode.WorldSpace : RenderMode.ScreenSpaceCamera;
+            }
+
+            FollowCheckbox.SetActive(value);
+
+
             Screen.orientation = value ? ScreenOrientation.Portrait : ScreenOrientation.LandscapeLeft;
             nrealModeEnabled = value;
             var finds = Resources.FindObjectsOfTypeAll<NRVirtualDisplayer>();
@@ -537,18 +603,44 @@ namespace PoweredOn.Managers
                 }
             }
 
+            string GetGameObjectPath(GameObject obj)
+            {
+                string path = "/" + obj.name;
+                while (obj.transform.parent != null)
+                {
+                    obj = obj.transform.parent.gameObject;
+                    path = "/" + obj.name + path;
+                }
+                return path;
+            }
+
             var finds2 = Resources.FindObjectsOfTypeAll<NRHMDPoseTracker>();
             if (finds2.Count() > 0)
             {
-                var nrCamera = finds2.First();
-                nrCamera.gameObject.SetActive(value);
+                foreach(var nrCamera in finds2)
+                {
+                    nrCamera.gameObject.SetActive(value);
+                    Debug.Log("NRHMDPoseTracker (NRCameraRig) found! setActive:"+ value + " on " + GetGameObjectPath(nrCamera.gameObject));
+                }
+            }
+            else
+            {
+                Debug.LogError("error finding NRHMDPoseTracker");
             }
 
             var finds3 = Resources.FindObjectsOfTypeAll<NRInput>();
             if (finds3.Count() > 0)
             {
-                var nrCamera = finds3.First();
-                nrCamera.gameObject.SetActive(value);
+                foreach(var nrInput in finds3){
+                    nrInput.gameObject.SetActive(value);
+                    Debug.Log("NRHMDPoseTracker (NRCameraRig) found! setActive:" + value + " on " + GetGameObjectPath(nrInput.gameObject));
+                }
+                
+                
+            }
+            else
+            {
+                Debug.LogError("error finding NRInput");
             }
 
             var finds4 = Resources.FindObjectsOfTypeAll<GameObject>();
@@ -617,8 +709,33 @@ namespace PoweredOn.Managers
                 mainCanvasCanvas.worldCamera = TargetWorldCam;
                 Debug.Log("main canvas world camera is now " + mainCanvasCanvas.worldCamera.gameObject.name);
             }
-            
+
+            if (value == true && FollowHead == true)
+            {
+                // after short delay
+                StartCoroutine(EnableSmoothFollow(true));
+            }
+            else
+            {
+                // instant
+                StartCoroutine(EnableSmoothFollow(false, 0.0f));
+            }
+
         }
+
+        /** Coroutine that fires after a 500ms delay */
+        IEnumerator EnableSmoothFollow(bool value, float delay = 0.5f)
+        {
+            yield return new WaitForSeconds(delay);
+            
+            // Find CameraSmoothFollow
+            var finds_cam_smooth_follows = Resources.FindObjectsOfTypeAll<CameraSmoothFollow>();
+            foreach (var csf in finds_cam_smooth_follows)
+            {
+                csf.enabled = value;
+            }
+        }
+
 
         public void NewGameAndDeal()
         {
@@ -1126,35 +1243,74 @@ namespace PoweredOn.Managers
             difficultyAssistant.UpdateDifficultyText();
         }
 
-        public void OnSliderChanged(Slider slider)
+        public void OnToggleChanged(Toggle toggle)
         {
-        
-            //var lc = GameObject.Find("MainCamera").GetComponent<LeiaCamera>();
-            //var ld = GameObject.FindObjectOfType<LeiaDisplay>();
-            switch (slider.gameObject.name)
+            Debug.LogWarning("OnToggleChanged " + toggle.gameObject.name  + " isOn " + toggle.isOn);
+            switch (toggle.gameObject.name)
             {
-                /*case "BaselineSlider":
-                    
-                    lc.BaselineScaling = slider.value;
+                case "FollowHeadToggle":
+                    FollowHead = toggle.isOn;
+
+                    if (FollowHead)
+                    {
+                        PlayPlaneOffset.transform.position = new Vector3(-0.0810000002f, 0.0419999994f, 0.662f);
+                        CanvasScaler.transform.position = new Vector3(0.0f, -264.0f, -1865.0f);
+                    }
+                    else
+                    {
+                        PlayPlaneOffset.transform.position = new Vector3(0.0f, 0.0f, 0.0780000016f);
+                        CanvasScaler.transform.position = new Vector3(5.79251099f, -371.0f, 57.5f);
+                    }
+
+                break;
+        }
+    }
+
+    public void OnSliderChanged(Slider slider)
+    {
+
+        //var lc = GameObject.Find("MainCamera").GetComponent<LeiaCamera>();
+        //var ld = GameObject.FindObjectOfType<LeiaDisplay>();
+        switch (slider.gameObject.name)
+        {
+            /*case "BaselineSlider":
+
+                lc.BaselineScaling = slider.value;
+                break;
+
+            case "PlaxSlider":
+
+                lc.CameraShiftScaling = slider.value;
+                break;
+
+            case "FocusSlider":
+
+                lc.ConvergenceDistance = slider.value;
+                break;*/
+
+                case "HueSlider":
+                    var light = GameObject.Find("MainLight");
+                    // update the light's color based on the 0-360 hue int value
+                    light.GetComponent<Light>().color = Color.HSVToRGB(slider.value / 360.0f, 1.0f, 1.0f);
                     break;
-
-                case "PlaxSlider":
-
-                    lc.CameraShiftScaling = slider.value;
-                    break;
-                    
-                case "FocusSlider":
-
-                    lc.ConvergenceDistance = slider.value;
-                    break;*/
 
                 case "ZoomSlider":
                     TargetWorldCam.fieldOfView = 100.0f - slider.value;
+                    if (nrealModeEnabled)
+                    {
+                        // update all 3 cameras
+                        LeftCamera.fieldOfView = TargetWorldCam.fieldOfView;
+                        RightCamera.fieldOfView = TargetWorldCam.fieldOfView;
+                    }
                     break;
 
-                /*case "OffsetSlider":
-                    game.Z_SPACING = slider.value;
-                    break;*/
+                case "ZDepthSlider":
+                    game.gameOptions.Z_OFFSET = slider.value;
+                    break;
+
+                case "PlayPlaneXRotationSlider":
+                    game.gameOptions.PLAYPLANE_X_ROTATION = slider.value;
+                    break;
             }
         }
 

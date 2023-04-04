@@ -44,8 +44,12 @@ public class BuildVersionIncrementerMenu : MonoBehaviour
         // Update the version numbers in PlayerSettings
         PlayerSettings.bundleVersion = string.Join(".", versionNumbers);
 
+        // Increment the version code
+        PlayerSettings.Android.bundleVersionCode++;
+
         // Log the new version number
         Debug.Log("Build version incremented to: " + PlayerSettings.bundleVersion);
+        Debug.Log("Version code incremented to: " + PlayerSettings.Android.bundleVersionCode);
     }
 #endif
 }

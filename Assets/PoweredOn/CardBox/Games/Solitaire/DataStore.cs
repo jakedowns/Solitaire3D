@@ -86,8 +86,13 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public void StoreData()
         {
-            string json = JsonUtility.ToJson(userData);
-            File.WriteAllText(dataFilePath, json);
+            try { 
+                string json = JsonUtility.ToJson(userData);
+                File.WriteAllText(dataFilePath, json);
+            }catch(Exception e)
+            {
+                Debug.LogError("failed to save " + e.Message);
+            }
         }
 
         public void UpdateAndStore(SolitaireGame game)

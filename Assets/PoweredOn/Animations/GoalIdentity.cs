@@ -111,6 +111,18 @@ namespace PoweredOn.CardBox.Animations
             this._position = gameObject.transform.InverseTransformPoint(worldPosition);
         }*/
 
+        public static GoalIdentity NONE
+        {
+            get {
+                return new GoalIdentity();
+            }
+        }
+
+        public GoalIdentity()
+        {
+
+        }
+
         public GoalIdentity(GameObject gameObject, GameObject goalObject)
         {
             this.gameObject = gameObject;

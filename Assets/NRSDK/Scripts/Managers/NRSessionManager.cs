@@ -91,9 +91,13 @@ namespace NRKernal
                 {
                     return NRHMDPoseTracker.centerAnchor;
                 }
-                else
+                else if (Camera.main != null && Camera.main.transform != null)
                 {
                     return Camera.main.transform;
+                }
+                else
+                {
+                    return null;
                 }
             }
         }

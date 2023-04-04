@@ -519,10 +519,10 @@ namespace NRKernal
                 NRDebugger.Info("[NRHMDPoseTracker] Left Camera Project Matrix : {0}", matrix_data.LEyeMatrix.ToString());
                 NRDebugger.Info("[NRHMDPoseTracker] RightCamera Project Matrix : {0}", matrix_data.REyeMatrix.ToString());
 
-                leftCamera.projectionMatrix = matrix_data.LEyeMatrix;
-                rightCamera.projectionMatrix = matrix_data.REyeMatrix;
+                //leftCamera.projectionMatrix = matrix_data.LEyeMatrix;
+                //rightCamera.projectionMatrix = matrix_data.REyeMatrix;
                 // set center camera's projection matrix with LEyeMatrix, in case some logic is using it
-                centerCamera.projectionMatrix = matrix_data.LEyeMatrix;
+                //centerCamera.projectionMatrix = matrix_data.LEyeMatrix;
 
                 var eyeposeFromHead = NRFrame.EyePoseFromHead;
                 leftCamera.transform.localPosition = eyeposeFromHead.LEyePose.position;

@@ -21,7 +21,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 {
     public class SolitaireGame
     {
-        GameObject playfield;
+        public GameObject playfield;
         // TODO: maybe Move to GameManager.Instance.Dealer.Deck
         // or GameManager.Instance.DeckManager.Deck
         private SolitaireDeck _deck;
@@ -30,13 +30,16 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
         public ScoreKeeper scoreKeeper = new ScoreKeeper();
 
-        public float Z_SPACING = 0.0043f;
-
         bool _isDealing = false;
         public bool MovingStockToWaste { get; internal set; } = false;
 
         public SolitaireMoveSuggestor moveSuggestor { get; internal set; } = new SolitaireMoveSuggestor();
         public bool DebugCardColors { get; internal set; } = false;
+
+        private Vector3 foundationOrigin = Vector3.zero;
+        private Vector3 tabOrigin = Vector3.zero;
+
+        private bool vibration_enabled = true;
 
         DebugOutput iDebug
         {
@@ -136,10 +139,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
         // TODO: these constants should probably be moved to a config file
         // OR: they could be moved to SolitairePlayfield.cs
         // OR: they could be moved to SolitaireDealer.cs
-        public const float TAB_SPACING = 0.1f;
+        public GameOptions gameOptions;
         const float RANDOM_AMPLITUDE = 0.5f;
         //public const float CARD_THICKNESS = 0.001f;
-        public const float TAB_VERT_OFFSET = 0.02f;
 
         // z-axis rotation is temporary until i fix the orientation of the mesh in blender
         public Quaternion CARD_DEFAULT_ROTATION = Quaternion.Euler(0, 180, 90);
@@ -165,6 +167,12 @@ namespace PoweredOn.CardBox.Games.Solitaire
         //int m_Moves = 0;
         //int score = 0;
         public SolitaireGame(){
+            gameOptions = GameObject.Find("GameManager").GetComponent<GameOptions>();
+            if (gameOptions == null)
+            {
+                // debug warn that the gameOptions class wasn't found
+                Debug.LogWarning("GameOptions not found");
+            }
         }
 
         /* this is the state where auto-complete should become available to the user */
@@ -335,6 +343,8 @@ namespace PoweredOn.CardBox.Games.Solitaire
             BuildFoundations();
             BuildTableaus();
             BuildDeck();
+
+            ReflowLayout();
 
             scoreKeeper.Reset();
             DidCalculateFinalScore = false;
@@ -566,7 +576,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
 
                     // NOTE: inside this method, we handle adding SuitRank to the proper Tableau list
                     // we also handle removing it from the previous spot (PlayfieldArea.Stock)
-                    MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.05f * dealtOrder.Count);
+                    MoveCardToNewSpot(ref card, new PlayfieldSpot(PlayfieldArea.TABLEAU, pile, round), faceUp, 0.01f * dealtOrder.Count);
 
                     if(deck.DeckCardPile.Count != 52 - (d + 1))
                     {
@@ -727,6 +737,24 @@ namespace PoweredOn.CardBox.Games.Solitaire
             return new SolitaireGameState(this);
         }
 
+        public GoalIdentity GetGoalIDForSpot(ref SolitaireCard card, PlayfieldSpot spot)
+        {
+            var id = GoalIdentity.NONE;
+            switch(spot.area)
+            {
+                case PlayfieldArea.TABLEAU:
+                    id = new GoalIdentity(card.gameObject, tableauCardPileGroup[spot.index].gameObject, new Vector3(
+                            0,
+                            (tableauCardPileGroup[spot.index].Count - 1) * -gameOptions.TAB_VERT_OFFSET,
+                            gameOptions.PLAYFIELD_OFFSET + (tableauCardPileGroup[spot.index].Count) * -gameOptions.Z_OFFSET
+                        ));
+                    break;
+                default:
+                    break;
+            }
+            return id;
+        }
+
         // todo: substackIndex is redundant, we could just read spot.index spot.substackIndex
 
         public void MoveCardToNewSpot(ref SolitaireCard card, PlayfieldSpot spot, bool faceUp, float delay = 0.0f, int substackIndex = 0, bool instant = false)
@@ -762,7 +790,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 TODO: fix it so we can reference game objects in Editor mode when running tests
                 for now we just conditionally reference the game object
              */
-            const float playfield_offset = -0.05f;
+            
             GameObject cardGO = card.gameObject;
             GoalIdentity goalID = null;
             Transform cardTX;
@@ -786,7 +814,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     // like stockCardPile.GetGoalIDAsCard(card) // returns the proper goal for the card based on it's position in the pile
                     if (goalID != null && stockCardPile.gameObject != null)
                     {
-                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * -Z_SPACING));
+                        Vector3 offset = new(0, 0, gameOptions.PLAYFIELD_OFFSET + (spot.index * -gameOptions.Z_OFFSET));
                         goalID = new GoalIdentity(card.gameObject, stockCardPile.gameObject, offset);
                     }
                     break;
@@ -796,10 +824,10 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     wasteCardPile.Add(card.GetSuitRank());
                     if (goalID != null && wasteCardPile.gameObject != null)
                     {
-                        /*gPos = wasteCardPile.gameObject.transform.TransformPoint(Vector3.forward * (wasteCardPile.Count * -Z_SPACING));
+                        /*gPos = wasteCardPile.gameObject.transform.TransformPoint(Vector3.forward * (wasteCardPile.Count * -gameOptions.Z_OFFSET));
                         goalID.position = gPos;*/
 
-                        Vector3 offset = new(0, 0, playfield_offset + (spot.index * -Z_SPACING));
+                        Vector3 offset = new(0, 0, gameOptions.PLAYFIELD_OFFSET + (spot.index * -gameOptions.Z_OFFSET));
                         goalID = new GoalIdentity(card.gameObject, wasteCardPile.gameObject, offset);
 
                     }
@@ -815,7 +843,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                         goalID = new GoalIdentity(card.gameObject, baseGO, new Vector3(
                             0,
                             0,
-                            playfield_offset + (foundationCardPileGroup[spot.index].Count * -Z_SPACING)
+                            gameOptions.PLAYFIELD_OFFSET + (foundationCardPileGroup[spot.index].Count * -gameOptions.Z_OFFSET)
                         ));
                     }
                     break;
@@ -825,15 +853,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     tableauCardPileGroup[spot.index].Add(card.GetSuitRank());
                     if (goalID != null && tableauCardPileGroup[spot.index].gameObject != null)
                     {
-                        /*gPos = tableauCardPileGroup[spot.index].gameObject.transform.position;
-                        gPos.z = (tableauCardPileGroup[spot.index].Count) * -Z_SPACING - .02f;;
-                        gPos.y = (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET;
-                        goalID.position = gPos;*/
-                        goalID = new GoalIdentity(card.gameObject, tableauCardPileGroup[spot.index].gameObject, new Vector3(
-                            0,
-                            (tableauCardPileGroup[spot.index].Count) * -TAB_VERT_OFFSET,
-                            playfield_offset + (tableauCardPileGroup[spot.index].Count) * -Z_SPACING
-                        ));
+                        goalID = GetGoalIDForSpot(ref card, spot);
                     }
                     break;
 
@@ -845,7 +865,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     //var hand = GetGameObjectByType(SolitaireGameObject.Hand_Base);
                     if (goalID != null && card.gameObject != null && handCardPile.gameObject != null)
                     {
-                        goalID = new GoalIdentity(card.gameObject, handCardPile.gameObject, new Vector3(0.0f, 0.0f, playfield_offset * spot.index * -Z_SPACING));
+                        goalID = new GoalIdentity(card.gameObject, handCardPile.gameObject, new Vector3(0.0f, 0.0f, gameOptions.PLAYFIELD_OFFSET * spot.index * -gameOptions.Z_OFFSET));
                     }
                     break;
 
@@ -856,7 +876,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     {
                         GameObject offsetGameObject = GetGameObjectByType(SolitaireDeck.offsetGameObjectType);
                         //Debug.LogWarning($"offsetGameObject: {offsetGameObject.transform.position}");
-                        goalID = new GoalIdentity(card.gameObject, offsetGameObject, new Vector3(0.0f, 0.0f, (Z_SPACING * spot.index))); // (52 - spot.index)
+                        goalID = new GoalIdentity(card.gameObject, offsetGameObject, new Vector3(0.0f, 0.0f, (gameOptions.Z_OFFSET * spot.index))); // (52 - spot.index)
                     }
                     break;
             }
@@ -1150,20 +1170,23 @@ namespace PoweredOn.CardBox.Games.Solitaire
         public void BuildFoundations()
         {
             foundationCardPileGroup = new FoundationCardPileGroup();
-            Assert.IsTrue(foundationCardPileGroup.Count == 4, "expect 4 piles in group");
+            Assert.IsTrue(foundationCardPileGroup.Count == 4, "expect 4 piles in group");            
+        }
 
-            if(runningInTestMode)
+        public void ReflowFoundations()
+        {
+            if (runningInTestMode)
             {
                 return;
             }
-
+            
             // Gather Game Object References:
             int i = 0;
-            Vector3 foundationOrigin = Vector3.zero;
+            
             foreach (int suit in Enum.GetValues(typeof(Suit)))
             {
                 string suitName = Enum.GetName(typeof(Suit), suit);
-                if(suitName.ToLower() == "none")
+                if (suitName.ToLower() == "none")
                 {
                     continue;
                 }
@@ -1177,66 +1200,109 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 }
                 else
                 {
-                    string enumName = $"Foundation{i+1}_Base";
+                    string enumName = $"Foundation{i + 1}_Base";
                     SolitaireGameObject.TryParse(enumName, out SolitaireGameObject solitaireGameObject);
                     gameObjectReferences[solitaireGameObject] = foundation;
-                    
-                    if (i == 0)
+
+                    if (i == 0 && foundationOrigin == Vector3.zero)
                     {
                         foundationOrigin = foundation.transform.localPosition;
                     }
 
                     // make sure the foundations are spaced evenly apart
                     Vector3 newPos = new Vector3(foundationOrigin.x, foundationOrigin.y, foundationOrigin.z);
-                    newPos.x = i * (TAB_SPACING * 0.75f);
+                    newPos.x = i * (gameOptions.TAB_SPACING);
                     foundation.transform.localPosition = newPos;
                 }
                 i++;
             }
         }
 
-        public void BuildTableaus()
-        {
-            tableauCardPileGroup = new TableauCardPileGroup();
+        
 
+        public void ReflowTableaus()
+        {
             if (runningInTestMode)
             {
                 return;
             }
 
-            // Game Object Stuff...
-            Vector3 tabOrigin = Vector3.zero;
+            
             for (int i = 0; i < 7; i++)
             {
                 // TODO Change to FindObjectOfType
                 GameObject tab = GameObject.Find("PlayPlane/PlayPlaneOffset/Tableau/t" + i.ToString());
                 //iDebug.Log("tab? " + (tab is null));
 
-                string enumName = $"Tableau{i+1}_Base";
+                string enumName = $"Tableau{i + 1}_Base";
                 SolitaireGameObject.TryParse(enumName, out SolitaireGameObject solitaireGameObject);
                 gameObjectReferences[solitaireGameObject] = tab;
 
                 if (tab != null)
                 {
-                    if (i == 0)
+                    if (i == 0 && tabOrigin == Vector3.zero)
                     {
                         tabOrigin = new Vector3(
-                            tab.transform.localPosition.x,
+                            tab.transform.localPosition.x - 0.0075f,
                             tab.transform.localPosition.y,
                             tab.transform.localPosition.z
                         );
                         //iDebug.LogWarning("tabOrigin " + tabOrigin);
                     }
-                    else
+
+                    // make sure the tableaus are evenly spaced apart
+                    Vector3 newPos = new Vector3(tabOrigin.x, tabOrigin.y, tabOrigin.z);
+                    if (i > 0)
                     {
-                        // make sure the tableaus are evenly spaced apart
-                        Vector3 newPos = new Vector3(tabOrigin.x, tabOrigin.y, tabOrigin.z);
-                        newPos.x = TAB_SPACING * i;
+                        newPos.x = newPos.x + (gameOptions.TAB_SPACING * i);
                         //iDebug.LogWarning($"tabPos: {i} {newPos}");
-                        tab.transform.localPosition = newPos; // tab.transform.InverseTransformPoint(newPos);
                     }
+                    tab.transform.localPosition = newPos; // tab.transform.InverseTransformPoint(newPos);
                 }
             }
+        }
+
+        public void ReflowStock()
+        {
+            
+        }
+
+        public void ReflowWaste()
+        {
+            
+        }
+
+        public void ReflowLayout()
+        {
+            if (runningInTestMode)
+            {
+                return;
+            }
+
+            var euler = new Vector3(gameOptions.PLAYPLANE_X_ROTATION, 0.0f, 0.0f);
+            var _rotation = Quaternion.Euler(euler.x, euler.y, euler.z);
+            playfield.transform.rotation = _rotation;
+
+            // loop through deck.cards
+            foreach(var card in deck.cards)
+            {
+                if (card != null && card.playfieldSpot.area == PlayfieldArea.TABLEAU)
+                {
+                    var _card = deck.GetCardBySuitRank(card.GetSuitRank());
+                    var nextID = GetGoalIDForSpot(ref _card, card.playfieldSpot);
+                    card.SetGoalIdentity(nextID);
+                }
+            }
+
+            ReflowFoundations();
+            ReflowTableaus();
+            ReflowStock();
+            ReflowWaste();
+        }
+
+        public void BuildTableaus()
+        {
+            tableauCardPileGroup = new TableauCardPileGroup();
         }
 
         public string GetDebugText()
@@ -1501,7 +1567,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                 case PlayfieldArea.STOCK:
                     if(handCardPile.Count == 0 && stockCardPile.Count < 1 && wasteCardPile.Count > 0)
                     {
-                        Vibration.Vibrate(30, 70);
+                        if(vibration_enabled){
+                            Vibration.Vibrate(30, 70);
+                        }
                         WasteToStock();
                     }
                     break;
@@ -1512,7 +1580,9 @@ namespace PoweredOn.CardBox.Games.Solitaire
                     }
                     else if (stockCardPile.Count > 0)
                     {
-                        Vibration.Vibrate(30, 70);
+                        if(vibration_enabled){
+                            Vibration.Vibrate(30, 70);
+                        }
                         StockToWaste();
                     }
                     break;
