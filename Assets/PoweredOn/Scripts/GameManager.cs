@@ -70,6 +70,9 @@ namespace PoweredOn.Managers
         AudioClip clickClip;
         Dropdown assistModeSelect;
 
+        public GameObject AboutPage;
+        public bool aboutPageVisible = false;
+
         public bool didLoad { get; private set; } = false;
         public bool GoalAnimationSystemEnabled { get; private set; } = true; // disable to use the "joint" system instead of the goal system
         public Camera TargetWorldCam { get; private set; }
@@ -207,6 +210,12 @@ namespace PoweredOn.Managers
                 else if (obj.name == "FollowCheckbox")
                 {
                     FollowCheckbox = obj;
+                }
+                else if (obj.name == "AboutPage")
+                {
+                    // hidden by default
+                    obj.SetActive(false);
+                    AboutPage = obj;
                 }
             }
             if(menuGroup == null)
@@ -1264,6 +1273,17 @@ namespace PoweredOn.Managers
 
                 break;
         }
+    }
+
+    public void ShowAboutPage()
+    {
+        aboutPageVisible = true;
+        AboutPage.SetActive(true);
+    }
+    public void CloseAboutPage()
+    {
+        aboutPageVisible = false;
+        AboutPage.SetActive(false);
     }
 
     public void OnSliderChanged(Slider slider)
