@@ -1,6 +1,7 @@
 Android/.idea
 
-*_BackUpThisFolder_ButDontShipItWithYourGame/
+*DontShip*
+*DoNotShip*
 
 Packages
 recompiled
