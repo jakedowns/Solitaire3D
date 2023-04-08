@@ -21,6 +21,7 @@ namespace PoweredOn.CardBox.Animations
 
         private bool useCustomRotation = false;
         private bool useCustomScale = true;
+        public bool useLocalPosition { get; private set; } = false;
 
         private GameObject _gameObject;
         public GameObject gameObject
@@ -43,6 +44,11 @@ namespace PoweredOn.CardBox.Animations
             }
         }
 
+        public void SetUseLocalPosition(bool value)
+        {
+            useLocalPosition = value;
+        }
+
         public void SetUseCustomRotation(bool value)
         {
             useCustomRotation = value;
@@ -61,9 +67,14 @@ namespace PoweredOn.CardBox.Animations
             get
             {
                 if (goalObject != null)
+                {
+                    if (useLocalPosition)
+                    {
+                        return this._gameObject.transform.InverseTransformPoint(this.goalObject.transform.position) + _offset;
+                    }
                     // world -> local
                     return goalObject.transform.position + _offset;
-                    //return gameObject.transform.InverseTransformPoint(goalObject.transform.position + this._offset);
+                }
                 
                 return _position + _offset;
             }

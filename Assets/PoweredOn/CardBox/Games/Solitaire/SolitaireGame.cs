@@ -748,6 +748,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
                             (tableauCardPileGroup[spot.index].Count - 1) * -gameOptions.TAB_VERT_OFFSET,
                             gameOptions.PLAYFIELD_OFFSET + (tableauCardPileGroup[spot.index].Count) * -gameOptions.Z_OFFSET
                         ));
+                    //id.SetUseLocalPosition(true);
                     break;
                 default:
                     break;

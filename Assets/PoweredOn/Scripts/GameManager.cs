@@ -976,10 +976,18 @@ namespace PoweredOn.Managers
                     // NOTE: the lerp function writes back to the startX arrays with the lerped values
                     SolitaireCard card = game.deck.cards[i];
                     GameObject cardGO = card.gameObject;
-                    if (cardGO != null && card.GetGoalIdentity() != null)
+                    GoalIdentity goalID = card.GetGoalIdentity();
+                    if (cardGO != null && goalID != null)
                     {
                         Transform cardTx = cardGO.transform;
-                        cardTx.position = job.startPositions[i];
+                        if (goalID.useLocalPosition)
+                        {
+                            cardTx.localPosition = job.startPositions[i];
+                        }
+                        else
+                        {
+                            cardTx.position = job.startPositions[i];
+                        }
                         //cardTx.position = game.fxManager.ApplyEffectsToPoint(cardTx.position);
                         cardTx.localRotation = job.startRotations[i];
                         cardTx.localScale = job.startScales[i];
