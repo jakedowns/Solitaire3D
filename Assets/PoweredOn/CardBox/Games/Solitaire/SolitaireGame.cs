@@ -166,7 +166,7 @@ namespace PoweredOn.CardBox.Games.Solitaire
         /* this is the state where auto-complete should become available to the user */
         public bool IsInFinalStage
         {
-            get { tableauCardPileGroup.GetFaceDownCards().Count == 0; }
+            get { return tableauCardPileGroup.GetFaceDownCards().Count == 0; }
             set { }
         }
 
