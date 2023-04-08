@@ -187,7 +187,11 @@ namespace PoweredOn.Managers
             GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
             foreach(var obj in allObjects)
             {
-                if ( obj.name == "MenuGroup" && obj.transform.parent.name == "CanvasScaler")
+                if((obj.name == "ToggleNRMode" || obj.name == "FollowCheckbox") && Application.platform == RuntimePlatform.IPhonePlayer)
+                {
+                    obj.SetActive(false);
+                }
+                else if ( obj.name == "MenuGroup" && obj.transform.parent.name == "CanvasScaler")
                 {
                     menuGroup = obj;
                     // disable 
@@ -354,7 +358,8 @@ namespace PoweredOn.Managers
             ToggleMenu(false);
 
             // MaybeEnableNreal
-            TryEnableNreal();
+            //TryEnableNreal();
+            SetNrealMode(false);
             ListAudioDeviceNames();
 
             bgMusicPlayer = GameObject.Find("BGMusic").GetComponent<AudioSource>();
@@ -365,11 +370,6 @@ namespace PoweredOn.Managers
             sfxPlayer = GameObject.Find("SFXPlayer").GetComponent<AudioSource>();
 
             
-            /*Screen.orientation = ScreenOrientation.LandscapeLeft;
-            Screen.autorotateToPortraitUpsideDown = false;
-            Screen.autorotateToPortrait = false;
-            Screen.autorotateToLandscapeRight = false;
-            Screen.autorotateToLandscapeLeft = false;*/
 
             if (DebugOutput.Instance == null)
             {
@@ -567,6 +567,12 @@ namespace PoweredOn.Managers
                 value = false;
             }
 
+            Screen.orientation = value ? ScreenOrientation.Portrait : ScreenOrientation.LandscapeLeft;
+            Screen.autorotateToPortraitUpsideDown = false;
+            Screen.autorotateToPortrait = true;
+            Screen.autorotateToLandscapeRight = !value;
+            Screen.autorotateToLandscapeLeft = !value;
+
             var findEventSystem = Resources.FindObjectsOfTypeAll<EventSystem>();
             if(findEventSystem.Length > 0)
             {
@@ -598,10 +604,8 @@ namespace PoweredOn.Managers
                 mainCanvas.GetComponent<Canvas>().renderMode = value ? RenderMode.WorldSpace : RenderMode.ScreenSpaceCamera;
             }
 
-            FollowCheckbox.SetActive(value);
 
-
-            Screen.orientation = value ? ScreenOrientation.Portrait : ScreenOrientation.LandscapeLeft;
+            
             nrealModeEnabled = value;
             var finds = Resources.FindObjectsOfTypeAll<NRVirtualDisplayer>();
             if (finds.Count() > 0)
@@ -717,17 +721,6 @@ namespace PoweredOn.Managers
             {
                 mainCanvasCanvas.worldCamera = TargetWorldCam;
                 Debug.Log("main canvas world camera is now " + mainCanvasCanvas.worldCamera.gameObject.name);
-            }
-
-            if (value == true && FollowHead == true)
-            {
-                // after short delay
-                StartCoroutine(EnableSmoothFollow(true));
-            }
-            else
-            {
-                // instant
-                StartCoroutine(EnableSmoothFollow(false, 0.0f));
             }
 
         }
@@ -1262,13 +1255,15 @@ namespace PoweredOn.Managers
 
                     if (FollowHead)
                     {
-                        PlayPlaneOffset.transform.position = new Vector3(-0.0810000002f, 0.0419999994f, 0.662f);
-                        CanvasScaler.transform.position = new Vector3(0.0f, -264.0f, -1865.0f);
+                        StartCoroutine(EnableSmoothFollow(true));
+                        PlayPlaneOffset.transform.localPosition = new Vector3(-0.0810000002f, 0.0419999994f, 0.662f);
+                        CanvasScaler.transform.localPosition = new Vector3(0.0f, 0.0f, 97.0f);
                     }
                     else
                     {
-                        PlayPlaneOffset.transform.position = new Vector3(0.0f, 0.0f, 0.0780000016f);
-                        CanvasScaler.transform.position = new Vector3(5.79251099f, -371.0f, 57.5f);
+                        StartCoroutine(EnableSmoothFollow(false, 0.0f));
+                        PlayPlaneOffset.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0780000016f);
+                        CanvasScaler.transform.localPosition = new Vector3(5.79251099f, -371.0f, 57.5f);
                     }
 
                 break;
@@ -1315,13 +1310,21 @@ namespace PoweredOn.Managers
                     break;
 
                 case "ZoomSlider":
-                    TargetWorldCam.fieldOfView = 100.0f - slider.value;
-                    if (nrealModeEnabled)
+                    if (TargetWorldCam != null)
                     {
-                        // update all 3 cameras
-                        LeftCamera.fieldOfView = TargetWorldCam.fieldOfView;
-                        RightCamera.fieldOfView = TargetWorldCam.fieldOfView;
+                        TargetWorldCam.fieldOfView = 100.0f - slider.value;
+                        if (nrealModeEnabled)
+                        {
+                            // update all 3 cameras
+                            LeftCamera.fieldOfView = TargetWorldCam.fieldOfView;
+                            RightCamera.fieldOfView = TargetWorldCam.fieldOfView;
+                        }
                     }
+                    else
+                    {
+                        Debug.LogWarning("TargetWorldCam not set");
+                    }
+                    
                     break;
 
                 case "ZDepthSlider":

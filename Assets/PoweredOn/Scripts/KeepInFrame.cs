@@ -1,10 +1,17 @@
 using UnityEngine;
 
+/* require a BoxCollider component on the game object */
+[RequireComponent(typeof(BoxCollider))]
 public class KeepInFrame : MonoBehaviour
 {
     public float speed = 1.0f;
     public bool forceFront = true;
-    public Bounds boundingBox;
+    private BoxCollider boundingBox;
+
+    private void Awake()
+    {
+        boundingBox = GetComponent<BoxCollider>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -23,6 +30,13 @@ public class KeepInFrame : MonoBehaviour
         Debug.DrawLine(mainCamera.ViewportToWorldPoint(new Vector3(0, 1, mainCamera.nearClipPlane)), mainCamera.ViewportToWorldPoint(new Vector3(1, 1, mainCamera.nearClipPlane)), Color.red);
         Debug.DrawLine(mainCamera.ViewportToWorldPoint(new Vector3(0, 0, mainCamera.nearClipPlane)), mainCamera.ViewportToWorldPoint(new Vector3(0, 1, mainCamera.nearClipPlane)), Color.red);
         Debug.DrawLine(mainCamera.ViewportToWorldPoint(new Vector3(1, 0, mainCamera.nearClipPlane)), mainCamera.ViewportToWorldPoint(new Vector3(1, 1, mainCamera.nearClipPlane)), Color.red);
+
+        // Draw lines connecting the camera to the frustum
+        Debug.DrawLine(mainCamera.transform.position, mainCamera.ViewportToWorldPoint(new Vector3(0, 0, mainCamera.nearClipPlane)), Color.red);
+        Debug.DrawLine(mainCamera.transform.position, mainCamera.ViewportToWorldPoint(new Vector3(1, 0, mainCamera.nearClipPlane)), Color.red);
+        Debug.DrawLine(mainCamera.transform.position, mainCamera.ViewportToWorldPoint(new Vector3(0, 1, mainCamera.nearClipPlane)), Color.red);
+        Debug.DrawLine(mainCamera.transform.position, mainCamera.ViewportToWorldPoint(new Vector3(1, 1, mainCamera.nearClipPlane)), Color.red);
+        
 
         // Check if the game object is in front of the camera
         Vector3 toObject = transform.position - mainCamera.transform.position;
@@ -50,10 +64,15 @@ public class KeepInFrame : MonoBehaviour
         }
 
         // Push the game object back in z-space if the bounding box exceeds the view frustum
+        Vector3 pushDirection = mainCamera.transform.forward;
         if (exceedsFrustum)
         {
-            Vector3 pushDirection = mainCamera.transform.forward;
             transform.position += pushDirection * speed * Time.deltaTime;
+        }
+        else
+        {
+            // push the towards the camera so it fills as much of the view as possible
+            transform.position -= pushDirection * speed * Time.deltaTime;
         }
     }
 
@@ -61,14 +80,15 @@ public class KeepInFrame : MonoBehaviour
     private Vector3[] GetBoundingBoxVertices()
     {
         Vector3[] vertices = new Vector3[8];
-        vertices[0] = transform.TransformPoint(boundingBox.min);
-        vertices[1] = transform.TransformPoint(new Vector3(boundingBox.min.x, boundingBox.min.y, boundingBox.max.z));
-        vertices[2] = transform.TransformPoint(new Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.min.z));
-        vertices[3] = transform.TransformPoint(new Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.max.z));
-        vertices[4] = transform.TransformPoint(new Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.min.z));
-        vertices[5] = transform.TransformPoint(new Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.max.z));
-        vertices[6] = transform.TransformPoint(new Vector3(boundingBox.max.x, boundingBox.max.y, boundingBox.min.z));
-        vertices[7] = transform.TransformPoint(boundingBox.max);
+        /* get the vertex positions of the bounding box */
+        vertices[0] = boundingBox.transform.TransformPoint(boundingBox.center + new Vector3(boundingBox.size.x, boundingBox.size.y, boundingBox.size.z) * 0.5f);
+        vertices[1] = boundingBox.transform.TransformPoint(boundingBox.center + new Vector3(boundingBox.size.x, boundingBox.size.y, -boundingBox.size.z) * 0.5f);
+        vertices[2] = boundingBox.transform.TransformPoint(boundingBox.center + new Vector3(boundingBox.size.x, -boundingBox.size.y, boundingBox.size.z) * 0.5f);
+        vertices[3] = boundingBox.transform.TransformPoint(boundingBox.center + new Vector3(boundingBox.size.x, -boundingBox.size.y, -boundingBox.size.z) * 0.5f);
+        vertices[4] = boundingBox.transform.TransformPoint(boundingBox.center + new Vector3(-boundingBox.size.x, boundingBox.size.y, boundingBox.size.z) * 0.5f);
+        vertices[5] = boundingBox.transform.TransformPoint(boundingBox.center + new Vector3(-boundingBox.size.x, boundingBox.size.y, -boundingBox.size.z) * 0.5f);
+        vertices[6] = boundingBox.transform.TransformPoint(boundingBox.center + new Vector3(-boundingBox.size.x, -boundingBox.size.y, boundingBox.size.z) * 0.5f);
+        vertices[7] = boundingBox.transform.TransformPoint(boundingBox.center + new Vector3(-boundingBox.size.x, -boundingBox.size.y, -boundingBox.size.z) * 0.5f);
 
         return vertices;
     }
